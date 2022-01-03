@@ -5,10 +5,12 @@
 	<meta http-equiv="X-UA-Compatible" content="IE=edge">
 	<meta name="viewport" content="width=device-width, initial-scale=1.0">
 	<title><?php echo $this->_pageTitle ?></title>
-	<!-- <?php $this->appendScript('main.js'); ?> -->
 	<!-- <?php $this->appendCSS('global.css'); ?> -->
+	<!-- <?php $this->appendScript('main.js'); ?> -->
 </head>
 <body>
-	<?php echo $this->content(); ?>
+	<?php echo $this->_renderViewScript('global/header.phtml', true); ?>
+	<?php echo $this->content(); ?> <!-- Outputs the current action layout -->
+	<?php echo $this->_renderViewScript('global/footer.phtml', true); ?>
 </body>
 </html>
