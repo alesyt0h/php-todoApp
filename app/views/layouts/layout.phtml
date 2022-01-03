@@ -11,7 +11,11 @@
 <body>
 	<?php echo $this->_renderViewScript('global/header.phtml', true); ?>
 	<?php echo $this->_renderViewScript('global/sidebar.phtml', true); ?>
-	<?php echo $this->content(); ?> <!-- Outputs the current action layout -->
+	<main>
+    	<div class="container">
+			<?php echo $this->content(); ?> <!-- Outputs the current action layout -->
+		</div>
+	</main>
 	<?php echo $this->_renderViewScript('global/footer.phtml', true); ?>
 </body>
 </html>
