@@ -85,14 +85,14 @@ class Model {
     }
 
     public function fetchUsers(){
-        $this->_users = $this->_jsonData;
+        $this->_users = $this->_jsonData ?? [];
         $this->_jsonData = [];
 
         return $this->_users;
     }
 
     public function fetchTodos(){
-        $this->_todos = $this->_jsonData;
+        $this->_todos = $this->_jsonData ?? [];
         $this->_jsonData = [];
 
         return $this->_todos;
