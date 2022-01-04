@@ -13,6 +13,8 @@ class Model {
     protected $_users = [];
     protected $_todos = [];
 
+    protected $_loggedUser;
+
     protected $dbDir = ROOT_PATH . '/db/';
 
     public function __construct(){
