@@ -1,133 +1,101 @@
 <?php
 
 /**
- * A base model for handling the database connections
- * @author jimmiw
- * @since 2012-07-02
+ * Model for creating and parsing JSON files
+ * 
+ * @author alesyt0h
+ * @since 2022-01-03
  */
-class Model
-{
-	protected $_dbh = null;
-	protected $_table = "";
-	
-	public function __construct()
-	{
-		// parses the settings file
-		$settings = parse_ini_file(ROOT_PATH . '/config/settings.ini', true);
-		
-		// starts the connection to the database
-		$this->_dbh = new PDO(
-			sprintf(
-				"%s:host=%s;dbname=%s",
-				$settings['database']['driver'],
-				$settings['database']['host'],
-				$settings['database']['dbname']
-			),
-			$settings['database']['user'],
-			$settings['database']['password'],
-			array(PDO::MYSQL_ATTR_INIT_COMMAND => "SET NAMES utf8")
-		);
-		
-		$this->init();
-	}
-	
-	public function init()
-	{
-		
-	}
-	
-	/**
-	 * Sets the database table the model is using
-	 * @param string $table the table the model is using
-	 */
-	protected function _setTable($table)
-	{
-		$this->_table = $table;
-	}
-	
-	public function fetchOne($id, $id_field = 'id')
-	{
-		$sql = 'SELECT * FROM ' . $this->_table;
-		$sql .= ' WHERE ' . $id_field . ' = ?';
 
-		$statement = $this->_dbh->prepare($sql);
-		$statement->execute(array($id));
-		
-		return $statement->fetch(PDO::FETCH_OBJ);
-	}
-	
-	/**
-	 * Saves the current data to the database. If an key named "id" is given,
-	 * an update will be issued.
-	 * @param array $data the data to save
-	 * @return int the id the data was saved under
-	 */
-	public function save($data = array())
-	{
-		$sql = '';
-		
-		$values = array();
-		$firstField = array_key_first($data);
-	
-		if (preg_match('/id$/', $firstField)) {
-			$sql = 'UPDATE ' . $this->_table . ' SET ';
-			
-			$first = true;
-			foreach($data as $key => $value) {
-				if ($key != $firstField) {
-					$sql .= ($first == false ? ',' : '') . ' ' . $key . ' = ?';
-					$values[] = $value;
-					
-					$first = false;
-				}
-			}
-			
-			// adds the id as well
-			$values[] = $data[$firstField];
-			
-			$sql .= ' WHERE ' . $firstField . ' = ?';// . $data['id'];
-			
-			$statement = $this->_dbh->prepare($sql);
-			return $statement->execute($values);
-		}
-		else {
-			$keys = array_keys($data);
-			
-			$sql = 'INSERT INTO ' . $this->_table . '(';
-			$sql .= implode(',', $keys);
-			$sql .= ')';
-			$sql .= ' VALUES (';
-			
-			$dataValues = array_values($data);
-			$first = true;
-			foreach($dataValues as $value) {
-				$sql .= ($first == false ? ',?' : '?');
-				
-				$values[] = $value;
-				
-				$first = false;
-			}
-			
-			$sql .= ')';
-			
-			$statement = $this->_dbh->prepare($sql);
-			if ($statement->execute($values)) {
-				return $this->_dbh->lastInsertId();
-			}
-		}
-		
-		return false;
-	}
-	
-	/**
-	 * Deletes a single entry
-	 * @param int $id the id of the entry to delete
-	 * @param string $id_field the id_field name of the entry to delete
-	 * @return boolean true if all went well, else false.
-	 */
-	public function delete($id, $id_field = 'id')
-	{
-		$statement = $this->_dbh->prepare("DELETE FROM " . $this->_table . " WHERE {$id_field} = ?");
-		return $statement->execute(array($id));
-	}
+class Model {
+
+    protected $_jsonData = [];
+    protected $_users = [];
+    protected $_todos = [];
+
+    protected $dbDir = ROOT_PATH . '/db/';
+
+    public function __construct(){
+        // Parse the DB's
+        $this->parseJSON('todos');
+        $this->_todos = $this->fetchTodos();
+
+        $this->parseJSON('users');
+        $this->_users = $this->fetchUsers();
+    }
+
+    /**
+     * Parses the given JSON file and stores it on $_jsonData
+     * @param string the file to parse. Do not include '.json' in the filename
+     */
+    public function parseJSON(string $file){
+        if(substr($file, -5) !== '.json'){
+            $file .= '.json';
+        }
+
+        if(!file_exists($this->dbDir . $file)){
+            throw new Exception('JSON File (' . $file . ') doesn\'t exist in db folder!');
+        }
+
+        $jsonRaw = file_get_contents($this->dbDir . $file);
+        $this->_jsonData = json_decode($jsonRaw, true);
+    }
+
+    /**
+     * Writes the current array state to the respective JSON database
+     * @param string $db the database being written. Only users & todos are valid values
+     */
+    public function writeJSON(string $db){
+        $db = $this->dbChecker($db);
+
+        $rawData = json_encode($this->$db, JSON_PRETTY_PRINT);
+
+        file_put_contents($this->dbDir . substr($db, 1) . '.json', $rawData);
+    }
+
+    /**
+     * Checks if DB is the correct type
+     * @param string $db the database
+     * @return exception|string returns an exception if DB wasn't users or todos, else append _ to the DB name and returns it 
+     */
+    protected function dbChecker(string $db){
+        return ($db !== 'users' && $db !== 'todos') ? throw new Exception('Not a valid Database!') : $db = '_' . $db; 
+    }
+
+    /**
+     * Finds and return the match of the given ID
+     * @param int $id the id of the todo or user
+     * @param string $db the database to search for. Only users & todos are valid values
+     */
+    public function findOneById(int $id, string $db){
+
+        $db = $this->dbChecker($db);
+
+        $result = [];
+
+        for ($i=0; $i < count($this->$db); $i++) { 
+            if($this->$db[$i]['id'] === $id){
+                $result = $this->$db[$i];
+            }
+        }
+
+        return $result;
+    }
+
+    public function fetchUsers(){
+        $this->_users = $this->_jsonData;
+        $this->_jsonData = [];
+
+        return $this->_users;
+    }
+
+    public function fetchTodos(){
+        $this->_todos = $this->_jsonData;
+        $this->_jsonData = [];
+
+        return $this->_todos;
+    }
+
 }
+
+?>
