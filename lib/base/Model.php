@@ -16,6 +16,7 @@ class Model {
     protected $dbDir = ROOT_PATH . '/db/';
 
     public function __construct(){
+        // Parse the DB's
         $this->parseJSON('todos');
         $this->_todos = $this->fetchTodos();
 
@@ -24,7 +25,7 @@ class Model {
     }
 
     /**
-     * Parses the given JSON file
+     * Parses the given JSON file and stores it on $_jsonData
      * @param string the file to parse. Do not include '.json' in the filename
      */
     public function parseJSON(string $file){
@@ -41,18 +42,24 @@ class Model {
     }
 
     /**
-     * Writes the given array to the respective JSON database
-     * @param array $data the array data to append to the JSON database
+     * Writes the current array state to the respective JSON database
      * @param string $db the database being written. Only users & todos are valid values
      */
-    public function writeJSON(array $data, string $db){
-
+    public function writeJSON(string $db){
         $db = $this->dbChecker($db);
 
-        array_push($this->$db, $data);
         $rawData = json_encode($this->$db, JSON_PRETTY_PRINT);
 
         file_put_contents($this->dbDir . substr($db, 1) . '.json', $rawData);
+    }
+
+    /**
+     * Checks if DB is the correct type
+     * @param string $db the database
+     * @return exception|string returns an exception if DB wasn't users or todos, else append _ to the DB name and returns it 
+     */
+    protected function dbChecker(string $db){
+        return ($db !== 'users' && $db !== 'todos') ? throw new Exception('Not a valid Database!') : $db = '_' . $db; 
     }
 
     /**
@@ -75,16 +82,6 @@ class Model {
         return $result;
     }
 
-    /**
-     * Checks if DB is the correct type
-     * @param string $db the database
-     * @return exception|string returns an exception if DB wasn't users or todos, else append _ to the DB name and returns it 
-     */
-    protected function dbChecker(string $db){
-        return ($db !== 'users' && $db !== 'todos') ? throw new Exception('Not a valid Database!') : $db = '_' . $db; 
-    }
-    
-
     public function fetchUsers(){
         $this->_users = $this->_jsonData;
         $this->_jsonData = [];
@@ -100,7 +97,5 @@ class Model {
     }
 
 }
-
-
 
 ?>
