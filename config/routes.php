@@ -14,6 +14,7 @@ $routes = array(
 	'/' => 'index#index',
 	'/auth/' => 'auth#login',
 	'/auth/login/' => 'auth#login',
+	'/auth/logout/' => 'auth#logout',
 	'/auth/register/' => 'auth#register',
 	'/todo/' => 'todo#new',
 	'/todo/list/' => 'todo#list',
