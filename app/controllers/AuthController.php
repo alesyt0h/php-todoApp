@@ -8,12 +8,18 @@ class AuthController extends ApplicationController{
 
     public function loginAction(){
 
-        $this->isLoggedIn();
+        // TODO
+        // $this->isLoggedIn();
 
         if(isset($_POST['username']) && isset($_POST['password'])){
 
             $user = strtolower($_POST['username']);
             $pass = $_POST['password'];
+
+            if(strlen($user) < 3 && strlen($pass) < 6){
+                $this->view->loginError = 'Incorrect length of user or password';
+                return;
+            }
             
             $loginResult = $this->userDB->checkCredentials($user, $pass);
 
@@ -21,8 +27,13 @@ class AuthController extends ApplicationController{
                 $_SESSION['isLoggedIn'] = true;
                 $_SESSION['loggedUser'] = $this->userDB->getLoggedUser();
 
+                // TODO 
                 var_dump($_SESSION['loggedUser']);
+                // header('Location: ' . WEB_ROOT . '/auth');
+            } else {
+                $this->view->loginError = 'Invalid Email or password';
             }
+
         }
 
     }
