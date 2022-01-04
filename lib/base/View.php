@@ -30,8 +30,11 @@ class View
 
 	/**
 	 * Renders the view script, and stores the output
+	 * @param string $viewScript the path to the view script. E.g.: 'global/header.phtml'
+	 * @param boolean $extraView specify if this is an extra view to return directly the output buffer, default value is false
+	 * @return string|false the output buffer in case $extraView was set to true 
 	 */
-	protected function _renderViewScript($viewScript)
+	protected function _renderViewScript($viewScript, $extraView = false)
 	{
 		// starts the output buffer
 		ob_start();
@@ -40,7 +43,11 @@ class View
 		include(ROOT_PATH . '/app/views/scripts/' . $viewScript);
 		
 		// returns the content of the output buffer
-		$this->_content = ob_get_clean();
+		if ($extraView) {
+			return ob_get_clean();
+		} else {
+			$this->_content = ob_get_clean();
+		}
 	}
 	
 	/**

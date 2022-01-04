@@ -11,7 +11,7 @@ define('ROOT_PATH', realpath(dirname(__FILE__) . '/../'));
 // defines the cms path
 define('CMS_PATH', ROOT_PATH . '/lib/base/');
 // defines the global app title
-define('APP_TITLE', 'myApp');
+define('APP_TITLE', 'todoApp');
 
 // starts the session
 session_start();
@@ -38,7 +38,7 @@ function autoloader($className) {
 			require_once ROOT_PATH . '/lib/' . $className . '.php';
 		}
 		else {
-			require_once ROOT_PATH . '/app/models/' . $className . '.model' . '.php';
+			require_once ROOT_PATH . '/app/models/' . $className . '.php';
 		}
 	}
 }

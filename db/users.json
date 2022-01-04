@@ -1,0 +1,29 @@
+[
+    {
+        "id": 1,
+        "username": "Janet",
+        "password": "",
+        "email": "janet.weaver@reqres.in",
+        "is_verified": false,
+        "registered_date": "2021-01-01 10:00:00",
+        "created_todos": 0
+    },
+    {
+        "id": 2,
+        "username": "Pepito",
+        "password": "Villalonga",
+        "email": "pepito@reqres.in",
+        "is_verified": true,
+        "registered_date": "2022-01-01 10:00:00",
+        "created_todos": 0
+    },
+    {
+        "id": 3,
+        "username": "Juanito",
+        "password": "Valderrama",
+        "email": "juanito@reqres.in",
+        "is_verified": true,
+        "registered_date": "2021-12-01 10:00:00",
+        "created_todos": 0
+    }
+]
