@@ -11,6 +11,7 @@ class Model {
 
     protected $_jsonData = [];
     protected $_users = [];
+    protected $_todos = [];
 
     protected $dbDir = ROOT_PATH . '/db/';
 
@@ -18,8 +19,11 @@ class Model {
 
     }
 
+    /**
+     * Parses the given JSON file
+     * @param string the file to parse. Do not include '.json' in the filename
+     */
     public function parseJSON(string $file){
-
         if(substr($file, -5) !== '.json'){
             $file .= '.json';
         }
@@ -30,22 +34,44 @@ class Model {
 
         $jsonRaw = file_get_contents($this->dbDir . $file);
         $this->_jsonData = json_decode($jsonRaw, true);
-
-        return $this->_jsonData;
     }
 
-    public function findOneById(int $id){
+    /**
+     * Finds and return the match of the given ID
+     * @param int $id the id of the todo or user
+     * @param string $db the db to search for. Only users & todos are valid values
+     */
+    public function findOneById(int $id, string $db){
+
+        if($db !== 'users' && $db !== 'todos'){
+            return [];
+        } else {
+            $db = '_' . $db; 
+        }
 
         $result = [];
 
-        for ($i=0; $i < count($this->_jsonData); $i++) { 
-            if($this->_jsonData[$i]['id'] === $id){
-                $result = $this->_jsonData[$i];
+        for ($i=0; $i < count($this->$db); $i++) { 
+            if($this->$db[$i]['id'] === $id){
+                $result = $this->$db[$i];
             }
         }
 
         return $result;
+    }
 
+    public function fetchUsers(){
+        $this->_users = $this->_jsonData;
+        $this->_jsonData = [];
+
+        return $this->_users;
+    }
+
+    public function fetchTodos(){
+        $this->_todos = $this->_jsonData;
+        $this->_jsonData = [];
+
+        return $this->_todos;
     }
 
 }
