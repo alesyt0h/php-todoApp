@@ -55,7 +55,6 @@ class UserModel extends Model {
             "username" => $username,
             "password" => $password,
             "email" => $email,
-            "isVerified" => false,
             "registeredDate" => date('c'),
             "createdTodos" => 0
         ];
