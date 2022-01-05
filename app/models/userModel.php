@@ -6,9 +6,15 @@ class UserModel extends Model {
         $match = false;
 
         for ($i=0; $i < count($this->_users); $i++) { 
-            if(strtolower($this->_users[$i]['username']) === $username && $this->_users[$i]['password'] === $password){
-                $match = true;
-                $this->_loggedUser = $this->_users[$i];
+            
+            if($this->_users[$i]['username'] === $username){
+
+                $validation = password_verify($password, $this->_users[$i]['password']);
+
+                if($validation){
+                    $this->_loggedUser = $this->_users[$i];
+                    $match = true;
+                } 
             }
         }
 

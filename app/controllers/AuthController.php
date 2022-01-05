@@ -8,8 +8,7 @@ class AuthController extends ApplicationController{
 
     public function loginAction(){
 
-        // TODO
-        // $this->isLoggedIn();
+        $this->isLoggedIn();
 
         if(isset($_POST['username']) && isset($_POST['password'])){
 
@@ -27,9 +26,7 @@ class AuthController extends ApplicationController{
                 $_SESSION['isLoggedIn'] = true;
                 $_SESSION['loggedUser'] = $this->userDB->getLoggedUser();
 
-                // TODO 
-                var_dump($_SESSION['loggedUser']);
-                // header('Location: ' . WEB_ROOT);
+                header('Location: ' . WEB_ROOT);
             } else {
                 $this->view->loginError = 'Invalid Email or password';
             }
@@ -40,8 +37,7 @@ class AuthController extends ApplicationController{
 
     public function registerAction(){
         
-        // TODO
-        // $this->isLoggedIn();
+        $this->isLoggedIn();
         
         if(isset($_POST['username']) && isset($_POST['password']) && isset($_POST['email'])){
             
@@ -78,9 +74,7 @@ class AuthController extends ApplicationController{
                 $_SESSION['isLoggedIn'] = true;
                 $_SESSION['loggedUser'] = $this->userDB->getLoggedUser();
 
-                // TODO 
-                var_dump($_SESSION['loggedUser']);
-                // header('Location: ' . WEB_ROOT);
+                header('Location: ' . WEB_ROOT);
             } else {
                 $this->view->registerError = 'Unknown error. Please try again';
             }
