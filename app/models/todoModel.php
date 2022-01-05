@@ -11,7 +11,7 @@ class TodoModel extends Model {
         }
 
         $newTodo = [
-            "id" => time(),
+            "id" => intval(microtime(true) * 1000),
             "title" => $title,
             "status" =>  'pending',
             "created_by" => $id,
