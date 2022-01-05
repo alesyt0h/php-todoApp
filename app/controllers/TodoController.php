@@ -18,6 +18,8 @@ class TodoController extends ApplicationController {
         
         if(isset($_POST['newTodo'])){
             $this->todoDB->createTodo($_POST['newTodo']);
+
+            header('Location: ' . WEB_ROOT . substr($_SERVER['REQUEST_URI'], strlen(WEB_ROOT)));
         }
 
     }
