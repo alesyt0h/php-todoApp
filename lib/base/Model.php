@@ -52,7 +52,7 @@ class Model {
 
         $rawData = json_encode($this->$db, JSON_PRETTY_PRINT);
 
-        file_put_contents($this->dbDir . substr($db, 1) . '.json', $rawData);
+        return file_put_contents($this->dbDir . substr($db, 1) . '.json', $rawData);
     }
 
     /**
