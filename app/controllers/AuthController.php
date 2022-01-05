@@ -16,7 +16,7 @@ class AuthController extends ApplicationController{
             $user = strtolower($_POST['username']);
             $pass = $_POST['password'];
 
-            if(strlen($user) < 3 && strlen($pass) < 6){
+            if(strlen($user) < 3 || strlen($pass) < 6){
                 $this->view->loginError = 'Incorrect length of user or password';
                 return;
             }
@@ -29,7 +29,7 @@ class AuthController extends ApplicationController{
 
                 // TODO 
                 var_dump($_SESSION['loggedUser']);
-                // header('Location: ' . WEB_ROOT . '/auth');
+                // header('Location: ' . WEB_ROOT);
             } else {
                 $this->view->loginError = 'Invalid Email or password';
             }
@@ -40,10 +40,45 @@ class AuthController extends ApplicationController{
 
     public function registerAction(){
         
-        $this->isLoggedIn();
-
+        // TODO
+        // $this->isLoggedIn();
+        
         if(isset($_POST['username']) && isset($_POST['password']) && isset($_POST['email'])){
-            $this->registerUser($_POST['username'], $_POST['password'], $_POST['email']);
+            
+            $user = strtolower($_POST['username']);
+            $pass = $_POST['password'];
+            $email = $_POST['email'];
+
+            // TODO valid email check
+            if(strlen($user) < 3 || strlen($pass) < 6){
+                $this->view->registerError = 'Incorrect length of user or password';
+                return;
+            }
+
+            if($this->userDB->userExists($user)){
+                $this->view->registerError = 'Username is taken! Please choose another';
+                return;
+            }
+
+            if($this->userDB->mailExists($email)){
+                $this->view->registerError = 'This email is already in use. Use another';
+                return;
+            }
+
+            $pass = password_hash($pass, PASSWORD_DEFAULT);
+            $result = $this->userDB->insertUser($user, $pass, $email);
+
+            if($result){
+                $_SESSION['isLoggedIn'] = true;
+                $_SESSION['loggedUser'] = $this->userDB->getLoggedUser();
+
+                // TODO 
+                var_dump($_SESSION['loggedUser']);
+                // header('Location: ' . WEB_ROOT);
+            } else {
+                $this->view->registerError = 'Unknown error. Please try again';
+            }
+
         }
 
     }
