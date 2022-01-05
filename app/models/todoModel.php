@@ -6,7 +6,7 @@ class TodoModel extends Model {
 
         $id = null;
 
-        if($_SESSION['loggedUser']){
+        if(isset($_SESSION['loggedUser'])){
             $id = $_SESSION['loggedUser']['id'];
         }
 
@@ -21,8 +21,7 @@ class TodoModel extends Model {
 
         array_push($this->_todos, $newTodo);
 
-        $this->writeJSON('todos');
-
+        return $this->writeJSON('todos');
     }
 
 }
