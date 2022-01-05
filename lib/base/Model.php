@@ -13,6 +13,8 @@ class Model {
     protected $_users = [];
     protected $_todos = [];
 
+    protected $_loggedUser;
+
     protected $dbDir = ROOT_PATH . '/db/';
 
     public function __construct(){
@@ -50,7 +52,7 @@ class Model {
 
         $rawData = json_encode($this->$db, JSON_PRETTY_PRINT);
 
-        file_put_contents($this->dbDir . substr($db, 1) . '.json', $rawData);
+        return file_put_contents($this->dbDir . substr($db, 1) . '.json', $rawData);
     }
 
     /**
@@ -83,14 +85,14 @@ class Model {
     }
 
     public function fetchUsers(){
-        $this->_users = $this->_jsonData;
+        $this->_users = $this->_jsonData ?? [];
         $this->_jsonData = [];
 
         return $this->_users;
     }
 
     public function fetchTodos(){
-        $this->_todos = $this->_jsonData;
+        $this->_todos = $this->_jsonData ?? [];
         $this->_jsonData = [];
 
         return $this->_todos;

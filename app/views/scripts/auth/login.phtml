@@ -1,9 +1,10 @@
-<form action="<?php echo WEB_ROOT; ?>" method="POST">
+<form action="<?php echo WEB_ROOT . '/auth/login'; ?>" method="POST">
+    <div class="error-msg" style="background: red"><?php echo $this->loginError ?></div>
     <label for="username">Username:</label>
-    <input type="text" required> <br>
+    <input type="text" minlength="3" name="username" required> <br>
 
     <label for="password">Password:</label>
-    <input type="text" required> <br>
+    <input type="password" minlength="6" name="password" required> <br>
 
     <button type="submit">Login</button>
     <span style="font-size: 0.8rem">Don't have an account? <a href="<?php echo WEB_ROOT . '/auth/register'; ?>">Register!</a></span>
