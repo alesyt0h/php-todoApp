@@ -49,14 +49,20 @@ class AuthController extends ApplicationController{
             $pass = $_POST['password'];
             $email = $_POST['email'];
 
-            // TODO valid email check
+            $emailPattern = '/^[a-z0-9._%+-]+@[a-z0-9.-]{2,}\\.[a-z]{2,4}$/';
+
             if(strlen($user) < 3 || strlen($pass) < 6){
                 $this->view->registerError = 'Incorrect length of user or password';
                 return;
             }
 
+            if(!preg_match($emailPattern, $email)){
+                $this->view->registerError = 'Please introduce a valid email';
+                return;
+            }
+
             if($this->userDB->userExists($user)){
-                $this->view->registerError = 'Username is taken! Please choose another';
+                $this->view->registerError = 'This username is taken! Please choose another';
                 return;
             }
 
