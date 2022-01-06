@@ -18,9 +18,9 @@ class TodoModel extends Model {
             "id" => $todoId,
             "title" => $title,
             "status" =>  'pending',
-            "created_by" => $userId,
-            "created_at" => date('c'), 
-            "completed_at" => null
+            "createdBy" => $userId,
+            "createdAt" => date('c'), 
+            "completedAt" => null
         ];
 
         array_push($this->_todos, $newTodo);
