@@ -17,7 +17,7 @@ class TodoModel extends Model {
         $newTodo = [
             "id" => $todoId,
             "title" => $title,
-            "status" =>  'pending',
+            "status" =>  'Pending',
             "createdBy" => $userId,
             "createdAt" => date('c'), 
             "completedAt" => null
@@ -47,8 +47,34 @@ class TodoModel extends Model {
         unset($_SESSION['tempUser']);
     }
 
+    public function modifyTodo(array $todo, string $title, string $status){
+
+        $todo['title'] = $title;
+        $todo['status'] = $status;
+
+        if($status === 'Completed'){
+            $todo['completedAt'] = date('c');
+        } else {
+            $todo['completedAt'] = null;
+        }
+
+        $this->todo = $todo;
+
+        $this->_todos = array_map( function($oldTodo){ 
+            return ($oldTodo['id'] === $this->todo['id']) ? $this->todo : $oldTodo;
+        }, $this->_todos);
+
+        $this->writeJSON('todos');
+
+        return $this->todo;
+    }
+
     public function getTodos(){
         return $this->_todos;
+    }
+
+    public function getTodoById(string $todoId){
+        return $this->findOneById(intval($todoId), 'todos');
     }
 }
 
