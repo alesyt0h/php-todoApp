@@ -7,6 +7,9 @@ class IndexController extends ApplicationController {
         $this->view->setTitle('Index Page');
         // $this->view->appendScript('main.js');
         // $this->view->appendCSS('style.css');
+
+        $todo = new TodoController();
+        $todo->newAction();
     }
 
 }
