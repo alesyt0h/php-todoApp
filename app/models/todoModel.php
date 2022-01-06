@@ -28,6 +28,28 @@ class TodoModel extends Model {
         return $this->writeJSON('todos');
     }
 
+    public function assignTodos(){
+
+        $userId = $_SESSION['loggedUser']['id'];
+        $tempTodosId = $_SESSION['tempUser'];
+
+        $todos = $this->_todos;
+
+        for ($i=0; $i < count($todos); $i++) { 
+            for ($j=0; $j < count($tempTodosId); $j++) { 
+                if($todos[$i]['id'] === $tempTodosId[$j]){
+                    $todos[$i]['createdBy'] = $userId;
+                }
+            }
+        }
+
+        $this->_todos = $todos;
+
+        $this->writeJSON('todos');
+        unset($_SESSION['tempUser']);
+
+    }
+
 }
 
 ?>

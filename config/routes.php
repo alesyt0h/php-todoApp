@@ -11,7 +11,7 @@
  * '/test/' => To match the URL exactly as is, it should end in '/', otherwise /tests will redirect to /test
  */
 $routes = array(
-	'/' => 'index#index',
+	'//' => 'index#index',
 	'/auth/' => 'auth#login',
 	'/auth/login/' => 'auth#login',
 	'/auth/logout/' => 'auth#logout',
@@ -20,4 +20,5 @@ $routes = array(
 	'/todo/list/' => 'todo#list',
 	'/todo/edit/' => 'todo#edit',
 	'/todo/new/' => 'todo#new',
+	'/todo/assign/' => 'todo#assign'
 );

@@ -37,6 +37,18 @@ class TodoController extends ApplicationController {
         }
     }
 
+    public function assignAction(){
+
+        $this->view->disableView();
+
+        if(isset($_SERVER['HTTP_REFERER']) && substr($_SERVER['HTTP_REFERER'], -13, 13) === 'auth/register'){
+            $this->todoDB->assignTodos();
+        }
+
+        header('Location: ' . WEB_ROOT);
+        die();
+    }
+
 }
 
 ?>
