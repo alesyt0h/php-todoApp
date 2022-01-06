@@ -74,7 +74,7 @@ class AuthController extends ApplicationController{
                 $_SESSION['isLoggedIn'] = true;
                 $_SESSION['loggedUser'] = $this->userDB->getLoggedUser();
 
-                header('Location: ' . WEB_ROOT);
+                (isset($_SESSION['tempUser'])) ? header('Location: ' . WEB_ROOT . '/todo/assign') : header('Location: ' . WEB_ROOT);
             } else {
                 $this->view->registerError = 'Unknown error. Please try again';
             }
