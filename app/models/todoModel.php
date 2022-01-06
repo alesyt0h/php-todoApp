@@ -4,17 +4,21 @@ class TodoModel extends Model {
 
     public function createTodo(string $title){
 
-        $id = null;
+        $userId = null;
+        $todoId = intval(microtime(true) * 1000);
 
         if(isset($_SESSION['loggedUser'])){
-            $id = $_SESSION['loggedUser']['id'];
+            $userId = $_SESSION['loggedUser']['id'];
+        } else {
+            $_SESSION['tempUser'] ?? $_SESSION['tempUser'] = [];
+            array_push($_SESSION['tempUser'], $todoId);
         }
 
         $newTodo = [
-            "id" => intval(microtime(true) * 1000),
+            "id" => $todoId,
             "title" => $title,
             "status" =>  'pending',
-            "created_by" => $id,
+            "created_by" => $userId,
             "created_at" => date('c'), 
             "completed_at" => null
         ];
