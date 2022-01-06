@@ -10,6 +10,9 @@ class IndexController extends ApplicationController {
 
         $todo = new TodoController();
         $todo->newAction();
+
+        $this->view->userTodos = $todo->listAction();
+
     }
 
 }

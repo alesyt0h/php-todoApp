@@ -47,6 +47,9 @@ class TodoModel extends Model {
         unset($_SESSION['tempUser']);
     }
 
+    public function getTodos(){
+        return $this->_todos;
+    }
 }
 
 ?>

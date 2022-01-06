@@ -1,15 +1,21 @@
-<table style="border: 1px solid black">
+<?php if( count( $this->userTodos ?? [] ) ){ ?>
+
+  <table style="border: 1px solid black">
     <caption>myTodos</caption>
-  <tr>
-    <th style="border: 1px solid black">todo</th>
-    <th style="border: 1px solid black">status</th>
-  </tr>
-  <tr>
-    <td style="border: 1px solid black">Learn some language</td>
-    <td style="border: 1px solid black">pending</td>
-  </tr>
-  <tr>
-    <td style="border: 1px solid black">Go to supermarket</td>
-    <td style="border: 1px solid black">completed</td>
-  </tr>
-</table>
+    <tr>
+      <th style="border: 1px solid black">todo</th>
+      <th style="border: 1px solid black">status</th>
+    </tr>
+      <?php
+        foreach($this->userTodos as $todo){
+            echo "
+            <tr id='todo-{$todo['id']}'>
+                <td>{$todo['title']}</td>
+                <td>{$todo['status']}</td>
+            </tr>
+            ";
+        }
+      ?>
+  </table>
+
+<?php } else { echo 'Try to add some TODO see it here!!'; } ?>

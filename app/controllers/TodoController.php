@@ -8,6 +8,37 @@ class TodoController extends ApplicationController {
 
     public function listAction(){
 
+        if(isset($_SESSION['loggedUser'])){
+
+            $this->userId = $_SESSION['loggedUser']['id'];
+
+            $userTodos = [];
+
+            $userTodos = array_filter($this->todoDB->getTodos(), function($todo){ 
+                if($todo['createdBy'] === $this->userId){ 
+                    return $todo; 
+                }
+            });
+
+            $userTodos = array_splice($userTodos, 0);
+            
+        } else if(isset($_SESSION['tempUser'])) {
+
+            $userTodos = array_filter($this->todoDB->getTodos(), function($todo){ 
+                if(in_array($todo['id'], $_SESSION['tempUser'])){ 
+                    return $todo; 
+                }
+            });
+
+            $userTodos = array_splice($userTodos, 0);
+        }
+
+        if($this->view){
+            $this->view->userTodos = $userTodos ?? [];
+        } else {
+            return $userTodos ?? [];
+        }
+
     }
 
     public function editAction(){
