@@ -1,1 +1,18 @@
 content from todo#edit
+<form action="" method="POST">
+    <input type="text" value="<?php echo $this->todo['title']?>" style="font-size: 2rem" autofocus>
+    <button style="font-size: 2rem; color: grey">Save changes</button>
+    <br>
+    <input type="radio" name="status" value="Pending" <?php echo ($this->todo['status'] === 'Pending') ? 'checked' : null; ?> >
+    <label for="Pending">Pending</label>
+    <input type="radio" name="status" value="In Process" <?php echo ($this->todo['status'] === 'In Process') ? 'checked' : null; ?>>
+    <label for="In Process">In Process</label>
+    <input type="radio" name="status" value="Completed" <?php echo ($this->todo['status'] === 'Completed') ? 'checked' : null; ?>>
+    <label for="Completed">Completed</label>
+</form>
+
+<?php
+
+    var_dump($this->todo);
+
+?>

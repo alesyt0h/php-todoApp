@@ -17,7 +17,7 @@ class TodoModel extends Model {
         $newTodo = [
             "id" => $todoId,
             "title" => $title,
-            "status" =>  'pending',
+            "status" =>  'Pending',
             "createdBy" => $userId,
             "createdAt" => date('c'), 
             "completedAt" => null
@@ -49,6 +49,10 @@ class TodoModel extends Model {
 
     public function getTodos(){
         return $this->_todos;
+    }
+
+    public function getTodoById(string $todoId){
+        return $this->findOneById(intval($todoId), 'todos');
     }
 }
 

@@ -43,6 +43,15 @@ class TodoController extends ApplicationController {
 
     public function editAction(){
 
+		$uri = explode('/',$_SERVER['REQUEST_URI']);
+        $todoId = $uri[count($uri) - 1];
+        
+        if($todoId){
+            $todo = $this->todoDB->getTodoById($todoId);
+
+            $this->view->todo = $todo;
+        }
+
     }
 
     public function newAction(){
