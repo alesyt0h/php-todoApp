@@ -45,12 +45,28 @@ class TodoController extends ApplicationController {
 
 		$uri = explode('/',$_SERVER['REQUEST_URI']);
         $todoId = $uri[count($uri) - 1];
-        
-        if($todoId){
-            $todo = $this->todoDB->getTodoById($todoId);
 
-            $this->view->todo = $todo;
+        if(!is_numeric($todoId)){
+            header('Location: ' . WEB_ROOT . '/todo/list');
+            die();
         }
+        
+        $todo = $this->todoDB->getTodoById($todoId);
+
+        if( count($todo) === 0 ){
+            header('Location: ' . WEB_ROOT . '/todo/list');
+            die();
+        };
+
+        if(count($_POST)){
+
+            $newTitle = $_POST['title'];
+            $newStatus = $_POST['status'];
+
+            $todo = $this->todoDB->modifyTodo($todo, $newTitle, $newStatus);
+        }
+
+        $this->view->todo = $todo;
 
     }
 

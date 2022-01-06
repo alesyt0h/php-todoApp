@@ -47,6 +47,28 @@ class TodoModel extends Model {
         unset($_SESSION['tempUser']);
     }
 
+    public function modifyTodo(array $todo, string $title, string $status){
+
+        $todo['title'] = $title;
+        $todo['status'] = $status;
+
+        if($status === 'Completed'){
+            $todo['completedAt'] = date('c');
+        } else {
+            $todo['completedAt'] = null;
+        }
+
+        $this->todo = $todo;
+
+        $this->_todos = array_map( function($oldTodo){ 
+            return ($oldTodo['id'] === $this->todo['id']) ? $this->todo : $oldTodo;
+        }, $this->_todos);
+
+        $this->writeJSON('todos');
+
+        return $this->todo;
+    }
+
     public function getTodos(){
         return $this->_todos;
     }

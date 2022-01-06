@@ -1,6 +1,5 @@
-content from todo#edit
 <form action="" method="POST">
-    <input type="text" value="<?php echo $this->todo['title']?>" style="font-size: 2rem" autofocus>
+    <input type="text" name="title" value="<?php echo $this->todo['title']?>" style="font-size: 2rem" autofocus>
     <button style="font-size: 2rem; color: grey">Save changes</button>
     <br>
     <input type="radio" name="status" value="Pending" <?php echo ($this->todo['status'] === 'Pending') ? 'checked' : null; ?> >
