@@ -33,21 +33,18 @@ class TodoModel extends Model {
         $userId = $_SESSION['loggedUser']['id'];
         $tempTodosId = $_SESSION['tempUser'];
 
-        $todos = $this->_todos;
+        for ($i=0; $i < count($tempTodosId); $i++) {
+            for ($j = count($this->_todos) - 1; $j > 0; $j--) {
 
-        for ($i=0; $i < count($todos); $i++) { 
-            for ($j=0; $j < count($tempTodosId); $j++) { 
-                if($todos[$i]['id'] === $tempTodosId[$j]){
-                    $todos[$i]['createdBy'] = $userId;
+                if($this->_todos[$j]['id'] === $tempTodosId[$i]){
+                    $this->_todos[$j]['createdBy'] = $userId;
+                    break;
                 }
             }
         }
 
-        $this->_todos = $todos;
-
         $this->writeJSON('todos');
         unset($_SESSION['tempUser']);
-
     }
 
 }
