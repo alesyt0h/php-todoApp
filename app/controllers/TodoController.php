@@ -93,6 +93,28 @@ class TodoController extends ApplicationController {
         }
     }
 
+    public function deleteAction(){
+
+        $this->view->disableView();
+
+        if(!isset($_POST['deleteTodoId'])){
+            if($_SERVER['HTTP_REFERER']){
+                header('Location: ' . $_SERVER['HTTP_REFERER']);
+            } else {
+                header('Location: ' . WEB_ROOT);
+            }
+            die();
+        }
+
+        $todoId = $_POST['deleteTodoId'];
+        $result = $this->todoDB->deleteTodo($todoId);
+
+        if(!$result){
+            throw new Exception('The Todo couldn\'t be deleted', 1);
+        }
+
+    }
+
     public function assignAction(){
 
         $this->view->disableView();
