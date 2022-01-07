@@ -1,0 +1,6 @@
+<div class="error-msg" style="background: olive"><?php echo (isset($_SESSION['todoMsg'])) ? $_SESSION['todoMsg'] : null; unset($_SESSION['todoMsg']); ?></div>
+<div class="error-msg" style="background: red"><?php echo $this->todoError ?></div>
+<form action="<?php echo WEB_ROOT . substr($_SERVER['REQUEST_URI'], strlen(WEB_ROOT)) ?>" method="POST">
+    <input type="text" name="newTodo" placeholder="What do you have to do?" style="font-size: 2rem" autofocus>
+    <button style="font-size: 2rem; color: grey">Submit</button>
+</form>
