@@ -20,6 +20,7 @@ $routes = array(
 	'/todo/list/' => 'todo#list',
 	'/todo/edit/' => 'todo#edit',
 	'/todo/edit/:todoId' => 'todo#edit',
+	'/todo/delete/:todoId' => 'todo#delete',
 	'/todo/new/' => 'todo#new',
 	'/todo/assign/' => 'todo#assign'
 );
