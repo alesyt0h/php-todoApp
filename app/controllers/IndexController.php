@@ -13,6 +13,9 @@ class IndexController extends ApplicationController {
 
         $this->view->userTodos = $todo->listAction();
 
+        if(isset($_GET['delete'])){
+            $this->afterFilters('view', 'modalContent', $todo->formData);
+        }
     }
 
 }

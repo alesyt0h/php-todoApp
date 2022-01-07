@@ -4,6 +4,8 @@ class TodoController extends ApplicationController {
 
     public function __construct(){
         $this->todoDB = new TodoModel();
+
+        $this->loadModal();
     }
 
     public function listAction(){
@@ -93,6 +95,31 @@ class TodoController extends ApplicationController {
         }
     }
 
+    public function deleteAction(){
+
+        $this->view->disableView();
+
+        if(!isset($_POST['deleteTodoId'])){
+            if($_SERVER['HTTP_REFERER']){
+                header('Location: ' . $_SERVER['HTTP_REFERER']);
+            } else {
+                header('Location: ' . WEB_ROOT);
+            }
+            die();
+        }
+
+        $todoId = $_POST['deleteTodoId'];
+        $result = $this->todoDB->deleteTodo($todoId);
+
+        if($result){
+            $location = preg_replace('/\?(.*)/','', $_SERVER['HTTP_REFERER']);
+            header('Location: ' . $location);
+        } else {
+            throw new Exception('The Todo couldn\'t be deleted', 1);
+        }
+
+    }
+
     public function assignAction(){
 
         $this->view->disableView();
@@ -103,6 +130,34 @@ class TodoController extends ApplicationController {
 
         header('Location: ' . WEB_ROOT);
         die();
+    }
+
+    public function loadModal(){
+        
+        if(isset($_GET['delete'])){
+
+            if(!isset($_SERVER['HTTP_REFERER'])){
+
+                (isset($_SERVER['HTTP_ORIGIN'])) ? $location = $_SERVER['HTTP_ORIGIN'] : $location = WEB_ROOT;
+                header('Location: ' . $location );
+                die();
+            }
+
+            // TODO check if this is the user who created it, if not don't even display it on modal. Same for TempUsers
+            $todo = $this->todoDB->getTodoById($_GET['delete']);
+
+            $formatedDate = date('l, F jS \of Y', strtotime($todo['createdAt']));
+
+            $this->formData = "
+            <form action=" . WEB_ROOT . '/todo/delete/' . $todo['id'] . " method='POST'>
+            <p>Are you sure you want to delete <strong> " . $todo['title'] . "</strong>?</p>
+            <p>You created this Todo on <strong> " . $formatedDate . "</strong></p><br>
+            <button type='submit' name='deleteTodoId' value=" . $todo['id'] . " >Delete</button>
+            </form>";
+            
+            $this->afterFilters('view', 'modalContent', $this->formData);
+            
+        }
     }
 
 }

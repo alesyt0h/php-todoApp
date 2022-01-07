@@ -69,6 +69,28 @@ class TodoModel extends Model {
         return $this->todo;
     }
 
+    public function deleteTodo(string $todoId){
+
+        $todo = $this->findOneById($todoId, 'todos');
+
+        // TODO try this changing loggedUser id
+        if($todo['createdBy'] !== $_SESSION['loggedUser']['id']){
+            return 'You are not the owner of this Todo!';
+        }
+
+        $this->todoId = intval($todoId);
+
+        $this->_todos = array_filter($this->_todos, function($oldTodo){ 
+            if($oldTodo['id'] !== $this->todoId){ 
+                return $oldTodo; 
+            } 
+        });
+
+        $this->_todos = array_splice($this->_todos, 0);
+
+        return $this->writeJSON('todos');
+    }
+
     public function getTodos(){
         return $this->_todos;
     }
