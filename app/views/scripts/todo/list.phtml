@@ -1,15 +1,31 @@
-<table style="border: 1px solid black">
+<?php if( count( $this->userTodos ?? [] ) ){ ?>
+  
+  <table style="border: 1px solid black">
     <caption>myTodos</caption>
-  <tr>
-    <th style="border: 1px solid black">todo</th>
-    <th style="border: 1px solid black">status</th>
-  </tr>
-  <tr>
-    <td style="border: 1px solid black">Learn some language</td>
-    <td style="border: 1px solid black">pending</td>
-  </tr>
-  <tr>
-    <td style="border: 1px solid black">Go to supermarket</td>
-    <td style="border: 1px solid black">completed</td>
-  </tr>
-</table>
+    <tr>
+      <th style="border: 1px solid black">Todo</th>
+      <th style="border: 1px solid black">Status</th>
+      <th style="border: 1px solid black">Edit</th>
+      <th style="border: 1px solid black">Delete</th>
+    </tr>
+      <?php
+        foreach($this->userTodos as $todo){
+            echo "
+            <tr id='todo-{$todo['id']}' " . (($todo['status'] === 'Completed') ? "class='todo-completed'" : null) . ">
+                <td>{$todo['title']}</td>
+                <td>{$todo['status']}</td>
+                <td><a href=" . WEB_ROOT . '/todo/edit/' . $todo['id'] . ">Edit</a></td>
+                <td><a href=" . '?delete=' . $todo['id'] . ">Delete</a></td>
+            </tr>
+            ";
+        }
+      ?>
+  </table>
+
+  <?php 
+    if(isset($_GET['delete'])){
+      echo $this->_renderViewScript('global/modal.phtml', true); 
+    }
+  ?>
+
+<?php } else { echo 'Try to add some TODO see it here!!'; } ?>

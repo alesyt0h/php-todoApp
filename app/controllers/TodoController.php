@@ -2,16 +2,162 @@
 
 class TodoController extends ApplicationController {
 
+    public function __construct(){
+        $this->todoDB = new TodoModel();
+
+        $this->loadModal();
+    }
+
     public function listAction(){
+
+        if(isset($_SESSION['loggedUser'])){
+
+            $this->userId = $_SESSION['loggedUser']['id'];
+
+            $userTodos = [];
+
+            $userTodos = array_filter($this->todoDB->getTodos(), function($todo){ 
+                if($todo['createdBy'] === $this->userId){ 
+                    return $todo; 
+                }
+            });
+
+            $userTodos = array_splice($userTodos, 0);
+            
+        } else if(isset($_SESSION['tempUser'])) {
+
+            $userTodos = array_filter($this->todoDB->getTodos(), function($todo){ 
+                if(in_array($todo['id'], $_SESSION['tempUser'])){ 
+                    return $todo; 
+                }
+            });
+
+            $userTodos = array_splice($userTodos, 0);
+        }
+
+        if($this->view){
+            $this->view->userTodos = $userTodos ?? [];
+        } else {
+            return $userTodos ?? [];
+        }
 
     }
 
     public function editAction(){
 
+		$uri = explode('/',$_SERVER['REQUEST_URI']);
+        $todoId = $uri[count($uri) - 1];
+
+        if(!is_numeric($todoId)){
+            header('Location: ' . WEB_ROOT . '/todo/list');
+            die();
+        }
+        
+        $todo = $this->todoDB->getTodoById($todoId);
+
+        if( count($todo) === 0 ){
+            header('Location: ' . WEB_ROOT . '/todo/list');
+            die();
+        };
+
+        if(count($_POST)){
+
+            $newTitle = $_POST['title'];
+            $newStatus = $_POST['status'];
+
+            $todo = $this->todoDB->modifyTodo($todo, $newTitle, $newStatus);
+        }
+
+        $this->view->todo = $todo;
+
     }
 
     public function newAction(){
         
+        if(isset($_POST['newTodo'])){
+
+            $result = $this->todoDB->createTodo($_POST['newTodo']);
+
+            if($result){
+
+                if(!isset($_SESSION['loggedUser'])){
+                    $_SESSION['todoMsg'] = "You created a todo, but you don't have an account! 
+                    TODO's created without account are deleted in 24h. 
+                    <a href=" . WEB_ROOT . "/auth/register" . ">Register now to keep your TODO for ever!</a>";
+                }
+                
+                header('Location: ' . WEB_ROOT . substr($_SERVER['REQUEST_URI'], strlen(WEB_ROOT)));
+                die();
+            } else {
+                $this->view->todoError = 'Error creating the todo, please try again';
+            }
+
+        }
+    }
+
+    public function deleteAction(){
+
+        $this->view->disableView();
+
+        if(!isset($_POST['deleteTodoId'])){
+            if($_SERVER['HTTP_REFERER']){
+                header('Location: ' . $_SERVER['HTTP_REFERER']);
+            } else {
+                header('Location: ' . WEB_ROOT);
+            }
+            die();
+        }
+
+        $todoId = $_POST['deleteTodoId'];
+        $result = $this->todoDB->deleteTodo($todoId);
+
+        if($result){
+            $location = preg_replace('/\?(.*)/','', $_SERVER['HTTP_REFERER']);
+            header('Location: ' . $location);
+        } else {
+            throw new Exception('The Todo couldn\'t be deleted', 1);
+        }
+
+    }
+
+    public function assignAction(){
+
+        $this->view->disableView();
+
+        if(isset($_SERVER['HTTP_REFERER']) && substr($_SERVER['HTTP_REFERER'], -13, 13) === 'auth/register'){
+            $this->todoDB->assignTodos();
+        }
+
+        header('Location: ' . WEB_ROOT);
+        die();
+    }
+
+    public function loadModal(){
+        
+        if(isset($_GET['delete'])){
+
+            if(!isset($_SERVER['HTTP_REFERER'])){
+
+                (isset($_SERVER['HTTP_ORIGIN'])) ? $location = $_SERVER['HTTP_ORIGIN'] : $location = WEB_ROOT;
+                header('Location: ' . $location );
+                die();
+            }
+
+            // TODO check if this is the user who created it, if not don't even display it on modal. Same for TempUsers
+            $todo = $this->todoDB->getTodoById($_GET['delete']);
+
+            $formatedDate = date('l, F jS \of Y', strtotime($todo['createdAt']));
+
+            $this->formData = "
+            <form action=" . WEB_ROOT . '/todo/delete/' . $todo['id'] . " method='POST'>
+            <p>Are you sure you want to delete <strong> " . $todo['title'] . "</strong>?</p>
+            <p>You created this Todo on <strong> " . $formatedDate . "</strong></p><br>
+            <button type='submit' name='deleteTodoId' value=" . $todo['id'] . " >Delete</button>
+            </form>";
+            
+            $this->afterFilters('view', 'modalContent', $this->formData);
+            
+        }
     }
 
 }

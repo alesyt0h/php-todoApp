@@ -38,9 +38,18 @@ class Controller
 	/**
 	 * These filters are run AFTER the action is run
 	 */
-	public function afterFilters()
+	public function afterFilters($classProperty, $propertyVar, $data)
 	{
-		// no standard filers
+		if(isset($this->priorLoading)){
+			$classProperty = $this->priorLoading[0];
+			$propertyVar = $this->priorLoading[1];
+			$data = $this->priorLoading[2];
+
+			$this->$classProperty->$propertyVar = $data;
+			return;
+		}
+
+		$this->priorLoading = [$classProperty, $propertyVar, $data];
 	}
 	
 	/**
@@ -67,8 +76,8 @@ class Controller
 		$this->$actionToCall();
 		
 		// executes the after filterss
-		$this->afterFilters();
-		
+		$this->afterFilters($classProperty = '', $propertyVar = '', $data = '');
+
 		// renders the view
 		$this->view->render($this->_getViewScript($action));
 	}
