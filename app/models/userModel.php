@@ -56,12 +56,30 @@ class UserModel extends Model {
             "password" => $password,
             "email" => $email,
             "registeredDate" => date('c'),
-            "createdTodos" => 0
+            "createdTodos" => 0,
+            "avatarUrl" => ''
         ];
 
         array_push($this->_users, $newUser);
         $this->_loggedUser = $newUser;
 
+        return $this->writeJSON('users');
+    }
+
+    public function modifyUser(int $userId, string $email, string $password, string $avatar){
+
+        $this->user = $this->findOneById($userId, 'users');
+
+        $this->user['email'] = $email;
+        $this->user['password'] = $password;
+        $this->user['avatarUrl'] = $avatar;
+        
+        $this->_users = array_map( function($oldUser){ 
+            return ($oldUser['id'] === $this->user['id']) ? $this->user : $oldUser;
+        }, $this->_users);
+
+        $_SESSION['loggedUser'] = $this->user;
+        
         return $this->writeJSON('users');
     }
 
