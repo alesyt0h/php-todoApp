@@ -77,7 +77,14 @@ class TodoController extends ApplicationController {
         
         if(isset($_POST['newTodo'])){
 
-            $result = $this->todoDB->createTodo($_POST['newTodo']);
+            $newTodo = $_POST['newTodo'];
+
+            if(!trim($newTodo)){
+                $_SESSION['todoError'] = 'The todo cannot be empty';
+                return;
+            }
+
+            $result = $this->todoDB->createTodo($newTodo);
 
             if($result){
 
@@ -92,7 +99,7 @@ class TodoController extends ApplicationController {
                 header('Location: ' . WEB_ROOT . substr($_SERVER['REQUEST_URI'], strlen(WEB_ROOT)));
                 die();
             } else {
-                $this->view->todoError = 'Error creating the todo, please try again';
+                $_SESSION['todoError'] = 'Error creating the todo, please try again';
             }
 
         }
@@ -127,6 +134,7 @@ class TodoController extends ApplicationController {
 
         $this->view->disableView();
 
+        // Assigning the todos only if the referer is the register page
         if(isset($_SERVER['HTTP_REFERER']) && substr($_SERVER['HTTP_REFERER'], -13, 13) === 'auth/register'){
             $newUserData = $this->todoDB->assignTodos();
             $this->sumTodo($newUserData[0], $newUserData[1]);
