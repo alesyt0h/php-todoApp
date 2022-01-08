@@ -14,16 +14,21 @@ class UserController extends ApplicationController{
         }
 
         $this->view->user = $_SESSION['loggedUser'];
-
+        
         if(count($_POST) > 0){
-
+            
             $userId = $_SESSION['loggedUser']['id'];
             $email = $this->emailProcedure();
             $password = $this->passwordProcedure();
             $avatarUrl = $this->avatarProcedure();
-
+            
             $result = $this->userDB->modifyUser($userId, $email, $password, $avatarUrl);
 
+            if($result){
+                $_SESSION['successMsg'] = 'Profile updated!';
+                header('Location: ' . WEB_ROOT . '/user/profile');
+                die();
+            }
         }
 
     }
@@ -75,7 +80,7 @@ class UserController extends ApplicationController{
             return $currentPassword;
         }
 
-        return $newPassword;
+        return password_hash($newPassword, PASSWORD_DEFAULT);
 
     }
 
