@@ -56,7 +56,8 @@ class UserModel extends Model {
             "password" => $password,
             "email" => $email,
             "registeredDate" => date('c'),
-            "createdTodos" => 0
+            "createdTodos" => 0,
+            "avatarUrl" => ''
         ];
 
         array_push($this->_users, $newUser);
