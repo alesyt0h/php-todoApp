@@ -55,7 +55,7 @@ class UserModel extends Model {
             "username" => $username,
             "password" => $password,
             "email" => $email,
-            "registeredDate" => date('c'),
+            "registerDate" => date('c'),
             "createdTodos" => 0,
             "avatarUrl" => ''
         ];
