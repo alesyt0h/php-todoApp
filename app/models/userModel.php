@@ -57,7 +57,7 @@ class UserModel extends Model {
             "email" => $email,
             "registerDate" => date('c'),
             "createdTodos" => 0,
-            "avatarUrl" => ''
+            "avatarUrl" => null
         ];
 
         array_push($this->_users, $newUser);
@@ -66,7 +66,7 @@ class UserModel extends Model {
         return $this->writeJSON('users');
     }
 
-    public function modifyUser(int $userId, string $email, string $password, string $avatar, int $count = 0){
+    public function modifyUser(int $userId, string $email, string $password, string|null $avatar, int $count = 0){
 
         $this->user = $this->findOneById($userId, 'users');
 

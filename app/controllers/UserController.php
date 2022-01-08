@@ -89,6 +89,10 @@ class UserController extends ApplicationController{
         $currentAvatar = $_SESSION['loggedUser']['avatarUrl'];
         $newAvatar = $_POST['avatarUrl'];
 
+        if(!trim($newAvatar)){
+            $newAvatar = null;
+        }
+
         if(!preg_match('/(https?:\/\/|www\.)/', $newAvatar) && strlen($newAvatar)){
             $this->view->modifyMsg .= 'Avatar URL is not a valid URL!<br>';
             return $currentAvatar;
