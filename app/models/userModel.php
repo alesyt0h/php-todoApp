@@ -66,6 +66,23 @@ class UserModel extends Model {
         return $this->writeJSON('users');
     }
 
+    public function modifyUser(int $userId, string $email, string $password, string $avatar){
+
+        $this->user = $this->findOneById($userId, 'users');
+
+        $this->user['email'] = $email;
+        $this->user['password'] = $password;
+        $this->user['avatarUrl'] = $avatar;
+        
+        $this->_users = array_map( function($oldUser){ 
+            return ($oldUser['id'] === $this->user['id']) ? $this->user : $oldUser;
+        }, $this->_users);
+
+        $_SESSION['loggedUser'] = $this->user;
+        
+        return $this->writeJSON('users');
+    }
+
     public function getLastUserId(){
 
         $lastId = 0;
