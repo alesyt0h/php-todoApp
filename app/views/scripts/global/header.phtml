@@ -2,6 +2,7 @@
     <div style="display: inline-block; ">
         <span>Header Menu Placeholder</span>
     </div>
+    <a href="<?php echo WEB_ROOT . '/user/profile' ?>"><?php echo (isset($_SESSION['loggedUser'])) ? 'User Profile' : ''?></a>
     <div style="float: right; ">
         <a href="<?php echo WEB_ROOT . '/auth/login' ?>">Login</a>
         <a href="<?php echo WEB_ROOT . '/auth/register' ?>">Register</a>
