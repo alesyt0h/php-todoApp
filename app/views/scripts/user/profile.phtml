@@ -1,0 +1,35 @@
+<form action="" method="POST">
+    <div class="card" style="padding: 10px; background: white; display:inline-block; border-radius: 10px; float: left" >
+        <img src="<?php echo (strlen($this->user['avatarUrl'])) ? $this->user['avatarUrl'] : WEB_ROOT . '/img/no-avatar.png'; ?>" alt="" width="150">
+    </div>
+    <div style="display: inline-block; margin-top: 10px ; margin-left: 30px">
+        <label for="username">Username: </label>
+        <input type="text" value="<?php echo $this->user['username']; ?>" disabled>
+        <br>
+        <label for="password">Password: </label>
+        <button class="show-password-changer">Change password</button>
+        <div class="password-changer" style="float: right; display: none">
+            <input type="password" name="oldPassword" id="" placeholder="Old Password"> <br>
+            <input type="password" name="newPassword" id="" placeholder="New Password"> <br>
+            <input type="password" name="confirmPassword" id="" placeholder="Confirm New Password">
+        </div>
+        <br>
+        <label for="email">Email: </label>
+        <input type="text" value="<?php echo $this->user['email']; ?>">
+        <br>
+        <label for="avatar">Avatar: </label>
+        <input type="text" value="<?php echo (strlen($this->user['avatarUrl'])) ? $this->user['avatarUrl'] : ''; ?>" placeholder="Avatar URL">
+        <br>
+        <label for="createdTodos">Created Todos: <?php echo $this->user['createdTodos']; ?></label>
+        <br>
+        <button type="submit">Save</button>
+        <button type="reset">Reset</button>
+    </div>
+    <br>
+    <br>
+    <p style="margin: 0; font-size: 1rem; text-align: center"> You created this account on 
+        <strong>
+            <?php echo date('l, F jS \of Y', strtotime($this->user['registeredDate'])); ?> 
+        </strong>
+    </p>
+</form>
