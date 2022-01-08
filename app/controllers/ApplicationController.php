@@ -23,4 +23,14 @@ class ApplicationController extends Controller {
 		}
 	}
 
+	public function sumTodo(string $userId, int $count = 1){
+
+		$email = $_SESSION['loggedUser']['email'];
+        $pass = $_SESSION['loggedUser']['password'];
+        $avatar = $_SESSION['loggedUser']['avatarUrl'];
+
+		$this->userDB->modifyUser($userId, $email, $pass, $avatar, $count);
+	
+	}
+
 }

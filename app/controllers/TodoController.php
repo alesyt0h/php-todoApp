@@ -3,6 +3,7 @@
 class TodoController extends ApplicationController {
 
     public function __construct(){
+        parent::__construct();
         $this->todoDB = new TodoModel();
 
         $this->loadModal();
@@ -84,6 +85,8 @@ class TodoController extends ApplicationController {
                     $_SESSION['todoMsg'] = "You created a todo, but you don't have an account! 
                     TODO's created without account are deleted in 24h. 
                     <a href=" . WEB_ROOT . "/auth/register" . ">Register now to keep your TODO for ever!</a>";
+                } else {
+                    $this->sumTodo($_SESSION['loggedUser']['id']);
                 }
                 
                 header('Location: ' . WEB_ROOT . substr($_SERVER['REQUEST_URI'], strlen(WEB_ROOT)));
@@ -125,7 +128,8 @@ class TodoController extends ApplicationController {
         $this->view->disableView();
 
         if(isset($_SERVER['HTTP_REFERER']) && substr($_SERVER['HTTP_REFERER'], -13, 13) === 'auth/register'){
-            $this->todoDB->assignTodos();
+            $newUserData = $this->todoDB->assignTodos();
+            $this->sumTodo($newUserData[0], $newUserData[1]);
         }
 
         header('Location: ' . WEB_ROOT);
@@ -134,6 +138,7 @@ class TodoController extends ApplicationController {
 
     public function loadModal(){
         
+        // Modal for confirmation prompt when delete a todo
         if(isset($_GET['delete'])){
 
             if(!isset($_SERVER['HTTP_REFERER'])){

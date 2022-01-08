@@ -45,6 +45,7 @@ class TodoModel extends Model {
 
         $this->writeJSON('todos');
         unset($_SESSION['tempUser']);
+        return [$userId, count($tempTodosId)];
     }
 
     public function modifyTodo(array $todo, string $title, string $status){
