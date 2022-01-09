@@ -61,12 +61,20 @@ class TodoController extends ApplicationController {
             die();
         };
 
-        if(count($_POST)){
+        if(count($_POST) === 2){
 
-            $newTitle = $_POST['title'];
+            $validStatus = ['Pending', 'In Process', 'Completed'];
+            $newTitle = trim($_POST['title']);
             $newStatus = $_POST['status'];
 
-            $todo = $this->todoDB->modifyTodo($todo, $newTitle, $newStatus);
+            if(!strlen($newTitle)){
+                $_SESSION['todoError'] = 'The Todo can not be empty!';
+            } else if (!in_array($newStatus, $validStatus)) {
+                $_SESSION['todoError'] = 'The Todo status is incorrect!';
+            } else {
+                $todo = $this->todoDB->modifyTodo($todo, $newTitle, $newStatus);
+            }
+
         }
 
         $this->view->todo = $todo;
