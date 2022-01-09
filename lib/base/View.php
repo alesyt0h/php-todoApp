@@ -197,3 +197,5 @@ class View
 	  return !$this->_layoutEnabled;
 	}
 }
+
+?>

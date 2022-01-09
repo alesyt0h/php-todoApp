@@ -25,3 +25,5 @@ $routes = array(
 	'/todo/assign/' => 'todo#assign',
 	'/user/profile/' => 'user#profile'
 );
+
+?>
