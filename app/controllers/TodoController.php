@@ -61,6 +61,11 @@ class TodoController extends ApplicationController {
             die();
         };
 
+        if(!isset($_SESSION['loggedUser']) || $todo['createdBy'] !== $_SESSION['loggedUser']['id']){
+            header('Location: ' . WEB_ROOT);
+            die();
+        }
+
         if(count($_POST) === 2){
 
             $validStatus = ['Pending', 'In Process', 'Completed'];
