@@ -7,7 +7,7 @@ class UserController extends ApplicationController{
     }
 
     public function profileAction(){
-        
+
         if(!isset($_SESSION['loggedUser'])){
             header('Location: ' . WEB_ROOT);
             die();
@@ -24,8 +24,10 @@ class UserController extends ApplicationController{
             
             $result = $this->userDB->modifyUser($userId, $email, $password, $avatarUrl);
 
-            if($result){
-                $_SESSION['successMsg'] = 'Profile updated!';
+            if($result['status']){
+
+                ($result['equals']) ? null : $_SESSION['successMsg'] = 'Profile updated!';
+
                 header('Location: ' . WEB_ROOT . '/user/profile');
                 die();
             }

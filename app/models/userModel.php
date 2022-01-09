@@ -79,9 +79,12 @@ class UserModel extends Model {
             return ($oldUser['id'] === $this->user['id']) ? $this->user : $oldUser;
         }, $this->_users);
 
+        $equals = ($this->user === $_SESSION['loggedUser']) ? true : false; 
+
         $_SESSION['loggedUser'] = $this->user;
-        
-        return $this->writeJSON('users');
+
+        return [ 'status' => $this->writeJSON('users'), 
+                 'equals' => $equals ];
     }
 
     public function getLastUserId(){
