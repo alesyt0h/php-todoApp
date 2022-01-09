@@ -12,8 +12,8 @@ class AuthController extends ApplicationController{
 
         if(isset($_POST['username']) && isset($_POST['password'])){
 
-            $user = strtolower($_POST['username']);
-            $pass = $_POST['password'];
+            $user = strtolower(trim($_POST['username']));
+            $pass = trim($_POST['password']);
 
             if(strlen($user) < 3 || strlen($pass) < 6){
                 $this->view->loginError = 'Incorrect length of user or password';
@@ -41,9 +41,9 @@ class AuthController extends ApplicationController{
         
         if(isset($_POST['username']) && isset($_POST['password']) && isset($_POST['email'])){
             
-            $user = strtolower($_POST['username']);
-            $pass = $_POST['password'];
-            $email = $_POST['email'];
+            $user = strtolower(trim($_POST['username']));
+            $pass = trim($_POST['password']);
+            $email = trim($_POST['email']);
 
             $emailPattern = '/^[a-z0-9._%+-]+@[a-z0-9.-]{2,}\\.[a-z]{2,4}$/';
 
