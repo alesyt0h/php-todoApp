@@ -56,7 +56,7 @@ class TodoController extends ApplicationController {
         
         $todo = $this->todoDB->getTodoById($todoId);
 
-        if( count($todo) === 0 ){
+        if(count($todo) === 0){
             header('Location: ' . WEB_ROOT . '/todo/list');
             die();
         };
@@ -85,9 +85,9 @@ class TodoController extends ApplicationController {
         
         if(isset($_POST['newTodo'])){
 
-            $newTodo = $_POST['newTodo'];
+            $newTodo = trim($_POST['newTodo']);
 
-            if(!trim($newTodo)){
+            if(!strlen($newTodo)){
                 $_SESSION['todoError'] = 'The todo cannot be empty';
                 return;
             }
