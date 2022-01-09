@@ -92,11 +92,20 @@ class UserController extends ApplicationController{
         $newAvatar = $_POST['avatarUrl'];
 
         if(!trim($newAvatar)){
-            $newAvatar = null;
+            return null;
         }
 
         if(!preg_match('/(https?:\/\/|www\.)/', $newAvatar) && strlen($newAvatar)){
             $this->view->modifyMsg .= 'Avatar URL is not a valid URL!<br>';
+            return $currentAvatar;
+        }
+
+        // ! Requires openSSL - extension=php_openssl.dll
+        $result = @getimagesize($newAvatar);
+        $result = ($result && strtolower(substr($result['mime'], 0, 5)) == 'image' ? true : false);
+
+        if(!$result){
+            $this->view->modifyMsg .= 'The Avatar URL you entered is not a valid image!<br>';
             return $currentAvatar;
         }
 
