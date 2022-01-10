@@ -18,6 +18,7 @@ class ApplicationController extends Controller {
 
 		if(isset($_SESSION['isLoggedIn']) && $_SESSION['isLoggedIn'] === true){
 			header('Location: ' . WEB_ROOT);
+			die();
 		} else {
 			return false;
 		}

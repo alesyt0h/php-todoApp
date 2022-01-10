@@ -27,8 +27,10 @@ class AuthController extends ApplicationController{
                 $_SESSION['loggedUser'] = $this->userDB->getLoggedUser();
 
                 header('Location: ' . WEB_ROOT);
+                die();
             } else {
                 $this->view->loginError = 'Invalid Email or password';
+                header('HTTP/1.0 403 Forbidden');
             }
 
         }
@@ -75,6 +77,7 @@ class AuthController extends ApplicationController{
                 $_SESSION['loggedUser'] = $this->userDB->getLoggedUser();
 
                 (isset($_SESSION['tempUser'])) ? header('Location: ' . WEB_ROOT . '/todo/assign') : header('Location: ' . WEB_ROOT);
+                die();
             } else {
                 $this->view->registerError = 'Unknown error. Please try again';
             }
@@ -92,6 +95,7 @@ class AuthController extends ApplicationController{
         unset($_SESSION['loggedUser']);
 
         header('Location: ' . WEB_ROOT . '/auth');
+        die();
     }
 
 }

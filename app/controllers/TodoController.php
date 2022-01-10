@@ -137,6 +137,7 @@ class TodoController extends ApplicationController {
         if($result){
             $location = preg_replace('/\?(.*)/','', $_SERVER['HTTP_REFERER']);
             header('Location: ' . $location);
+            die();
         } else {
             throw new Exception('The Todo couldn\'t be deleted', 1);
         }
@@ -152,6 +153,8 @@ class TodoController extends ApplicationController {
             $newUserData = $this->todoDB->assignTodos();
             $this->sumTodo($newUserData[0], $newUserData[1]);
         }
+
+        unset($_SESSION['tempUser']);
 
         header('Location: ' . WEB_ROOT);
         die();
