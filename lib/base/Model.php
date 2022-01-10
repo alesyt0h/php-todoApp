@@ -78,6 +78,7 @@ class Model {
         for ($i=0; $i < count($this->$db); $i++) { 
             if($this->$db[$i]['id'] === $id){
                 $result = $this->$db[$i];
+                break;
             }
         }
 

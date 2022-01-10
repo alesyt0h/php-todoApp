@@ -14,6 +14,7 @@ class UserModel extends Model {
                 if($validation){
                     $this->_loggedUser = $this->_users[$i];
                     $match = true;
+                    break;
                 } 
             }
         }
@@ -28,6 +29,7 @@ class UserModel extends Model {
         for ($i=0; $i < count($this->_users); $i++) { 
             if(strtolower($this->_users[$i]['username']) === $username){
                 $userExists = true;
+                break;
             }
         }
 
@@ -41,6 +43,7 @@ class UserModel extends Model {
         for ($i=0; $i < count($this->_users); $i++) { 
             if(strtolower($this->_users[$i]['email']) === $email){
                 $mailExists = true;
+                break;
             }
         }
         return $mailExists;
@@ -94,6 +97,7 @@ class UserModel extends Model {
         for ($i=0; $i < count($this->_users); $i++) { 
             if($lastId < $this->_users[$i]['id']){
                 $lastId = $this->_users[$i]['id'];
+                break;
             }
         }
 
