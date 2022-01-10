@@ -97,7 +97,6 @@ class UserModel extends Model {
         for ($i=0; $i < count($this->_users); $i++) { 
             if($lastId < $this->_users[$i]['id']){
                 $lastId = $this->_users[$i]['id'];
-                break;
             }
         }
 
