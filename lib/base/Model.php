@@ -30,7 +30,7 @@ class Model {
      * Parses the given JSON file and stores it on $_jsonData
      * @param string the file to parse. Do not include '.json' in the filename
      */
-    public function parseJSON(string $file){
+    protected function parseJSON(string $file){
         if(substr($file, -5) !== '.json'){
             $file .= '.json';
         }
@@ -85,14 +85,14 @@ class Model {
         return $result;
     }
 
-    public function fetchUsers(){
+    protected function fetchUsers(){
         $this->_users = $this->_jsonData ?? [];
         $this->_jsonData = [];
 
         return $this->_users;
     }
 
-    public function fetchTodos(){
+    protected function fetchTodos(){
         $this->_todos = $this->_jsonData ?? [];
         $this->_jsonData = [];
 
