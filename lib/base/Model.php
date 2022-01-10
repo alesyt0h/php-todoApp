@@ -51,6 +51,10 @@ class Model {
     public function writeJSON(string $db){
         $db = $this->dbChecker($db);
 
+        if(!count($this->$db)){
+            return;
+        }
+
         $rawData = json_encode($this->$db, JSON_PRETTY_PRINT);
 
         return file_put_contents($this->dbDir . substr($db, 1) . '.json', $rawData);
