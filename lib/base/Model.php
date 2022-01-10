@@ -21,6 +21,7 @@ class Model {
         // Parse the DB's
         $this->parseJSON('todos');
         $this->_todos = $this->fetchTodos();
+        $this->purgeTodos();
 
         $this->parseJSON('users');
         $this->_users = $this->fetchUsers();
@@ -83,6 +84,31 @@ class Model {
         }
 
         return $result;
+    }
+
+    /**
+     * Filters and removes the created Todo's by temp users that have more than 24h
+     */
+    protected function purgeTodos(){
+
+        $this->_todos = array_filter($this->_todos, function($todo){
+            if(!$todo['createdBy']){
+                $now = new DateTime();
+                $todoDate = new DateTime($todo['createdAt']);
+    
+                $dayPassed = date_diff($now, $todoDate);
+    
+                if(!$dayPassed->days){
+                    return $todo;
+                }
+            } else {
+                return $todo;
+            }
+        });
+
+        $this->_todos = array_splice($this->_todos, 0);
+
+        $this->writeJSON('todos');
     }
 
     protected function fetchUsers(){
