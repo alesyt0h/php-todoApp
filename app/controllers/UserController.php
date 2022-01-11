@@ -7,7 +7,7 @@ class UserController extends ApplicationController{
     }
 
     public function profileAction(){
-        
+
         if(!isset($_SESSION['loggedUser'])){
             header('Location: ' . WEB_ROOT);
             die();
@@ -24,8 +24,10 @@ class UserController extends ApplicationController{
             
             $result = $this->userDB->modifyUser($userId, $email, $password, $avatarUrl);
 
-            if($result){
-                $_SESSION['successMsg'] = 'Profile updated!';
+            if($result['status']){
+
+                ($result['equals']) ? null : $_SESSION['successMsg'] = 'Profile updated!';
+
                 header('Location: ' . WEB_ROOT . '/user/profile');
                 die();
             }
@@ -37,20 +39,26 @@ class UserController extends ApplicationController{
 
         $currentMail = $_SESSION['loggedUser']['email'];
         $newMail = $_POST['email'];
+        $emailPattern = '/^[a-z0-9._%+-]+@[a-z0-9.-]{2,}\\.[a-z]{2,4}$/';
 
         if($newMail === $currentMail){
             return $currentMail;
         }
+        
+        if(!strlen(trim($newMail))){
+            $_SESSION['modifyMsg'] .= 'Email can not be empty!<br>';
+            return $currentMail;
+        }
 
-        if(!strlen($newMail)){
-            $this->view->modifyMsg .= 'Email can\'t be empty!<br>';
+        if(!preg_match($emailPattern, $newMail)){
+            $_SESSION['modifyMsg'] .= 'Please introduce a valid email';
             return $currentMail;
         }
 
         $mailExists = $this->userDB->mailExists($newMail);
 
         if($mailExists){
-            $this->view->modifyMsg .= 'Email already exists, choose another<br>';
+            $_SESSION['modifyMsg'] .= 'Email already exists, choose another<br>';
             return $currentMail;
         } else {
             return $newMail;
@@ -66,17 +74,22 @@ class UserController extends ApplicationController{
         $newPassword = $_POST['newPassword'];
         $confirmPassword = $_POST['confirmPassword'];
 
-        if(!strlen($formPassword)){
+        if(!strlen(trim($formPassword))){
+            return $currentPassword;
+        }
+
+        if(strlen($newPassword) < 6){
+            $_SESSION['modifyMsg'] .= 'Password must have at least 6 characters!';
             return $currentPassword;
         }
 
         if(!password_verify($formPassword, $currentPassword)){
-            $this->view->modifyMsg .= 'Current password is incorrect<br>';
+            $_SESSION['modifyMsg'] .= 'Current password is incorrect<br>';
             return $currentPassword;
         }
 
-        if($newPassword !== $confirmPassword || !strlen($newPassword)){
-            $this->view->modifyMsg .= 'New password don\'t match';
+        if($newPassword !== $confirmPassword || !strlen(trim($newPassword))){
+            $_SESSION['modifyMsg'] .= 'New password don\'t match';
             return $currentPassword;
         }
 
@@ -89,9 +102,24 @@ class UserController extends ApplicationController{
         $currentAvatar = $_SESSION['loggedUser']['avatarUrl'];
         $newAvatar = $_POST['avatarUrl'];
 
-        if(!preg_match('/(https?:\/\/|www\.)/', $newAvatar) && strlen($newAvatar)){
-            $this->view->modifyMsg .= 'Avatar URL is not a valid URL!<br>';
+        if(!strlen(trim($newAvatar))){
+            return null;
+        }
+
+        if(!preg_match('/(https?:\/\/|www\.)/', $newAvatar)){
+            $_SESSION['modifyMsg'] .= 'Avatar URL is not a valid URL!<br>';
             return $currentAvatar;
+        }
+
+        // ! Requires openSSL - extension=php_openssl.dll
+        $result = @getimagesize($newAvatar);
+        $result = ($result && strtolower(substr($result['mime'], 0, 5)) == 'image' ? true : false);
+
+        if(extension_loaded('openssl')){
+            if(!$result){
+                $_SESSION['modifyMsg'] .= 'The Avatar URL you entered is not a valid image!<br>';
+                return $currentAvatar;
+            }
         }
 
         return $newAvatar;

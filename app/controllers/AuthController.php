@@ -12,8 +12,8 @@ class AuthController extends ApplicationController{
 
         if(isset($_POST['username']) && isset($_POST['password'])){
 
-            $user = strtolower($_POST['username']);
-            $pass = $_POST['password'];
+            $user = strtolower(trim($_POST['username']));
+            $pass = trim($_POST['password']);
 
             if(strlen($user) < 3 || strlen($pass) < 6){
                 $this->view->loginError = 'Incorrect length of user or password';
@@ -26,9 +26,11 @@ class AuthController extends ApplicationController{
                 $_SESSION['isLoggedIn'] = true;
                 $_SESSION['loggedUser'] = $this->userDB->getLoggedUser();
 
-                header('Location: ' . WEB_ROOT);
+                (isset($_SESSION['tempUser'])) ? header('Location: ' . WEB_ROOT . '?assign') : header('Location: ' . WEB_ROOT);
+                die();
             } else {
                 $this->view->loginError = 'Invalid Email or password';
+                header('HTTP/1.0 403 Forbidden');
             }
 
         }
@@ -41,9 +43,9 @@ class AuthController extends ApplicationController{
         
         if(isset($_POST['username']) && isset($_POST['password']) && isset($_POST['email'])){
             
-            $user = strtolower($_POST['username']);
-            $pass = $_POST['password'];
-            $email = $_POST['email'];
+            $user = strtolower(trim($_POST['username']));
+            $pass = trim($_POST['password']);
+            $email = trim($_POST['email']);
 
             $emailPattern = '/^[a-z0-9._%+-]+@[a-z0-9.-]{2,}\\.[a-z]{2,4}$/';
 
@@ -72,9 +74,13 @@ class AuthController extends ApplicationController{
 
             if($result){
                 $_SESSION['isLoggedIn'] = true;
+                $_SESSION['allowAssign'] = true;
                 $_SESSION['loggedUser'] = $this->userDB->getLoggedUser();
 
-                (isset($_SESSION['tempUser'])) ? header('Location: ' . WEB_ROOT . '/todo/assign') : header('Location: ' . WEB_ROOT);
+                $this->view->accountCreated = true;
+
+                // (isset($_SESSION['tempUser'])) ? header('Location: ' . WEB_ROOT . '/todo/assign') : header('Location: ' . WEB_ROOT);
+                // die();
             } else {
                 $this->view->registerError = 'Unknown error. Please try again';
             }
@@ -92,6 +98,7 @@ class AuthController extends ApplicationController{
         unset($_SESSION['loggedUser']);
 
         header('Location: ' . WEB_ROOT . '/auth');
+        die();
     }
 
 }

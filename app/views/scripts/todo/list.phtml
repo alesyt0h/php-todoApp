@@ -1,6 +1,8 @@
+<div class="error-msg" style="background: red"><?php echo (isset($_SESSION['deleteError'])) ? $_SESSION['deleteError'] : null; unset($_SESSION['deleteError']); ?></div>
+<?php $reqFrom = (isset($_SERVER['REQUEST_URI'])) ? $_SERVER['REQUEST_URI'] : '';
+      $reqFrom = preg_match('/\/todo\/list/', $reqFrom); ?>
 <?php if( count( $this->userTodos ?? [] ) ){ ?>
-  
-  <table style="border: 1px solid black">
+  <table style="border: 1px solid black" <?php echo (!$reqFrom) ? "class='todo-table'" : ''; ?>>
     <caption>myTodos</caption>
     <tr>
       <th style="border: 1px solid black">Todo</th>
@@ -23,7 +25,7 @@
   </table>
 
   <?php 
-    if(isset($_GET['delete'])){
+    if(isset($_GET['delete']) || isset($_GET['assign'])){
       echo $this->_renderViewScript('global/modal.phtml', true); 
     }
   ?>

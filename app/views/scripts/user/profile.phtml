@@ -1,10 +1,10 @@
-<form action="" method="POST">
+<form method="POST">
     <div class="card" style="padding: 10px; background: white; border-radius: 10px; float: left">
         <img src="<?php echo (strlen($this->user['avatarUrl'])) ? $this->user['avatarUrl'] : WEB_ROOT . '/img/no-avatar.png'; ?>" alt="" width="150">
     </div>
     <div style="display: inline-block; margin-top: 10px ; margin-left: 30px">
         <div class="error-msg" style="background: olive"><?php echo (isset($_SESSION['successMsg'])) ? $_SESSION['successMsg'] : null; unset($_SESSION['successMsg']); ?></div>
-        <div class="error-msg" style="background: red"><?php echo $this->modifyMsg ?></div>
+        <div class="error-msg" style="background: red"><?php echo (isset($_SESSION['modifyMsg'])) ? $_SESSION['modifyMsg'] : null; unset($_SESSION['modifyMsg']); ?></div>
         <label for="username">Username: </label>
         <input type="text" value="<?php echo $this->user['username']; ?>" disabled>
         <br>
@@ -31,7 +31,7 @@
     <br>
     <p style="margin: 0; font-size: 1rem; text-align: center"> You created this account on 
         <strong>
-            <?php echo date('l, F jS \of Y', strtotime($this->user['registeredDate'])); ?> 
+            <?php echo date('l, F jS \of Y', strtotime($this->user['registerDate'])); ?> 
         </strong>
     </p>
 </form>

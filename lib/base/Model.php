@@ -21,6 +21,7 @@ class Model {
         // Parse the DB's
         $this->parseJSON('todos');
         $this->_todos = $this->fetchTodos();
+        $this->purgeTodos();
 
         $this->parseJSON('users');
         $this->_users = $this->fetchUsers();
@@ -30,7 +31,7 @@ class Model {
      * Parses the given JSON file and stores it on $_jsonData
      * @param string the file to parse. Do not include '.json' in the filename
      */
-    public function parseJSON(string $file){
+    protected function parseJSON(string $file){
         if(substr($file, -5) !== '.json'){
             $file .= '.json';
         }
@@ -49,6 +50,10 @@ class Model {
      */
     public function writeJSON(string $db){
         $db = $this->dbChecker($db);
+
+        if(!count($this->$db)){
+            return;
+        }
 
         $rawData = json_encode($this->$db, JSON_PRETTY_PRINT);
 
@@ -78,20 +83,46 @@ class Model {
         for ($i=0; $i < count($this->$db); $i++) { 
             if($this->$db[$i]['id'] === $id){
                 $result = $this->$db[$i];
+                break;
             }
         }
 
         return $result;
     }
 
-    public function fetchUsers(){
+    /**
+     * Filters and removes the created Todo's by temp users that have more than 24h
+     */
+    protected function purgeTodos(){
+
+        $this->_todos = array_filter($this->_todos, function($todo){
+            if(!$todo['createdBy']){
+                $now = new DateTime();
+                $todoDate = new DateTime($todo['createdAt']);
+    
+                $dayPassed = date_diff($now, $todoDate);
+    
+                if(!$dayPassed->days){
+                    return $todo;
+                }
+            } else {
+                return $todo;
+            }
+        });
+
+        $this->_todos = array_splice($this->_todos, 0);
+
+        $this->writeJSON('todos');
+    }
+
+    protected function fetchUsers(){
         $this->_users = $this->_jsonData ?? [];
         $this->_jsonData = [];
 
         return $this->_users;
     }
 
-    public function fetchTodos(){
+    protected function fetchTodos(){
         $this->_todos = $this->_jsonData ?? [];
         $this->_jsonData = [];
 

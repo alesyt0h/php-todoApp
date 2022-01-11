@@ -34,7 +34,7 @@ class TodoModel extends Model {
         $tempTodosId = $_SESSION['tempUser'];
 
         for ($i=0; $i < count($tempTodosId); $i++) {
-            for ($j = count($this->_todos) - 1; $j > 0; $j--) {
+            for ($j = count($this->_todos) - 1; $j > 0; $j--) { // Reverse lookup - Faster
 
                 if($this->_todos[$j]['id'] === $tempTodosId[$i]){
                     $this->_todos[$j]['createdBy'] = $userId;
@@ -45,6 +45,7 @@ class TodoModel extends Model {
 
         $this->writeJSON('todos');
         unset($_SESSION['tempUser']);
+        return [$userId, count($tempTodosId)];
     }
 
     public function modifyTodo(array $todo, string $title, string $status){
@@ -73,22 +74,27 @@ class TodoModel extends Model {
 
         $todo = $this->findOneById($todoId, 'todos');
 
-        // TODO try this changing loggedUser id
-        if($todo['createdBy'] !== $_SESSION['loggedUser']['id']){
-            return 'You are not the owner of this Todo!';
+        $isValidUser = (isset($_SESSION['loggedUser']) && $todo['createdBy'] === $_SESSION['loggedUser']['id']);
+        $isValidTempUser = (isset($_SESSION['tempUser']) && in_array($todo['id'], $_SESSION['tempUser']));
+
+        if($isValidUser || $isValidTempUser) {
+            $this->todoId = intval($todoId);
+    
+            $this->_todos = array_filter($this->_todos, function($oldTodo){ 
+                if($oldTodo['id'] !== $this->todoId){ 
+                    return $oldTodo; 
+                } 
+            });
+    
+            $this->_todos = array_splice($this->_todos, 0);
+
+            if($isValidTempUser){
+                $key = array_search($todoId, $_SESSION['tempUser']);
+                unset($_SESSION['tempUser'][$key]);
+            }
+    
+            return $this->writeJSON('todos');
         }
-
-        $this->todoId = intval($todoId);
-
-        $this->_todos = array_filter($this->_todos, function($oldTodo){ 
-            if($oldTodo['id'] !== $this->todoId){ 
-                return $oldTodo; 
-            } 
-        });
-
-        $this->_todos = array_splice($this->_todos, 0);
-
-        return $this->writeJSON('todos');
     }
 
     public function getTodos(){

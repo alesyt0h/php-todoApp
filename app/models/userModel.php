@@ -14,6 +14,7 @@ class UserModel extends Model {
                 if($validation){
                     $this->_loggedUser = $this->_users[$i];
                     $match = true;
+                    break;
                 } 
             }
         }
@@ -28,6 +29,7 @@ class UserModel extends Model {
         for ($i=0; $i < count($this->_users); $i++) { 
             if(strtolower($this->_users[$i]['username']) === $username){
                 $userExists = true;
+                break;
             }
         }
 
@@ -41,6 +43,7 @@ class UserModel extends Model {
         for ($i=0; $i < count($this->_users); $i++) { 
             if(strtolower($this->_users[$i]['email']) === $email){
                 $mailExists = true;
+                break;
             }
         }
         return $mailExists;
@@ -55,9 +58,9 @@ class UserModel extends Model {
             "username" => $username,
             "password" => $password,
             "email" => $email,
-            "registeredDate" => date('c'),
+            "registerDate" => date('c'),
             "createdTodos" => 0,
-            "avatarUrl" => ''
+            "avatarUrl" => null
         ];
 
         array_push($this->_users, $newUser);
@@ -66,33 +69,46 @@ class UserModel extends Model {
         return $this->writeJSON('users');
     }
 
-    public function modifyUser(int $userId, string $email, string $password, string $avatar){
+    public function modifyUser(int $userId, string $email, string $password, string|null $avatar, int $count = 0){
 
         $this->user = $this->findOneById($userId, 'users');
 
         $this->user['email'] = $email;
         $this->user['password'] = $password;
         $this->user['avatarUrl'] = $avatar;
+        $this->user['createdTodos'] += $count;
         
         $this->_users = array_map( function($oldUser){ 
             return ($oldUser['id'] === $this->user['id']) ? $this->user : $oldUser;
         }, $this->_users);
 
+        $equals = ($this->user === $_SESSION['loggedUser']) ? true : false; 
+
         $_SESSION['loggedUser'] = $this->user;
-        
-        return $this->writeJSON('users');
+
+        return [ 'status' => $this->writeJSON('users'), 
+                 'equals' => $equals ];
     }
 
     public function getLastUserId(){
 
-        $lastId = 0;
+        // * Previous method - keeping for reference
+        // $lastId = 0;
 
-        for ($i=0; $i < count($this->_users); $i++) { 
-            if($lastId < $this->_users[$i]['id']){
-                $lastId = $this->_users[$i]['id'];
-            }
+        // for ($i=0; $i < count($this->_users); $i++) { 
+        //     if($lastId < $this->_users[$i]['id']){
+        //         $lastId = $this->_users[$i]['id'];
+        //     }
+        // }
+        
+        if(!count($this->_users)) return 1;
+        
+        // Reverse lookup, since users aren't deleted, this should be faster and work the same way
+        for ($i= count($this->_users) - 1; $i < count($this->_users); $i--) { 
+            $lastId = $this->_users[$i]['id'];
+            break;
         }
-
+        
         return $lastId + 1;
     }
 
