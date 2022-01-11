@@ -1,5 +1,19 @@
 <div class="error-msg" style="background: olive"><?php echo (isset($_SESSION['todoMsg'])) ? $_SESSION['todoMsg'] : null; unset($_SESSION['todoMsg']); ?></div>
 <div class="error-msg" style="background: red"><?php echo (isset($_SESSION['todoError'])) ? $_SESSION['todoError'] : null; unset($_SESSION['todoError']); ?></div>
+
+<?php
+
+    $reqFrom = (isset($_SERVER['REQUEST_URI'])) ? $_SERVER['REQUEST_URI'] : '';
+    $reqFrom = preg_match('/\/todo\/new/', $reqFrom);
+    
+    if(isset($_SESSION['newTodoTemp']) && $reqFrom == true){
+        echo "<div class='error-msg' style='background: green'>You created the todo: " . $_SESSION['newTodoTemp'] . "</div>";
+        unset($_SESSION['newTodoTemp']);
+    } else {
+        unset($_SESSION['newTodoTemp']);
+    }
+
+?>
 <form method="POST">
     <input type="text" name="newTodo" placeholder="What do you have to do?" style="font-size: 2rem" autofocus>
     <button style="font-size: 2rem; color: grey">Submit</button>

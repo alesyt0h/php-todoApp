@@ -112,6 +112,8 @@ class TodoController extends ApplicationController {
                 } else {
                     $this->sumTodo($_SESSION['loggedUser']['id']);
                 }
+
+                $_SESSION['newTodoTemp'] = $newTodo;
                 
                 header('Location: ' . WEB_ROOT . substr($_SERVER['REQUEST_URI'], strlen(WEB_ROOT)));
                 die();

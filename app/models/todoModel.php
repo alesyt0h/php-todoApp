@@ -34,7 +34,7 @@ class TodoModel extends Model {
         $tempTodosId = $_SESSION['tempUser'];
 
         for ($i=0; $i < count($tempTodosId); $i++) {
-            for ($j = count($this->_todos) - 1; $j > 0; $j--) {
+            for ($j = count($this->_todos) - 1; $j > 0; $j--) { // Reverse lookup - Faster
 
                 if($this->_todos[$j]['id'] === $tempTodosId[$i]){
                     $this->_todos[$j]['createdBy'] = $userId;
