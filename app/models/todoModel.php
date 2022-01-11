@@ -87,6 +87,11 @@ class TodoModel extends Model {
             });
     
             $this->_todos = array_splice($this->_todos, 0);
+
+            if($isValidTempUser){
+                $key = array_search($todoId, $_SESSION['tempUser']);
+                unset($_SESSION['tempUser'][$key]);
+            }
     
             return $this->writeJSON('todos');
         }
