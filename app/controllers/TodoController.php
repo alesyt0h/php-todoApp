@@ -144,14 +144,13 @@ class TodoController extends ApplicationController {
         $todoId = $_POST['deleteTodoId'];
         $result = $this->todoDB->deleteTodo($todoId);
 
-        if($result){
-            $location = preg_replace('/\?(.*)/','', $_SERVER['HTTP_REFERER']);
-            header('Location: ' . $location);
-            die();
-        } else {
-            throw new Exception('The Todo couldn\'t be deleted', 1);
+        if(!$result){
+            $_SESSION['deleteError'] = 'Error borrando el todo!';
         }
 
+        $location = preg_replace('/\?(.*)/','', $_SERVER['HTTP_REFERER']);
+        header('Location: ' . $location);
+        die();
     }
 
     public function assignAction(){

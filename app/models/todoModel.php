@@ -74,22 +74,22 @@ class TodoModel extends Model {
 
         $todo = $this->findOneById($todoId, 'todos');
 
-        // TODO try this changing loggedUser id
-        if($todo['createdBy'] !== $_SESSION['loggedUser']['id']){
-            return 'You are not the owner of this Todo!';
+        $isValidUser = (isset($_SESSION['loggedUser']) && $todo['createdBy'] === $_SESSION['loggedUser']['id']);
+        $isValidTempUser = (isset($_SESSION['tempUser']) && in_array($todo['id'], $_SESSION['tempUser']));
+
+        if($isValidUser || $isValidTempUser) {
+            $this->todoId = intval($todoId);
+    
+            $this->_todos = array_filter($this->_todos, function($oldTodo){ 
+                if($oldTodo['id'] !== $this->todoId){ 
+                    return $oldTodo; 
+                } 
+            });
+    
+            $this->_todos = array_splice($this->_todos, 0);
+    
+            return $this->writeJSON('todos');
         }
-
-        $this->todoId = intval($todoId);
-
-        $this->_todos = array_filter($this->_todos, function($oldTodo){ 
-            if($oldTodo['id'] !== $this->todoId){ 
-                return $oldTodo; 
-            } 
-        });
-
-        $this->_todos = array_splice($this->_todos, 0);
-
-        return $this->writeJSON('todos');
     }
 
     public function getTodos(){
