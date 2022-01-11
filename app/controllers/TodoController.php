@@ -65,28 +65,32 @@ class TodoController extends ApplicationController {
             die();
         };
 
-        if(!isset($_SESSION['loggedUser']) || $todo['createdBy'] !== $_SESSION['loggedUser']['id']){
+        $isValidUser = (isset($_SESSION['loggedUser']) && $todo['createdBy'] === $_SESSION['loggedUser']['id']);
+        $isValidTempUser = (isset($_SESSION['tempUser']) && in_array($todo['id'], $_SESSION['tempUser']));
+
+        if($isValidUser || $isValidTempUser){
+
+            if(count($_POST) === 2){
+    
+                $validStatuses = ['Pending', 'In Process', 'Completed'];
+                $newTitle = trim($_POST['title']);
+                $newStatus = $_POST['status'];
+    
+                if(!strlen($newTitle)){
+                    $_SESSION['todoError'] = 'The Todo can not be empty!';
+                } else if (!in_array($newStatus, $validStatuses)) {
+                    $_SESSION['todoError'] = 'The Todo status is incorrect!';
+                } else {
+                    $todo = $this->todoDB->modifyTodo($todo, $newTitle, $newStatus);
+                }
+    
+            }
+    
+            $this->view->todo = $todo;
+        } else {
             header('Location: ' . WEB_ROOT);
             die();
         }
-
-        if(count($_POST) === 2){
-
-            $validStatus = ['Pending', 'In Process', 'Completed'];
-            $newTitle = trim($_POST['title']);
-            $newStatus = $_POST['status'];
-
-            if(!strlen($newTitle)){
-                $_SESSION['todoError'] = 'The Todo can not be empty!';
-            } else if (!in_array($newStatus, $validStatus)) {
-                $_SESSION['todoError'] = 'The Todo status is incorrect!';
-            } else {
-                $todo = $this->todoDB->modifyTodo($todo, $newTitle, $newStatus);
-            }
-
-        }
-
-        $this->view->todo = $todo;
 
     }
 
