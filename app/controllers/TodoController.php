@@ -6,6 +6,10 @@ class TodoController extends ApplicationController {
         parent::__construct();
         $this->todoDB = new TodoModel();
 
+        if(!isset($_SESSION['tempUser'])){
+            unset($_SESSION['allowAssign']);
+        }
+
         $this->loadModal();
     }
 
@@ -148,13 +152,14 @@ class TodoController extends ApplicationController {
 
         $this->view->disableView();
 
-        // Assigning the todos only if the referer is the register page
-        if(isset($_SERVER['HTTP_REFERER']) && substr($_SERVER['HTTP_REFERER'], -13, 13) === 'auth/register'){
+        if(isset($_SESSION['allowAssign']) && $_SESSION['allowAssign'] === true){
             $newUserData = $this->todoDB->assignTodos();
             $this->sumTodo($newUserData[0], $newUserData[1]);
+            
+            unset($_SESSION['tempUser']);
+            unset($_SESSION['allowAssign']);
+            $_SESSION['assignedSuccess'] = true; 
         }
-
-        unset($_SESSION['tempUser']);
 
         header('Location: ' . WEB_ROOT);
         die();
@@ -179,13 +184,27 @@ class TodoController extends ApplicationController {
 
             $this->formData = "
             <form action=" . WEB_ROOT . '/todo/delete/' . $todo['id'] . " method='POST'>
-            <p>Are you sure you want to delete <strong> " . $todo['title'] . "</strong>?</p>
-            <p>You created this Todo on <strong> " . $formatedDate . "</strong></p><br>
-            <button type='submit' name='deleteTodoId' value=" . $todo['id'] . " >Delete</button>
+                <p>Are you sure you want to delete <strong> " . $todo['title'] . "</strong>?</p>
+                <p>You created this Todo on <strong> " . $formatedDate . "</strong></p><br>
+                <button type='submit' name='deleteTodoId' value=" . $todo['id'] . " >Delete</button>
+                <button type='button'>Cancel</button>
             </form>";
             
             $this->afterFilters('view', 'modalContent', $this->formData);
             
+        } else if(isset($_GET['assign'])) {
+
+            $_SESSION['allowAssign'] = true;
+
+            $this->formData = "
+            <form action=" . WEB_ROOT . '/todo/assign' . ">
+                <p>You created <strong>". count($_SESSION['tempUser']) . "</strong> todo while you were not authenticated. Would you like to add them to this account?</p>
+                <p>If you want to do it later, you will find a link in the menu to assign them to your account.</p>
+                <button type='submit'>Yes</button>
+                <button type='button'>No</button>
+            </form>";
+            
+            $this->afterFilters('view', 'modalContent', $this->formData);
         }
     }
 

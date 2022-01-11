@@ -26,7 +26,7 @@ class AuthController extends ApplicationController{
                 $_SESSION['isLoggedIn'] = true;
                 $_SESSION['loggedUser'] = $this->userDB->getLoggedUser();
 
-                header('Location: ' . WEB_ROOT);
+                (isset($_SESSION['tempUser'])) ? header('Location: ' . WEB_ROOT . '?assign') : header('Location: ' . WEB_ROOT);
                 die();
             } else {
                 $this->view->loginError = 'Invalid Email or password';
@@ -74,6 +74,7 @@ class AuthController extends ApplicationController{
 
             if($result){
                 $_SESSION['isLoggedIn'] = true;
+                $_SESSION['allowAssign'] = true;
                 $_SESSION['loggedUser'] = $this->userDB->getLoggedUser();
 
                 $this->view->accountCreated = true;
