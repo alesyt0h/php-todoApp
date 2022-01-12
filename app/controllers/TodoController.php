@@ -159,7 +159,7 @@ class TodoController extends ApplicationController {
 
         if(isset($_SESSION['allowAssign']) && $_SESSION['allowAssign'] === true){
             $newUserData = $this->todoDB->assignTodos();
-            $this->sumTodo($newUserData[0], $newUserData[1]);
+            $this->sumTodo($newUserData['userId'], $newUserData['todosCount']);
             
             unset($_SESSION['tempUser']);
             unset($_SESSION['allowAssign']);
