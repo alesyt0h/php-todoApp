@@ -10,15 +10,15 @@ class ApplicationController extends Controller {
 		$this->userDB = new UserModel();
 	}
 
-	public function isTempUser(){
+	protected function isTempUser(){
 		return (isset($_SESSION['tempUser'])) ? true : false;
 	}
 
-	public function isUser(){
+	protected function isUser(){
 		return (isset($_SESSION['loggedUser'])) ? true : false;
 	}
 
-	public function sumTodo(string $userId, int $count = 1){
+	protected function sumTodo(string $userId, int $count = 1){
 
 		$email = $_SESSION['loggedUser']['email'];
         $pass = $_SESSION['loggedUser']['password'];
@@ -32,7 +32,7 @@ class ApplicationController extends Controller {
 	 * @param string $uri must start with slash. Eg. '/todo/list'
 	 * @return void
 	 */
-	public function redirect(string $uri = ''){
+	protected function redirect(string $uri = ''){
 		header('Location: ' . WEB_ROOT . $uri);
         die();
 	}
