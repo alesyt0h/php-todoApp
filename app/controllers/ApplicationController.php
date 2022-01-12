@@ -37,6 +37,11 @@ class ApplicationController extends Controller {
         die();
 	}
 
+	protected function selfRedirect(){
+		header('Location: ' . WEB_ROOT . substr($_SERVER['REQUEST_URI'], strlen(WEB_ROOT)));
+		die();
+	}
+
 }
 
 ?>

@@ -80,9 +80,10 @@ class TodoController extends ApplicationController {
                     $_SESSION['todoError'] = 'The Todo status is incorrect!';
                 } else {
                     $todo = $this->todoDB->modifyTodo($todo, $newTitle, $newStatus);
+                    $this->selfRedirect();
                 }
             }
-    
+            
             $this->view->todo = $todo;
         } else {
             $this->redirect();
@@ -114,6 +115,7 @@ class TodoController extends ApplicationController {
             }
 
             $_SESSION['newTodoTemp'] = $newTodo;
+            $this->selfRedirect();
         } else {
             $_SESSION['todoError'] = 'Error creating the todo, please try again';
         }
