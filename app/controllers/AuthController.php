@@ -8,7 +8,7 @@ class AuthController extends ApplicationController{
 
     public function loginAction(){
 
-        $this->isLoggedIn();
+        if($this->isUser()) $this->redirect();
 
         if(isset($_POST['username']) && isset($_POST['password'])){
 
@@ -23,11 +23,9 @@ class AuthController extends ApplicationController{
             $loginResult = $this->userDB->checkCredentials($user, $pass);
 
             if($loginResult){
-                $_SESSION['isLoggedIn'] = true;
                 $_SESSION['loggedUser'] = $this->userDB->getLoggedUser();
 
-                (isset($_SESSION['tempUser'])) ? header('Location: ' . WEB_ROOT . '?assign') : header('Location: ' . WEB_ROOT);
-                die();
+                ($this->isTempUser()) ? $this->redirect('?assign') : $this->redirect();
             } else {
                 $this->view->loginError = 'Invalid Email or password';
                 header('HTTP/1.0 403 Forbidden');
@@ -39,7 +37,7 @@ class AuthController extends ApplicationController{
 
     public function registerAction(){
         
-        $this->isLoggedIn();
+        if($this->isUser()) $this->redirect();
         
         if(isset($_POST['username']) && isset($_POST['password']) && isset($_POST['email'])){
             
@@ -73,14 +71,11 @@ class AuthController extends ApplicationController{
             $result = $this->userDB->insertUser($user, $pass, $email);
 
             if($result){
-                $_SESSION['isLoggedIn'] = true;
                 $_SESSION['allowAssign'] = true;
                 $_SESSION['loggedUser'] = $this->userDB->getLoggedUser();
 
                 $this->view->accountCreated = true;
-
-                // (isset($_SESSION['tempUser'])) ? header('Location: ' . WEB_ROOT . '/todo/assign') : header('Location: ' . WEB_ROOT);
-                // die();
+                // Redirect to index when account is created, is being done by JavaScript on register.phtml
             } else {
                 $this->view->registerError = 'Unknown error. Please try again';
             }
@@ -94,11 +89,9 @@ class AuthController extends ApplicationController{
         $this->view->disableView();
 
         $this->userDB->purgeModelUser();
-        $_SESSION['isLoggedIn'] = false;
         unset($_SESSION['loggedUser']);
 
-        header('Location: ' . WEB_ROOT . '/auth');
-        die();
+        $this->redirect('/auth');
     }
 
 }

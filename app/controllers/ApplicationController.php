@@ -10,18 +10,12 @@ class ApplicationController extends Controller {
 		$this->userDB = new UserModel();
 	}
 
-	protected function isLoggedIn(){
+	public function isTempUser(){
+		return (isset($_SESSION['tempUser'])) ? true : false;
+	}
 
-		if($this->_action === 'logout'){
-			return false;
-		}
-
-		if(isset($_SESSION['isLoggedIn']) && $_SESSION['isLoggedIn'] === true){
-			header('Location: ' . WEB_ROOT);
-			die();
-		} else {
-			return false;
-		}
+	public function isUser(){
+		return (isset($_SESSION['loggedUser'])) ? true : false;
 	}
 
 	public function sumTodo(string $userId, int $count = 1){
@@ -32,6 +26,15 @@ class ApplicationController extends Controller {
 
 		$this->userDB->modifyUser($userId, $email, $pass, $avatar, $count);
 	
+	}
+
+	/**
+	 * @param string $uri must start with slash. Eg. '/todo/list'
+	 * @return void
+	 */
+	public function redirect(string $uri = ''){
+		header('Location: ' . WEB_ROOT . $uri);
+        die();
 	}
 
 }

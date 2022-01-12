@@ -6,7 +6,7 @@ class TodoController extends ApplicationController {
         parent::__construct();
         $this->todoDB = new TodoModel();
 
-        if(!isset($_SESSION['tempUser'])){
+        if(!$this->isTempUser()){
             unset($_SESSION['allowAssign']);
         }
 
@@ -15,7 +15,7 @@ class TodoController extends ApplicationController {
 
     public function listAction(){
 
-        if(isset($_SESSION['loggedUser'])){
+        if($this->isUser()){
 
             $this->userId = $_SESSION['loggedUser']['id'];
 
@@ -29,7 +29,7 @@ class TodoController extends ApplicationController {
 
             $userTodos = array_splice($userTodos, 0);
             
-        } else if(isset($_SESSION['tempUser'])) {
+        } else if($this->isTempUser()) {
 
             $userTodos = array_filter($this->todoDB->getTodos(), function($todo){ 
                 if(in_array($todo['id'], $_SESSION['tempUser'])){ 
@@ -54,19 +54,17 @@ class TodoController extends ApplicationController {
         $todoId = $uri[count($uri) - 1];
 
         if(!is_numeric($todoId)){
-            header('Location: ' . WEB_ROOT . '/todo/list');
-            die();
+            $this->redirect('/todo/list');
         }
         
         $todo = $this->todoDB->getTodoById($todoId);
 
         if(count($todo) === 0){
-            header('Location: ' . WEB_ROOT . '/todo/list');
-            die();
+            $this->redirect('/todo/list');
         };
 
-        $isValidUser = (isset($_SESSION['loggedUser']) && $todo['createdBy'] === $_SESSION['loggedUser']['id']);
-        $isValidTempUser = (isset($_SESSION['tempUser']) && in_array($todo['id'], $_SESSION['tempUser']));
+        $isValidUser = ($this->isUser() && $todo['createdBy'] === $_SESSION['loggedUser']['id']);
+        $isValidTempUser = ($this->isTempUser() && in_array($todo['id'], $_SESSION['tempUser']));
 
         if($isValidUser || $isValidTempUser){
 
@@ -83,48 +81,41 @@ class TodoController extends ApplicationController {
                 } else {
                     $todo = $this->todoDB->modifyTodo($todo, $newTitle, $newStatus);
                 }
-    
             }
     
             $this->view->todo = $todo;
         } else {
-            header('Location: ' . WEB_ROOT);
-            die();
+            $this->redirect();
         }
 
     }
 
     public function newAction(){
         
-        if(isset($_POST['newTodo'])){
+        if(!isset($_POST['newTodo'])) return false;
 
-            $newTodo = trim($_POST['newTodo']);
+        $newTodo = trim($_POST['newTodo']);
 
-            if(!strlen($newTodo)){
-                $_SESSION['todoError'] = 'The todo cannot be empty';
-                return;
-            }
+        if(!strlen($newTodo)){
+            $_SESSION['todoError'] = 'The todo cannot be empty';
+            return;
+        }
 
-            $result = $this->todoDB->createTodo($newTodo);
+        $result = $this->todoDB->createTodo($newTodo);
 
-            if($result){
+        if($result){
 
-                if(!isset($_SESSION['loggedUser'])){
-                    $_SESSION['todoMsg'] = "You created a todo, but you don't have an account! 
-                    TODO's created without account are deleted in 24h. 
-                    <a href=" . WEB_ROOT . "/auth/register" . ">Register now to keep your TODO for ever!</a>";
-                } else {
-                    $this->sumTodo($_SESSION['loggedUser']['id']);
-                }
-
-                $_SESSION['newTodoTemp'] = $newTodo;
-                
-                header('Location: ' . WEB_ROOT . substr($_SERVER['REQUEST_URI'], strlen(WEB_ROOT)));
-                die();
+            if(!$this->isUser()){
+                $_SESSION['todoMsg'] = "You created a todo, but you don't have an account! 
+                TODO's created without account are deleted in 24h. 
+                <a href=" . WEB_ROOT . "/auth/register" . ">Register now to keep your TODO for ever!</a>";
             } else {
-                $_SESSION['todoError'] = 'Error creating the todo, please try again';
+                $this->sumTodo($_SESSION['loggedUser']['id']);
             }
 
+            $_SESSION['newTodoTemp'] = $newTodo;
+        } else {
+            $_SESSION['todoError'] = 'Error creating the todo, please try again';
         }
     }
 
@@ -166,8 +157,7 @@ class TodoController extends ApplicationController {
             $_SESSION['assignedSuccess'] = true; 
         }
 
-        header('Location: ' . WEB_ROOT);
-        die();
+        $this->redirect();
     }
 
     public function loadModal(){

@@ -91,6 +91,7 @@ class TodoModel extends Model {
             if($isValidTempUser){
                 $key = array_search($todoId, $_SESSION['tempUser']);
                 unset($_SESSION['tempUser'][$key]);
+                $_SESSION['tempUser'] = array_splice($_SESSION['tempUser'], 0);
             }
     
             return $this->writeJSON('todos');

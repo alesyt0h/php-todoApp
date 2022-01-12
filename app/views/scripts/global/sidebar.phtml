@@ -5,7 +5,7 @@
         <li><a href="<?php echo WEB_ROOT . '/todo/list'; ?>">List todo</a></li>
         <li><a href="<?php echo WEB_ROOT . '/todo/edit'; ?>">Edit todo</a></li>
         <?php echo (isset($_SESSION['allowAssign']) && $_SESSION['allowAssign'] === true &&
-                    isset($_SESSION['isLoggedIn']) && $_SESSION['isLoggedIn'] === true) ? "<li><a href=" . WEB_ROOT . '/todo/assign' . ">Assign todos</a></li>" : '' ?>
+                    isset($_SESSION['loggedUser'])) ? "<li><a href=" . WEB_ROOT . '/todo/assign' . ">Assign todos</a></li>" : '' ?>
         <!-- <?php var_dump($_SESSION['tempUser']); ?> -->
     </ol>
 </aside>
