@@ -124,11 +124,7 @@ class TodoController extends ApplicationController {
         $this->view->disableView();
 
         if(!isset($_POST['deleteTodoId'])){
-            if($_SERVER['HTTP_REFERER']){
-                header('Location: ' . $_SERVER['HTTP_REFERER']);
-            } else {
-                header('Location: ' . WEB_ROOT);
-            }
+            header('Location: ' . $_SERVER['HTTP_REFERER'] ?? WEB_ROOT);
             die();
         }
 
@@ -189,7 +185,7 @@ class TodoController extends ApplicationController {
             
         } else if(isset($_GET['assign'])) {
 
-            $_SESSION['allowAssign'] = true;
+            if(!$_SESSION['allowAssign']) $this->redirect();
 
             $this->formData = "
             <form action=" . WEB_ROOT . '/todo/assign' . ">

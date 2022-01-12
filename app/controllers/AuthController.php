@@ -24,6 +24,7 @@ class AuthController extends ApplicationController{
 
             if($loginResult){
                 $_SESSION['loggedUser'] = $this->userDB->getLoggedUser();
+                $_SESSION['allowAssign'] = true;
 
                 ($this->isTempUser()) ? $this->redirect('?assign') : $this->redirect();
             } else {
