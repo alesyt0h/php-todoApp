@@ -129,10 +129,24 @@ class TodoController extends ApplicationController {
         }
 
         $todoId = $_POST['deleteTodoId'];
-        $result = $this->todoDB->deleteTodo($todoId);
+        $todo = $this->todoDB->getTodoById($todoId);
 
-        if(!$result){
-            $_SESSION['deleteError'] = 'Error borrando el todo!';
+        $isValidUser = ($this->isUser() && $todo['createdBy'] === $_SESSION['loggedUser']['id']);
+        $isValidTempUser = ($this->isTempUser() && in_array($todo['id'], $_SESSION['tempUser']));
+
+        if($isValidUser || $isValidTempUser) {
+
+            $result = $this->todoDB->deleteTodo($todoId);
+
+            if(!$result){
+                $_SESSION['deleteError'] = 'Error borrando el todo!';
+            }
+
+            if($isValidTempUser && $result){
+                $key = array_search($todoId, $_SESSION['tempUser']);
+                unset($_SESSION['tempUser'][$key]);
+                $_SESSION['tempUser'] = array_splice($_SESSION['tempUser'], 0);
+            }
         }
 
         $location = preg_replace('/\?(.*)/','', $_SERVER['HTTP_REFERER']);
