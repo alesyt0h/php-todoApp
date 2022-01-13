@@ -75,11 +75,12 @@ class TodoController extends ApplicationController {
                 $newStatus = $_POST['status'];
     
                 if(!strlen($newTitle)){
-                    $_SESSION['todoError'] = 'The Todo can not be empty!';
+                    $this->appMsg('error', 'The Todo can not be empty!');
                 } else if (!in_array($newStatus, $validStatuses)) {
-                    $_SESSION['todoError'] = 'The Todo status is incorrect!';
+                    $this->appMsg('error', 'The Todo status is incorrect!');
                 } else {
                     $todo = $this->todoDB->modifyTodo($todo, $newTitle, $newStatus);
+                    $this->appMsg('success', 'The Todo was updated correctly');
                     $this->selfRedirect();
                 }
             }
@@ -98,7 +99,7 @@ class TodoController extends ApplicationController {
         $newTodo = trim($_POST['newTodo']);
 
         if(!strlen($newTodo)){
-            $_SESSION['todoError'] = 'The todo cannot be empty';
+            $this->appMsg('error', 'The todo cannot be empty');
             return;
         }
 
@@ -107,17 +108,17 @@ class TodoController extends ApplicationController {
         if($result){
 
             if(!$this->isUser()){
-                $_SESSION['todoMsg'] = "You created a todo, but you don't have an account! 
-                TODO's created without account are deleted in 24h. 
-                <a href=" . WEB_ROOT . "/auth/register" . ">Register now to keep your TODO for ever!</a>";
+                $this->appMsg('info', 'You created a todo, but you don\'t have an account! 
+                                       TODO\'s created without account are deleted in 24h. 
+                                       <a href=" . WEB_ROOT . "/auth/register" . ">Register now</a> to keep your TODO\'s for ever!');
             } else {
                 $this->sumTodo($_SESSION['loggedUser']['id']);
             }
 
-            $_SESSION['newTodoTemp'] = $newTodo;
+            $this->appMsg('success', 'You created the todo: ' . $newTodo);
             $this->selfRedirect();
         } else {
-            $_SESSION['todoError'] = 'Error creating the todo, please try again';
+            $this->appMsg('error', 'Error creating the todo, please try again');
         }
     }
 
@@ -141,7 +142,7 @@ class TodoController extends ApplicationController {
             $result = $this->todoDB->deleteTodo($todoId);
 
             if(!$result){
-                $_SESSION['deleteError'] = 'Error borrando el todo!';
+                $this->appMsg('error', 'Error deleting the todo');
             }
 
             if($isValidTempUser && $result){

@@ -54,6 +54,21 @@ td {
     justify-content: center;
 }
 
+.error-msg {
+    background: rgb(179, 33, 33);
+    text-align: center;
+}
+
+.info-msg {
+    background: rgb(74, 141, 141);
+    text-align: center;
+}
+
+.success-msg {
+    background: rgb(58, 151, 58);
+    text-align: center;    
+}
+
 .modal {
     align-items: center;
     background: #0000006b;

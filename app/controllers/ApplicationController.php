@@ -42,6 +42,15 @@ class ApplicationController extends Controller {
 		die();
 	}
 
+	/**
+	 * @param string success|error|info the type of the msg. Valid values are only: error, info, success
+	 * @param string $message the message to display
+	 */
+	protected function appMsg(string $type, string $message){
+		$div = "<div class='${type}-msg'>${message}</div>";
+		$_SESSION[$type] = $div;
+	}
+
 }
 
 ?>

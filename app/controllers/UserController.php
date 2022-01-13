@@ -20,7 +20,7 @@ class UserController extends ApplicationController{
             $avatarUrl = $this->avatarProcedure();
             
             $result = $this->userDB->modifyUser($userId, $email, $password, $avatarUrl);
-
+            
             if($result['status']){
 
                 ($result['equals']) ? null : $_SESSION['successMsg'] = 'Profile updated!';

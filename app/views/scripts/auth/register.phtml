@@ -1,5 +1,8 @@
 <form method="POST">
-    <div class="error-msg" style="background: red"><?php echo $this->registerError ?></div>
+    <?php 
+        echo $_SESSION['error'] ?? ''; 
+        unset($_SESSION['error']); 
+    ?>
     <label for="username">Username:</label>
     <input type="text" minlength="3" name="username" required> <br>
 
@@ -16,10 +19,12 @@
 <script type="text/javascript">
     const created = <?php echo json_encode($this->accountCreated);?>;
     const tempUser = <?php echo json_encode(isset($_SESSION['tempUser']));?>;
+    const successMsg = <?php echo json_encode($_SESSION['success'] ?? '');?>;
+    <?php unset($_SESSION['success']); ?>
 
     if(created){
         const form = document.querySelector('form');
-        form.innerHTML = '<div class="error-msg" style="background: green">Account created! You will be redirected in few seconds</div>';
+        form.innerHTML = successMsg;
 
         setTimeout(() => {
             if(tempUser){
