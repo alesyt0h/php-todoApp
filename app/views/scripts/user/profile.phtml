@@ -1,10 +1,14 @@
 <form method="POST">
     <div class="card" style="padding: 10px; background: white; border-radius: 10px; float: left">
-        <img src="<?php echo (strlen($this->user['avatarUrl'])) ? $this->user['avatarUrl'] : WEB_ROOT . '/img/no-avatar.png'; ?>" alt="" width="150">
+        <img src="<?php echo $this->user['avatarUrl'] ?? WEB_ROOT . '/img/no-avatar.png'; ?>" alt="" width="150">
     </div>
     <div style="display: inline-block; margin-top: 10px ; margin-left: 30px">
-        <div class="error-msg" style="background: olive"><?php echo (isset($_SESSION['successMsg'])) ? $_SESSION['successMsg'] : null; unset($_SESSION['successMsg']); ?></div>
-        <div class="error-msg" style="background: red"><?php echo (isset($_SESSION['modifyMsg'])) ? $_SESSION['modifyMsg'] : null; unset($_SESSION['modifyMsg']); ?></div>
+        <?php
+            echo $_SESSION['success'] ?? '';
+            echo $_SESSION['error'] ?? '';
+
+            unset($_SESSION['success'], $_SESSION['error']);
+        ?>
         <label for="username">Username: </label>
         <input type="text" value="<?php echo $this->user['username']; ?>" disabled>
         <br>
@@ -20,7 +24,7 @@
         <input type="text" name="email" value="<?php echo $this->user['email']; ?>">
         <br>
         <label for="avatar">Avatar URL: </label>
-        <input type="text" name="avatarUrl" value="<?php echo (strlen($this->user['avatarUrl'])) ? $this->user['avatarUrl'] : ''; ?>" placeholder="Avatar URL">
+        <input type="text" name="avatarUrl" value="<?php echo $this->user['avatarUrl'] ?? ''; ?>" placeholder="Avatar URL">
         <br>
         <label for="createdTodos">Created Todos: <?php echo $this->user['createdTodos']; ?></label>
         <br>

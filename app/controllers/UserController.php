@@ -2,8 +2,14 @@
 
 class UserController extends ApplicationController{
 
+    private bool $isError;
+    private string $errMsg;
+
     public function __construct(){
         parent::__construct();
+
+        $this->isError = false;
+        $this->errMsg = '';
     }
 
     public function profileAction(){
@@ -19,11 +25,16 @@ class UserController extends ApplicationController{
             $password = $this->passwordProcedure();
             $avatarUrl = $this->avatarProcedure();
             
+            if($this->isError){
+                $this->appMsg('error', $this->errMsg);
+                $this->redirect('/user/profile');
+            }
+            
             $result = $this->userDB->modifyUser($userId, $email, $password, $avatarUrl);
             
             if($result['status']){
 
-                ($result['equals']) ? null : $_SESSION['successMsg'] = 'Profile updated!';
+                ($result['equals']) ? null : $this->appMsg('success','Profile updated!');
 
                 $this->redirect('/user/profile');
             }
@@ -42,20 +53,23 @@ class UserController extends ApplicationController{
         }
         
         if(!strlen(trim($newMail))){
-            $_SESSION['modifyMsg'] .= 'Email can not be empty!<br>';
-            return $currentMail;
+            $this->isError = true;
+            $this->errMsg .= 'Email can not be empty!<br>';
+            return;
         }
 
         if(!preg_match($emailPattern, $newMail)){
-            $_SESSION['modifyMsg'] .= 'Please introduce a valid email';
-            return $currentMail;
+            $this->isError = true;
+            $this->errMsg .= 'Please introduce a valid email<br>';
+            return;
         }
 
         $mailExists = $this->userDB->mailExists($newMail);
 
         if($mailExists){
-            $_SESSION['modifyMsg'] .= 'Email already exists, choose another<br>';
-            return $currentMail;
+            $this->isError = true;
+            $this->errMsg .= 'Email already exists, choose another<br>';
+            return;
         } else {
             return $newMail;
         }
@@ -75,18 +89,21 @@ class UserController extends ApplicationController{
         }
 
         if(strlen($newPassword) < 6){
-            $_SESSION['modifyMsg'] .= 'Password must have at least 6 characters!';
-            return $currentPassword;
+            $this->isError = true;
+            $this->errMsg .= 'Password must have at least 6 characters!<br>';
+            return;
         }
 
         if(!password_verify($formPassword, $currentPassword)){
-            $_SESSION['modifyMsg'] .= 'Current password is incorrect<br>';
-            return $currentPassword;
+            $this->isError = true;
+            $this->errMsg .= 'Current password is incorrect<br>';
+            return;
         }
 
         if($newPassword !== $confirmPassword || !strlen(trim($newPassword))){
-            $_SESSION['modifyMsg'] .= 'New password don\'t match';
-            return $currentPassword;
+            $this->isError = true;
+            $this->errMsg .= 'New password don\'t match<br>';
+            return;
         }
 
         return password_hash($newPassword, PASSWORD_DEFAULT);
@@ -95,7 +112,6 @@ class UserController extends ApplicationController{
 
     public function avatarProcedure(){
 
-        $currentAvatar = $_SESSION['loggedUser']['avatarUrl'];
         $newAvatar = $_POST['avatarUrl'];
 
         if(!strlen(trim($newAvatar))){
@@ -103,8 +119,9 @@ class UserController extends ApplicationController{
         }
 
         if(!preg_match('/(https?:\/\/|www\.)/', $newAvatar)){
-            $_SESSION['modifyMsg'] .= 'Avatar URL is not a valid URL!<br>';
-            return $currentAvatar;
+            $this->isError = true;
+            $this->errMsg .= 'Avatar URL is not a valid URL!<br>';
+            return;
         }
 
         // ! Requires openSSL - extension=php_openssl.dll
@@ -113,8 +130,9 @@ class UserController extends ApplicationController{
 
         if(extension_loaded('openssl')){
             if(!$result){
-                $_SESSION['modifyMsg'] .= 'The Avatar URL you entered is not a valid image!<br>';
-                return $currentAvatar;
+                $this->isError = true;
+                $this->errMsg .= 'The Avatar URL you entered is not a valid image!<br>';
+                return;
             }
         }
 
