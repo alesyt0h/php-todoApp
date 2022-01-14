@@ -1,11 +1,14 @@
+<?php 
+    $assignEnabled = isset($_SESSION['allowAssign']) && $_SESSION['allowAssign'] === true;
+    $isUser = isset($_SESSION['loggedUser']);
+    $fromRegister = preg_match('/register/', $_SERVER['HTTP_REFERER'] ?? '')
+?>
 <aside>
     <ol>
         <li><a href="<?php echo WEB_ROOT; ?>">Root</a></li>
         <li><a href="<?php echo WEB_ROOT . '/todo/new'; ?>">New todo</a></li>
         <li><a href="<?php echo WEB_ROOT . '/todo/list'; ?>">List todo</a></li>
         <li><a href="<?php echo WEB_ROOT . '/todo/edit'; ?>">Edit todo</a></li>
-        <?php echo (isset($_SESSION['allowAssign']) && $_SESSION['allowAssign'] === true &&
-                    isset($_SESSION['isLoggedIn']) && $_SESSION['isLoggedIn'] === true) ? "<li><a href=" . WEB_ROOT . '/todo/assign' . ">Assign todos</a></li>" : '' ?>
-        <!-- <?php var_dump($_SESSION['tempUser']); ?> -->
+        <?php echo ($assignEnabled && $isUser && !$fromRegister) ? "<li><a href=" . WEB_ROOT . '/todo/assign' . ">Assign todos</a></li>" : '' ?>
     </ol>
 </aside>

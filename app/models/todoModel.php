@@ -45,7 +45,7 @@ class TodoModel extends Model {
 
         $this->writeJSON('todos');
         unset($_SESSION['tempUser']);
-        return [$userId, count($tempTodosId)];
+        return ["userId" => $userId, "todosCount" => count($tempTodosId)];
     }
 
     public function modifyTodo(array $todo, string $title, string $status){
@@ -72,29 +72,17 @@ class TodoModel extends Model {
 
     public function deleteTodo(string $todoId){
 
-        $todo = $this->findOneById($todoId, 'todos');
+        $this->todoId = intval($todoId);
 
-        $isValidUser = (isset($_SESSION['loggedUser']) && $todo['createdBy'] === $_SESSION['loggedUser']['id']);
-        $isValidTempUser = (isset($_SESSION['tempUser']) && in_array($todo['id'], $_SESSION['tempUser']));
+        $this->_todos = array_filter($this->_todos, function($oldTodo){ 
+            if($oldTodo['id'] !== $this->todoId){ 
+                return $oldTodo; 
+            } 
+        });
 
-        if($isValidUser || $isValidTempUser) {
-            $this->todoId = intval($todoId);
-    
-            $this->_todos = array_filter($this->_todos, function($oldTodo){ 
-                if($oldTodo['id'] !== $this->todoId){ 
-                    return $oldTodo; 
-                } 
-            });
-    
-            $this->_todos = array_splice($this->_todos, 0);
+        $this->_todos = array_splice($this->_todos, 0);
 
-            if($isValidTempUser){
-                $key = array_search($todoId, $_SESSION['tempUser']);
-                unset($_SESSION['tempUser'][$key]);
-            }
-    
-            return $this->writeJSON('todos');
-        }
+        return $this->writeJSON('todos');
     }
 
     public function getTodos(){

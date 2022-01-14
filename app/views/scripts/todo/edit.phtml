@@ -1,5 +1,9 @@
 <form method="POST">
-    <div class="error-msg" style="background: red"><?php echo (isset($_SESSION['todoError'])) ? $_SESSION['todoError'] : null; unset($_SESSION['todoError']); ?></div>
+    <?php
+        echo $_SESSION['error'] ?? '';
+        echo $_SESSION['success'] ?? '';
+        unset($_SESSION['error'], $_SESSION['success']);
+    ?>
     <input type="text" name="title" value="<?php echo $this->todo['title']?>" style="font-size: 2rem" autofocus>
     <button style="font-size: 2rem; color: grey">Save changes</button>
     <br>
@@ -12,7 +16,7 @@
 </form>
 
 <?php
-
+    // REVIEW
     var_dump($this->todo);
 
 ?>

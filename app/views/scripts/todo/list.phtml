@@ -1,6 +1,10 @@
-<div class="error-msg" style="background: red"><?php echo (isset($_SESSION['deleteError'])) ? $_SESSION['deleteError'] : null; unset($_SESSION['deleteError']); ?></div>
-<?php $reqFrom = (isset($_SERVER['REQUEST_URI'])) ? $_SERVER['REQUEST_URI'] : '';
-      $reqFrom = preg_match('/\/todo\/list/', $reqFrom); ?>
+<?php
+  echo $_SESSION['error'] ?? '';
+  unset($_SESSION['error']);
+  
+  $reqFrom = $_SERVER['REQUEST_URI'] ?? '';
+  $reqFrom = preg_match('/\/todo\/list/', $reqFrom); 
+?>
 <?php if( count( $this->userTodos ?? [] ) ){ ?>
   <table style="border: 1px solid black" <?php echo (!$reqFrom) ? "class='todo-table'" : ''; ?>>
     <caption>myTodos</caption>

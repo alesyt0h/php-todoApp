@@ -91,19 +91,10 @@ class UserModel extends Model {
     }
 
     public function getLastUserId(){
-
-        // * Previous method - keeping for reference
-        // $lastId = 0;
-
-        // for ($i=0; $i < count($this->_users); $i++) { 
-        //     if($lastId < $this->_users[$i]['id']){
-        //         $lastId = $this->_users[$i]['id'];
-        //     }
-        // }
         
         if(!count($this->_users)) return 1;
         
-        // Reverse lookup, since users aren't deleted, this should be faster and work the same way
+        // Reverse lookup, since users aren't deleted, this should be faster and efficient
         for ($i= count($this->_users) - 1; $i < count($this->_users); $i--) { 
             $lastId = $this->_users[$i]['id'];
             break;
