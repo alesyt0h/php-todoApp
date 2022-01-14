@@ -15,9 +15,12 @@ class AuthController extends ApplicationController{
             $user = strtolower(trim($_POST['username']));
             $pass = trim($_POST['password']);
 
-            if(strlen($user) < 3 || strlen($pass) < 6){
-                $this->appMsg('error', 'Incorrect length of user or password');
-                return;
+            $validation = new LoginSuperSet($user, $pass);
+            $validation = LoginSuperSet::$message;
+
+            if($validation){
+                $this->appMsg('error', $validation);
+                $this->redirect('/auth/login');
             }
             
             $loginResult = $this->userDB->checkCredentials($user, $pass);
@@ -29,7 +32,7 @@ class AuthController extends ApplicationController{
                 ($this->isTempUser()) ? $this->redirect('?assign') : $this->redirect();
             } else {
                 $this->appMsg('error', 'Invalid Email or password');
-                header('HTTP/1.0 403 Forbidden');
+                $this->redirect('/auth/login');
             }
 
         }
@@ -46,26 +49,12 @@ class AuthController extends ApplicationController{
             $pass = trim($_POST['password']);
             $email = trim($_POST['email']);
 
-            $emailPattern = '/^[a-z0-9._%+-]+@[a-z0-9.-]{2,}\\.[a-z]{2,4}$/';
+            $validation = new RegisterSuperSet($user, $pass, $email);
+            $validation = RegisterSuperSet::$message;
 
-            if(strlen($user) < 3 || strlen($pass) < 6){
-                $this->appMsg('error', 'Incorrect length of user or password');
-                return;
-            }
-
-            if(!preg_match($emailPattern, $email)){
-                $this->appMsg('error', 'Please introduce a valid email');
-                return;
-            }
-
-            if($this->userDB->userExists($user)){
-                $this->appMsg('error', 'This username is taken! Please choose another');
-                return;
-            }
-
-            if($this->userDB->mailExists($email)){
-                $this->appMsg('error', 'This email is already in use. Use another');
-                return;
+            if($validation){
+                $this->appMsg('error', $validation);
+                $this->redirect('/auth/register');
             }
 
             $pass = password_hash($pass, PASSWORD_DEFAULT);

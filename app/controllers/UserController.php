@@ -2,14 +2,8 @@
 
 class UserController extends ApplicationController{
 
-    private bool $isError;
-    private string $errMsg;
-
     public function __construct(){
-        parent::__construct();
-
-        $this->isError = false;
-        $this->errMsg = '';
+        $this->userDB = new UserModel();
     }
 
     public function profileAction(){
@@ -21,12 +15,15 @@ class UserController extends ApplicationController{
         if(count($_POST) > 0){
             
             $userId = $_SESSION['loggedUser']['id'];
+
+            $this->validation = new Validations(new EmptyRuleSet());
+
             $email = $this->emailProcedure();
             $password = $this->passwordProcedure();
             $avatarUrl = $this->avatarProcedure();
             
-            if($this->isError){
-                $this->appMsg('error', $this->errMsg);
+            if($this->validation::$message){
+                $this->appMsg('error', $this->validation::$message);
                 $this->redirect('/user/profile');
             }
             
@@ -35,109 +32,57 @@ class UserController extends ApplicationController{
             if($result['status']){
 
                 ($result['equals']) ? null : $this->appMsg('success','Profile updated!');
-
+                
                 $this->redirect('/user/profile');
             }
         }
-
     }
-
-    public function emailProcedure(){
-
-        $currentMail = $_SESSION['loggedUser']['email'];
-        $newMail = $_POST['email'];
-        $emailPattern = '/^[a-z0-9._%+-]+@[a-z0-9.-]{2,}\\.[a-z]{2,4}$/';
-
-        if($newMail === $currentMail){
-            return $currentMail;
-        }
-        
-        if(!strlen(trim($newMail))){
-            $this->isError = true;
-            $this->errMsg .= 'Email can not be empty!<br>';
-            return;
-        }
-
-        if(!preg_match($emailPattern, $newMail)){
-            $this->isError = true;
-            $this->errMsg .= 'Please introduce a valid email<br>';
-            return;
-        }
-
-        $mailExists = $this->userDB->mailExists($newMail);
-
-        if($mailExists){
-            $this->isError = true;
-            $this->errMsg .= 'Email already exists, choose another<br>';
-            return;
-        } else {
-            return $newMail;
-        }
-
-    }
-
+    
     public function passwordProcedure(){
 
         $currentPassword = $_SESSION['loggedUser']['password'];
         
-        $formPassword = $_POST['password'];
-        $newPassword = $_POST['newPassword'];
-        $confirmPassword = $_POST['confirmPassword'];
+        $formPassword = trim($_POST['password']);
+        $newPassword = trim($_POST['newPassword']);
+        $confirmPassword = trim($_POST['confirmPassword']);
 
-        if(!strlen(trim($formPassword))){
+        if(!$formPassword){
             return $currentPassword;
         }
 
-        if(strlen($newPassword) < 6){
-            $this->isError = true;
-            $this->errMsg .= 'Password must have at least 6 characters!<br>';
-            return;
-        }
-
-        if(!password_verify($formPassword, $currentPassword)){
-            $this->isError = true;
-            $this->errMsg .= 'Current password is incorrect<br>';
-            return;
-        }
-
-        if($newPassword !== $confirmPassword || !strlen(trim($newPassword))){
-            $this->isError = true;
-            $this->errMsg .= 'New password don\'t match<br>';
-            return;
-        }
+        $this->validation->setValidator(new PasswordValidation($formPassword, $currentPassword, $newPassword, $confirmPassword));
+        $this->validation->performValidation();
 
         return password_hash($newPassword, PASSWORD_DEFAULT);
+    }
 
+    public function emailProcedure(){
+        
+        $currentMail = $_SESSION['loggedUser']['email'];
+        $newMail = trim($_POST['email']);
+        
+        if($newMail === $currentMail){
+            return $currentMail;
+        }
+        
+        $this->validation->setValidator(new EmailValidation($newMail));
+        $this->validation->performValidation();
+
+        return $newMail;
     }
 
     public function avatarProcedure(){
 
-        $newAvatar = $_POST['avatarUrl'];
+        $newAvatar = trim($_POST['avatarUrl']);
 
-        if(!strlen(trim($newAvatar))){
+        if(!$newAvatar){
             return null;
         }
 
-        if(!preg_match('/(https?:\/\/|www\.)/', $newAvatar)){
-            $this->isError = true;
-            $this->errMsg .= 'Avatar URL is not a valid URL!<br>';
-            return;
-        }
-
-        // ! Requires openSSL - extension=php_openssl.dll
-        $result = @getimagesize($newAvatar);
-        $result = ($result && strtolower(substr($result['mime'], 0, 5)) == 'image' ? true : false);
-
-        if(extension_loaded('openssl')){
-            if(!$result){
-                $this->isError = true;
-                $this->errMsg .= 'The Avatar URL you entered is not a valid image!<br>';
-                return;
-            }
-        }
+        $this->validation->setValidator(new AvatarValidation($newAvatar));
+        $this->validation->performValidation();
 
         return $newAvatar;
-
     }
 
 }
