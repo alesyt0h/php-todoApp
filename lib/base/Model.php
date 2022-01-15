@@ -40,7 +40,13 @@ class Model {
             throw new Exception('JSON File (' . $file . ') doesn\'t exist in db folder!');
         }
 
-        $jsonRaw = file_get_contents($this->dbDir . $file);
+        $jsonRaw = @file_get_contents($this->dbDir . $file);
+
+        if($jsonRaw === false){
+            $err = error_get_last();
+            throw new Exception($err['message']);
+        }
+
         $this->_jsonData = json_decode($jsonRaw, true);
     }
 
@@ -57,7 +63,14 @@ class Model {
 
         $rawData = json_encode($this->$db, JSON_PRETTY_PRINT);
 
-        return file_put_contents($this->dbDir . substr($db, 1) . '.json', $rawData);
+        $result = @file_put_contents($this->dbDir . substr($db, 1) . '.json', $rawData);
+
+        if($result === false){
+            $err = error_get_last();
+            throw new Exception($err['message']);
+        }
+
+        return $result;
     }
 
     /**
