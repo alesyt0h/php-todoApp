@@ -100,7 +100,7 @@ class TodoController extends ApplicationController {
 
         if(!strlen($newTodo)){
             $this->appMsg('error', 'The todo cannot be empty');
-            return;
+            $this->selfRedirect();
         }
 
         $result = $this->todoDB->createTodo($newTodo);
