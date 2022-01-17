@@ -5,13 +5,24 @@
     ?>
 
     <div class="max-w-md w-full space-y-8">
-
+        <div>
+            <div class="wrapper-logo rounded-full">
+                <svg class="logo-checkmark z-20 h-20 w-14" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 52 52" >
+                    <circle class="logo-checkmark__circle" cx="26" cy="26" r="25" fill="none" />
+                    <path class="logo-checkmark__check" fill="none" d="M14.1 27.2l7.1 7.2 16.7-16.8" />
+                </svg>
+            </div>
+            <h2 class="mt-2 text-center text-3xl font-extrabold text-gray-900">Sign in to your account</h2>
+            <p class="mt-2 text-center text-sm text-gray-600">
+                Or <a href="<?php echo WEB_ROOT . '/auth/register'; ?>" class="font-medium text-sky-600 hover:text-sky-500"> sign up if you don't have an account yet!</a>
+            </p>
+        </div>
         <div class="rounded-md shadow-sm -space-y-px">
             <div>
                 <label for="username" class="sr-only">Username</label>
                 <input id="username" name="username" type="text" class="appearance-none rounded-none relative block w-full px-3 py-2 border border-gray-300 placeholder-gray-500 text-gray-900 rounded-t-md focus:outline-none focus:ring-sky-500 focus:border-sky-500 focus:z-10 sm:text-sm" placeholder="Username">
             </div>
-            
+
             <div>
                 <label for="password" class="sr-only">Password</label>
                 <input id="password" name="password" type="password" class="appearance-none rounded-none relative block w-full px-3 py-2 border border-gray-300 placeholder-gray-500 text-gray-900 rounded-b-md focus:outline-none focus:ring-sky-500 focus:border-sky-500 focus:z-10 sm:text-sm" placeholder="Password">

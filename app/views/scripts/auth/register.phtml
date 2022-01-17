@@ -1,5 +1,18 @@
 <form method="POST">
     <div class="max-w-md w-full space-y-8">
+        <div>
+            <div class="wrapper-logo rounded-full">
+                <svg class="logo-checkmark z-20 h-20 w-14" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 52 52" >
+                    <circle class="logo-checkmark__circle" cx="26" cy="26" r="25" fill="none" />
+                    <path class="logo-checkmark__check" fill="none" d="M14.1 27.2l7.1 7.2 16.7-16.8" />
+                </svg>
+            </div>
+            <h2 class="mt-2 text-center text-3xl font-extrabold text-gray-900">Create your account</h2>
+            <p class="mt-2 text-center text-sm text-gray-600">
+                Or <a href="<?php echo WEB_ROOT . '/auth/login'; ?>" class="font-medium text-sky-600 hover:text-sky-500"> sign in if you already have one</a>
+            </p>
+        </div>
+        
         <?php 
             echo $_SESSION['error'] ?? ''; 
             unset($_SESSION['error']); 
