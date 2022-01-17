@@ -6,7 +6,7 @@
   $reqFrom = preg_match('/\/todo\/list/', $reqFrom); 
 ?>
 <?php if( count( $this->userTodos ?? [] ) ){ ?>
-  <table style="border: 1px solid black" <?php echo (!$reqFrom) ? "class='todo-table'" : ''; ?>>
+  <table style="border: 1px solid black" <?php echo (!$reqFrom) ? "class='todo-table table-auto'" : ''; ?>>
     <caption>myTodos</caption>
     <tr>
       <th style="border: 1px solid black">Todo</th>
@@ -15,6 +15,7 @@
       <th style="border: 1px solid black">Delete</th>
     </tr>
       <?php
+        $this->userTodos = array_reverse($this->userTodos);
         foreach($this->userTodos as $todo){
             echo "
             <tr id='todo-{$todo['id']}' " . (($todo['status'] === 'Completed') ? "class='todo-completed'" : null) . ">
