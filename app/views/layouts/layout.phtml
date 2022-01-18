@@ -5,12 +5,12 @@
 	<meta http-equiv="X-UA-Compatible" content="IE=edge">
 	<meta name="viewport" content="width=device-width, initial-scale=1.0">
 	<title><?php echo $this->_pageTitle ?></title>
-	<script src="https://cdn.tailwindcss.com?plugins=forms,typography,aspect-ratio,line-clamp"></script>
+	<!-- <script src="https://cdn.tailwindcss.com?plugins=forms,typography,aspect-ratio,line-clamp"></script> -->
 	<?php $this->appendCSS('global.css'); ?>
+	<?php $this->appendCSS('tailwind.css'); ?>
 	<link rel="preconnect" href="https://fonts.googleapis.com">
 	<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 	<link href="https://fonts.googleapis.com/css2?family=Catamaran:wght@100;330;686;749;900&display=swap" rel="stylesheet">
-	<!-- <?php $this->appendScript('main.js'); ?> -->
 </head>
 <body>
 	<?php echo $this->_renderViewScript('global/header.phtml', true); ?>
