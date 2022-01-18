@@ -24,9 +24,9 @@ $reqFrom = preg_match('/\/todo\/list/', $reqFrom);
                                     Title
                                 </th>
                                 <th scope="col" class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                                    When
+                                    Created
                                 </th>
-                                <th scope="col" class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                                <th scope="col" class="px-6 py-3 text-center text-xs font-medium text-gray-500 uppercase tracking-wider">
                                     Status
                                 </th>
                                 <th scope="col" class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
@@ -38,8 +38,8 @@ $reqFrom = preg_match('/\/todo\/list/', $reqFrom);
 
                         <tbody class="bg-white divide-y divide-gray-200">
                             <?php
-                            $this->userTodos = array_reverse($this->userTodos);
-                            foreach ($this->userTodos as $todo) {
+                                $this->userTodos = array_reverse($this->userTodos);
+                                foreach ($this->userTodos as $todo) {
                                 $isCompleted = ($todo['status'] === 'Completed') ? true : false; ?>
 
 
@@ -57,16 +57,20 @@ $reqFrom = preg_match('/\/todo\/list/', $reqFrom);
                                         </div>
                                     </td>
                                     <td class="px-6 py-4 whitespace-nowrap text-left">
-                                        <?php echo ($isCompleted) ? "<div class=\"text-sm text-gray-500\">Completed </div>" : '';  ?>
-                                        <div class="text-sm text-gray-900"><?php echo ($isCompleted) ? time_elapsed_string('@' . strtotime($todo['completedAt'])) : time_elapsed_string('@' . strtotime($todo['createdAt'])) ?></div>
+
+                                        <!-- TODO bad readability -->
+                                        <div class="text-sm text-gray-900" <?php echo ($isCompleted) ? 'title="Created ' . time_elapsed_string('@' . strtotime($todo['createdAt'])) . '"' : null ?> >
+                                            <span class="text-sm text-gray-500"><?php echo ($isCompleted) ? "Completed " : ''; ?></span>
+                                            <?php echo ($isCompleted) ? time_elapsed_string('@' . strtotime($todo['completedAt'])) : time_elapsed_string('@' . strtotime($todo['createdAt'])) ?>
+                                        </div>
+
                                     </td>
-                                    <td class="px-6 py-4 whitespace-nowrap">
-                                        <span class="px-2 inline-flex text-xs leading-5 font-semibold rounded-full <?php printBadge($todo['status']); ?>"> <!--bg-green-100 text-green-800">-->
+                                    <td class="px-6 py-4 whitespace-nowrap text-center">
+                                        <span class="px-2 inline-flex text-xs leading-5 font-semibold rounded-full <?php printBadge($todo['status']); ?>">
                                             <?php echo $todo['status']; ?>
                                         </span>
                                     </td>
                                     <td class="px-6 py-4 whitespace-nowrap">
-                                        <!-- <a href="<?php echo WEB_ROOT . '/todo/edit/' . $todo['id']; ?>" class="text-indigo-600 hover:text-indigo-900">Edit</a> -->
                                         <div class="relative  flex items-center">
                                             <a href="<?php echo WEB_ROOT . '/todo/edit/' . $todo['id']; ?>">
                                                 <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 mr-2 text-gray-500" fill="none" viewBox="0 0 24 24" stroke="currentColor">
@@ -81,6 +85,7 @@ $reqFrom = preg_match('/\/todo\/list/', $reqFrom);
                                         </div>
                                     </td>
                                 </tr>
+
                             <?php } ?>
 
                         </tbody>
@@ -120,7 +125,7 @@ $reqFrom = preg_match('/\/todo\/list/', $reqFrom);
 <?php
 
     // https://stackoverflow.com/a/18602474/3015572
-    
+
     function time_elapsed_string($datetime, $full = false) {
         $now = new DateTime;
         $ago = new DateTime($datetime);
