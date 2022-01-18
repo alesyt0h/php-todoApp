@@ -1,38 +1,217 @@
 <?php
-  echo $_SESSION['error'] ?? '';
-  unset($_SESSION['error']);
-  
-  $reqFrom = $_SERVER['REQUEST_URI'] ?? '';
-  $reqFrom = preg_match('/\/todo\/list/', $reqFrom); 
+echo $_SESSION['error'] ?? '';
+unset($_SESSION['error']);
+
+$reqFrom = $_SERVER['REQUEST_URI'] ?? '';
+$reqFrom = preg_match('/\/todo\/list/', $reqFrom);
 ?>
-<?php if( count( $this->userTodos ?? [] ) ){ ?>
-  <table style="border: 1px solid black" <?php echo (!$reqFrom) ? "class='todo-table table-auto'" : ''; ?>>
-    <caption>myTodos</caption>
-    <tr>
-      <th style="border: 1px solid black">Todo</th>
-      <th style="border: 1px solid black">Status</th>
-      <th style="border: 1px solid black">Edit</th>
-      <th style="border: 1px solid black">Delete</th>
-    </tr>
-      <?php
-        $this->userTodos = array_reverse($this->userTodos);
-        foreach($this->userTodos as $todo){
-            echo "
-            <tr id='todo-{$todo['id']}' " . (($todo['status'] === 'Completed') ? "class='todo-completed'" : null) . ">
-                <td>{$todo['title']}</td>
-                <td>{$todo['status']}</td>
-                <td><a href=" . WEB_ROOT . '/todo/edit/' . $todo['id'] . ">Edit</a></td>
-                <td><a href=" . '?delete=' . $todo['id'] . ">Delete</a></td>
-            </tr>
-            ";
-        }
-      ?>
-  </table>
 
-  <?php 
-    if(isset($_GET['delete']) || isset($_GET['assign'])){
-      echo $this->_renderViewScript('global/modal.phtml', true); 
+<!-- This was for show the table as absolute on homepage and relative in /todo/list -->
+<!-- <table style="border: 1px solid black" <?php echo (!$reqFrom) ? "class='todo-table table-auto'" : ''; ?>> -->
+
+<?php if (count($this->userTodos ?? [])) { ?>
+    <div class="flex flex-col">
+        <div class="-my-2 overflow-x-auto sm:-mx-6 lg:-mx-8">
+            <div class="py-2 align-middle inline-block min-w-full sm:px-6 lg:px-8">
+                <div class="shadow overflow-hidden border-b border-gray-200 sm:rounded-lg">
+                    <table class="min-w-full divide-y divide-gray-200">
+                        <thead class="bg-gray-50">
+                            <tr>
+                                <th scope="col" class="relative px-6 py-3">
+                                    <input id="master-checker" name="master-checker" type="checkbox" class="focus:ring-sky-500 h-4 w-4 text-sky-600 border-gray-300 rounded">
+                                </th>
+                                <th scope="col" class="px-2 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider max-w-[100px]">
+                                    Title
+                                </th>
+                                <th scope="col" class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                                    When
+                                </th>
+                                <th scope="col" class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                                    Status
+                                </th>
+                                <th scope="col" class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                                    Actions
+                                </th>
+                            </tr>
+                        </thead>
+
+
+                        <tbody class="bg-white divide-y divide-gray-200">
+                            <?php
+                            $this->userTodos = array_reverse($this->userTodos);
+                            foreach ($this->userTodos as $todo) {
+                                $isCompleted = ($todo['status'] === 'Completed') ? true : false; ?>
+
+
+                                <tr>
+                                    <td class="px-6 py-4 whitespace-nowrap">
+                                        <input id="<?php echo $todo['id']; ?>" name="status-checker" type="checkbox" <?php echo ($isCompleted) ? 'checked' : ''; ?> class="focus:ring-sky-500 h-4 w-4 text-sky-600 border-gray-300 rounded">
+                                    </td>
+                                    <td class="px-2 py-4 whitespace-nowrap">
+                                        <div class="flex items-center">
+                                            <div class="relative w-[400px]">
+                                                <div class="title-wrap text-left text-sm font-medium truncate hover:absolute hover:top-[-12px] hover:rounded-[1px] hover:shadow-[0_0_4px_0_black] hover:bg-white hover:z-50 hover:whitespace-normal <?php echo ($isCompleted) ? 'line-through text-gray-400' : 'text-gray-900' ?>">
+                                                    <?php echo $todo['title'] ?>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </td>
+                                    <td class="px-6 py-4 whitespace-nowrap text-left">
+                                        <?php echo ($isCompleted) ? "<div class=\"text-sm text-gray-500\">Completed </div>" : '';  ?>
+                                        <div class="text-sm text-gray-900"><?php echo ($isCompleted) ? time_elapsed_string('@' . strtotime($todo['completedAt'])) : time_elapsed_string('@' . strtotime($todo['createdAt'])) ?></div>
+                                    </td>
+                                    <td class="px-6 py-4 whitespace-nowrap">
+                                        <span class="px-2 inline-flex text-xs leading-5 font-semibold rounded-full <?php printBadge($todo['status']); ?>"> <!--bg-green-100 text-green-800">-->
+                                            <?php echo $todo['status']; ?>
+                                        </span>
+                                    </td>
+                                    <td class="px-6 py-4 whitespace-nowrap">
+                                        <!-- <a href="<?php echo WEB_ROOT . '/todo/edit/' . $todo['id']; ?>" class="text-indigo-600 hover:text-indigo-900">Edit</a> -->
+                                        <div class="relative  flex items-center">
+                                            <a href="<?php echo WEB_ROOT . '/todo/edit/' . $todo['id']; ?>">
+                                                <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 mr-2 text-gray-500" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z" />
+                                                </svg>
+                                            </a>
+                                            <a href="<?php echo '?delete=' . $todo['id'] ?>">
+                                                <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 text-red-500" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16" />
+                                                </svg>
+                                            </a>
+                                        </div>
+                                    </td>
+                                </tr>
+                            <?php } ?>
+
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+    </div>
+
+
+    <?php
+    if (isset($_GET['delete']) || isset($_GET['assign'])) {
+        echo $this->_renderViewScript('global/modal.phtml', true);
     }
-  ?>
+    ?>
 
-<?php } else { echo 'Try to add some TODO see it here!!'; } ?>
+<?php } else {
+    echo 'Try to add some TODO see it here!!';
+} ?>
+
+<?php 
+    function printBadge(string $status){
+        switch ($status) {
+            case 'Pending':
+                echo 'bg-red-100 text-red-800';
+                break;
+            case 'In Process':
+                echo 'bg-yellow-100 text-yellow-800';
+                break;
+            case 'Completed':
+                echo 'bg-green-100 text-green-800';
+                break;
+        }
+    }
+?>
+
+<?php
+
+    // https://stackoverflow.com/a/18602474/3015572
+    
+    function time_elapsed_string($datetime, $full = false) {
+        $now = new DateTime;
+        $ago = new DateTime($datetime);
+        $diff = $now->diff($ago);
+
+        $diff->w = floor($diff->d / 7);
+        $diff->d -= $diff->w * 7;
+
+        $string = array(
+            'y' => 'year',
+            'm' => 'month',
+            'w' => 'week',
+            'd' => 'day',
+            'h' => 'hour',
+            'i' => 'minute',
+            's' => 'second',
+        );
+        foreach ($string as $k => &$v) {
+            if ($diff->$k) {
+                $v = $diff->$k . ' ' . $v . ($diff->$k > 1 ? 's' : '');
+            } else {
+                unset($string[$k]);
+            }
+        }
+
+        if (!$full) $string = array_slice($string, 0, 1);
+        return $string ? implode(', ', $string) . ' ago' : 'just now';
+    }
+?>
+
+
+
+<script>
+    // addEventListener('change', (e) => {
+    //   if(e.target.checked){
+    //     e.target.checked = false;
+    //     e.target.indeterminate = true;
+    //   } else if (e.target.indeterminate){
+    //     e.target.checked = true; 
+    //     e.target.indeterminate = false;
+    //   }
+
+    // })
+
+    let vivaldi = 0;
+
+    const elemento = document.querySelector('input');
+    elemento.addEventListener('change', (e) => {
+
+        // e.preventDefault();
+        // e.stopPropagation();
+
+        // TODO selectorAll and check if the change event is from an input of my selectors then do this shit
+
+        if (vivaldi === 0) {
+            console.log('if')
+
+            elemento.indeterminate = true;
+            vivaldi++;
+        } else if (vivaldi === 1) {
+            console.log('else if')
+
+            elemento.indeterminate = false;
+            elemento.checked = true;
+            vivaldi++;
+
+        } else {
+            console.log('else')
+
+            elemento.indeterminate = false;
+            elemento.checked = false;
+            vivaldi = 0;
+        }
+
+    });
+</script>
+
+
+
+<script>
+    document.querySelectorAll('.title-wrap').forEach((el) => {
+        if (el.offsetWidth === el.scrollWidth) {
+            el.classList.remove(
+                'hover:absolute',
+                'hover:top-[-12px]',
+                'hover:rounded-[1px]',
+                'hover:shadow-[0_0_4px_0_black]',
+                'hover:bg-white',
+                'hover:z-50',
+                'hover:whitespace-normal'
+            );
+        }
+    });
+</script>
