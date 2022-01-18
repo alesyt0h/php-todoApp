@@ -1,9 +1,10 @@
 html, body {
-    background: rgb(192, 192, 192);
-    font-size: 1.2rem;
-    margin: 0;
-    padding: 0;
+    background: url('../img/bg-candidate4.jpg') fixed;
+    background-size: cover;
+    background-repeat: no-repeat;
+    /* background-position: 60%; TODO for media queries*/ 
 }
+
 aside {
     background:rgb(119, 89, 89);
     height: 100vh;
@@ -17,25 +18,34 @@ aside > ol {
     margin-top: 50px;
 }
 
-footer {
-    background: rgb(80, 80, 80);
-    bottom: 0;
-    padding: 6px;
-    position: fixed;
-    width: 100%;
+
+.logo-text {
+    font-family: 'Catamaran', sans-serif;
+    font-weight: 749;
 }
 
-footer > p {
+
+
+
+/* footer { */
+    /* background: rgb(80, 80, 80); */
+    /* bottom: 0; */
+    /* padding: 6px; */
+    /* position: fixed;
+    width: 100%; */
+/* } */
+
+/* footer > p {
     margin: 0;
     padding: 0;
-}
+} */
 
-header {
-    background: rgb(80, 80, 80);
-    padding: 6px;
-    position: relative;
-    z-index: 1;
-}
+/* header { */
+    /* background: rgb(80, 80, 80); */
+    /* padding: 6px; */
+    /* position: relative; */
+    /* z-index: 1; */
+/* } */
 
 main {
     margin-left: 160px;
@@ -50,7 +60,8 @@ td {
     align-items: center;
     display: flex;
     flex-direction: column;
-    height: 100%;
+    /* height: 100%; */
+    height: calc(100% - 91px);
     justify-content: center;
 }
 
@@ -165,4 +176,68 @@ td {
 @-ms-keyframes fadeOut {
       0% {opacity:1;}
     100% {opacity:0;}
+}
+
+
+
+
+
+
+
+
+
+
+
+/* LOGO RELATED */
+
+.wrapper-logo {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+
+.logo-checkmark__circle {
+    stroke-dasharray:  166;
+    stroke-dashoffset: 0;
+    stroke-width: 3;
+    stroke-miterlimit: 10;
+    stroke: #0284C7;
+    fill: none;
+}
+
+.hover-out {
+    animation: fillOut .2s ease-in-out forwards;
+}
+
+.logo-checkmark {
+    width: 35px;
+    height: 35px;
+    border-radius: 50%;
+    display: block;
+    stroke: #0284C7;
+    stroke-width: 4;
+    stroke-miterlimit: 10;
+    box-shadow: inset 0px 0px 0px #0284C7;
+}
+
+.main-logo:hover .logo-checkmark {
+    stroke-width: 4;
+    animation: fill .4s ease-in-out forwards;
+    stroke: #fff;
+    transition-property: all;
+}
+
+.logo-checkmark__check {
+    transform-origin: 50% 50%;
+    stroke-dasharray: 48;
+    stroke-dashoffset: 0
+}
+
+@keyframes fill {
+    0% { box-shadow: inset 0px 0px 0px 0px #0284C7; }
+    100% { box-shadow: inset 0px 0px 0px 90px #0284C7; }
+}
+@keyframes fillOut {
+    0% { box-shadow: inset 0px 0px 0px 90px #0284C7; stroke: #fff; }
+    100% { box-shadow: inset 0px 0px 0px 0px #0284C7; stroke: #0284C7; }
 }
