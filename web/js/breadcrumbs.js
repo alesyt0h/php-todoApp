@@ -5,7 +5,7 @@
 
     const rootPath = baseUrl + webRoot;
 
-    if(currentUrl === rootPath || currentUrl === rootPath + '/'){
+    if(currentUrl === rootPath || currentUrl === rootPath + '/' || currentUrl.includes(rootPath + '/?')){
 
         const dashboard = document.querySelector('#dashboard');
         dashboard.classList.add('bg-[#06080E]', 'text-white');
