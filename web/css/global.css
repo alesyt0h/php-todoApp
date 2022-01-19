@@ -1,5 +1,5 @@
 html, body {
-    background: url('../img/bg-candidate4.jpg') fixed;
+    background: url('../img/bg.jpg') fixed;
     background-size: cover;
     background-repeat: no-repeat;
     /* background-position: 60%; TODO for media queries*/ 
@@ -48,7 +48,7 @@ aside > ol {
 /* } */
 
 main {
-    margin-left: 160px;
+    /* margin-left: 160px; */
     height: calc(100vh - 39px);
 }
 
@@ -60,6 +60,7 @@ td {
     align-items: center;
     display: flex;
     flex-direction: column;
+    margin: auto;
     /* height: 100%; */
     height: calc(100% - 91px);
     justify-content: center;
