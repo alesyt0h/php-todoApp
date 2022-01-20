@@ -1,9 +1,39 @@
 module.exports = {
-  content: ["./app/views/**/**/*.phtml", "./app/controllers/*.php", "./web/js/*.js"],
+  content: [
+    "./app/views/**/**/*.phtml", 
+    "./app/controllers/*.php", 
+    "./web/js/*.js"
+  ],
   theme: {
-    extend: {},
+    extend: {
+      animation: {
+        'bounce': 'bounce 1s ease 0s 1 normal forwards',
+        'smooth': 'smooth .3s ease-in-out',
+        'smooth-out': 'smooth-out .3s ease-in-out',
+        'fade': 'fade .3s ease-in-out',
+        'fade-out': 'fade-out .3s ease-in-out',
+      },
+      keyframes: {
+        'smooth': {
+          '0%': {  opacity: 0, transform: 'scale(.95)' },
+          '100%': { opacity: 1, transform: 'scale(1)' },
+        },
+        'smooth-out': {
+          '0%': { opacity: 1, transform: 'scale(1)' },
+          '100%': {  opacity: 0, transform: 'scale(.95)' },
+        },
+        'fade': {
+          '0%': {  opacity: 0 },
+          '100%': { opacity: 1 },
+        },
+        'fade-out': {
+          '0%': { opacity: 1 },
+          '100%': {  opacity: 0 },
+        }
+      }
+    },
   },
-  plugins: [],
+  plugins: [require('@tailwindcss/forms')],
 }
 
 // * Usage for production
