@@ -17,6 +17,7 @@
     	<div class="container">
 			<?php echo $this->content(); /* Outputs the current action layout */ ?> 
 		</div>
+		<?php echo $this->appendScript('relativeScroll.js'); ?>
 	</main>
 	<?php echo $this->_renderViewScript('global/footer.phtml', true); ?>
 </body>

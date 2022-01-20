@@ -14,7 +14,7 @@ html, body {
 main {
     display: flex;
     height: calc(100vh - 128px);
-    overflow-y: scroll;
+    /* overflow-y: scroll; */
 }
 
 td {
@@ -39,11 +39,12 @@ td {
     flex-direction: column;
     margin: auto;
     justify-content: center;
-    padding-bottom: 100px;
-    padding-top: 80px;
+    padding-bottom: 40px;
+    padding-top: 60px;
 }
 
 .error-msg {
+    background: rgba(0, 0, 0, 0.11);
     background: rgb(179, 33, 33);
     text-align: center;
 }
