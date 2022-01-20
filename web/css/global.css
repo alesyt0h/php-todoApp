@@ -220,3 +220,9 @@ td {
     0% { box-shadow: inset 0px 0px 0px 90px #0284C7; stroke: #fff; }
     100% { box-shadow: inset 0px 0px 0px 0px #0284C7; stroke: #0284C7; }
 }
+
+/* List Rounded Borders */
+th:first-of-type { border-radius: 0.5rem 0; }
+th:last-of-type { border-radius: 0 0.5rem; }
+tr:last-of-type td:first-of-type { border-radius: 0 0.5rem; }
+tr:last-of-type td:last-of-type { border-radius: 0 0 0.5rem; }
