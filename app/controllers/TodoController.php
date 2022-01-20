@@ -177,30 +177,30 @@ class TodoController extends ApplicationController {
 
     public function loadModal(){
         
-        // Modal for confirmation prompt when delete a todo
         if(isset($_GET['delete'])){
 
-            if(!isset($_SERVER['HTTP_REFERER'])){
-
-                (isset($_SERVER['HTTP_ORIGIN'])) ? $location = $_SERVER['HTTP_ORIGIN'] : $location = WEB_ROOT;
-                header('Location: ' . $location );
-                die();
-            }
-
-            // TODO check if this is the user who created it, if not don't even display it on modal. Same for TempUsers
+            if(!isset($_SERVER['HTTP_REFERER'])) $this->refererRedirect();
+            
             $todo = $this->todoDB->getTodoById($_GET['delete']);
 
-            $formatedDate = date('l, F jS \of Y', strtotime($todo['createdAt']));
+            $isInvalidUser = $this->isUser() && $todo['createdBy'] !== $_SESSION['loggedUser']['id'];
+            $isInvalidTempUser = ($this->isTempUser() && !in_array($todo['id'], $_SESSION['tempUser']));
+
+            if($isInvalidTempUser || $isInvalidUser) $this->refererRedirect();
 
             $this->formData = "
             <form action=" . WEB_ROOT . '/todo/delete/' . $todo['id'] . " method='POST'>
                 <p>Are you sure you want to delete <strong> " . $todo['title'] . "</strong>?</p>
-                <p>You created this Todo on <strong> " . $formatedDate . "</strong></p><br>
-                <button type='submit' name='deleteTodoId' value=" . $todo['id'] . " >Delete</button>
-                <button type='button'>Cancel</button>
-            </form>";
+            ";
+
+            $this->modal = [];
+
+            $this->modal['content'] = $this->formData;
+            $this->modal['title'] = 'Delete todo';
+            $this->modal['type'] = 'Delete';
+            $this->modal['id'] = $todo['id'];
             
-            $this->afterFilters('view', 'modalContent', $this->formData);
+            $this->afterFilters('view', 'modal', $this->modal);
             
         } else if(isset($_GET['assign'])) {
 
@@ -208,13 +208,17 @@ class TodoController extends ApplicationController {
 
             $this->formData = "
             <form action=" . WEB_ROOT . '/todo/assign' . ">
-                <p>You created <strong>". count($_SESSION['tempUser']) . "</strong> todo while you were not authenticated. Would you like to add them to this account?</p>
+                <p>You created <strong>". count($_SESSION['tempUser']) . "</strong> todo while you were not authenticated. Would you like to add them to this account?</p><br>
                 <p>If you want to do it later, you will find a link in the menu to assign them to your account.</p>
-                <button type='submit'>Yes</button>
-                <button type='button'>No</button>
-            </form>";
-            
-            $this->afterFilters('view', 'modalContent', $this->formData);
+            ";
+
+            $this->modal = [];
+
+            $this->modal['content'] = $this->formData;
+            $this->modal['title'] = 'Assign todo' . (count($_SESSION['tempUser']) > 1 ? 's' : '');
+            $this->modal['type'] = 'Assign';
+
+            $this->afterFilters('view', 'modal', $this->modal);
         }
     }
 

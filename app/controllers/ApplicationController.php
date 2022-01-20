@@ -42,12 +42,19 @@ class ApplicationController extends Controller {
 		die();
 	}
 
+	protected function refererRedirect(){
+		(isset($_SERVER['HTTP_ORIGIN'])) ? $location = $_SERVER['HTTP_ORIGIN'] : $location = WEB_ROOT;
+		header('Location: ' . $location );
+		die();
+	}
+
 	/**
 	 * @param string success|error|info the type of the msg. Valid values are only: error, info, success
 	 * @param string $message the message to display
 	 */
 	protected function appMsg(string $type, string $message){
 		// TODO the alert keeps it's position in the DOM with opacity: 0 and/or visibility: invisible. Display: none should be used in order to remove it's position in the DOM, however this makes the fade out animation unable to play.
+		// <svg xmlns='http://www.w3.org/2000/svg' class='float-right h-4 w-4 cursor-pointer m-1 text-gray-700' fill='none' viewBox='0 0 24 24' stroke='currentColor' onclick='removeFadeOut(this.parentElement, 1000)'>
 		$div = "<div class='${type}-msg transition-all duration-[400ms]'>
 					<svg xmlns='http://www.w3.org/2000/svg' class='float-right h-4 w-4 cursor-pointer m-1 text-gray-700' fill='none' viewBox='0 0 24 24' stroke='currentColor' onclick='this.parentElement.classList.add(\"opacity-0\", \"invisible\")'>
 						<path stroke-linecap='round' stroke-linejoin='round' stroke-width='2' d='M6 18L18 6M6 6l12 12' />
