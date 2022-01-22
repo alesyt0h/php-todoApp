@@ -128,8 +128,9 @@ class AvatarValidation implements singleValidation {
 
         if(extension_loaded('openssl')){
             if(!$result){
-                return Validations::$message .= 'The Avatar you entered is not a valid image!<br> 
-                Make sure your URL ends in a known image extension like .jpg, .png, .webp etc..<br>';
+                return Validations::$message .= 'The Avatar you entered is not a valid image!<br/> 
+                Make sure your URL ends in a known image<br/>
+                extension like .jpg, .png, .webp etc..<br>';
             }
         }
     }

@@ -1,7 +1,7 @@
 <form method="POST">
     <?php 
-        echo $_SESSION['error'] ?? '';
-        unset($_SESSION['error']);
+        // echo $_SESSION['error'] ?? '';
+        // unset($_SESSION['error']);
     ?>
 
     <div class="max-w-md w-full space-y-8">
@@ -17,6 +17,10 @@
                 Or <a href="<?php echo WEB_ROOT . '/auth/register'; ?>" class="font-medium text-sky-600 hover:text-sky-500"> sign up if you don't have an account yet!</a>
             </p>
         </div>
+        <?php 
+        echo $_SESSION['error'] ?? '';
+        unset($_SESSION['error']);
+    ?>
         <div class="rounded-md shadow-sm -space-y-px">
             <div>
                 <label for="username" class="sr-only">Username</label>

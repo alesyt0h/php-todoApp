@@ -53,14 +53,46 @@ class ApplicationController extends Controller {
 	 * @param string $message the message to display
 	 */
 	protected function appMsg(string $type, string $message){
-		// TODO the alert keeps it's position in the DOM with opacity: 0 and/or visibility: invisible. Display: none should be used in order to remove it's position in the DOM, however this makes the fade out animation unable to play.
-		// <svg xmlns='http://www.w3.org/2000/svg' class='float-right h-4 w-4 cursor-pointer m-1 text-gray-700' fill='none' viewBox='0 0 24 24' stroke='currentColor' onclick='removeFadeOut(this.parentElement, 1000)'>
-		$div = "<div class='${type}-msg transition-all duration-[400ms]'>
-					<svg xmlns='http://www.w3.org/2000/svg' class='float-right h-4 w-4 cursor-pointer m-1 text-gray-700' fill='none' viewBox='0 0 24 24' stroke='currentColor' onclick='this.parentElement.classList.add(\"opacity-0\", \"invisible\")'>
+
+		$newMsg = explode("<br>", $message);
+
+		if(count($newMsg) > 1){
+
+			$message = '';
+
+			foreach ($newMsg as $key => $value) {
+				if(strlen($value)){
+					$result = preg_replace('/^/','<li>', $value);
+					$result = preg_replace('/$/','</li>', $result);
+	
+					$message .= $result;
+				}
+			}
+			
+			$padding = 'p-4';
+		} else {
+			$padding = 'p-2';
+		}
+
+		switch ($type) {
+			case 'error':
+				$typeMsg = 'bg-red-100 text-red-800 border-red-200';
+				break;
+			case 'success':
+				$typeMsg = 'bg-green-100 text-green-800 border-green-200';
+				break;
+			case 'info':
+				$typeMsg = 'bg-sky-100 text-sky-800 border-sky-200';
+				break;
+		}
+
+		$div = "<div id='appMsg' class='${typeMsg} transition-all rounded-md ${padding} pr-10 duration-[600ms] relative shadow border-2 list-disc'>
+					<svg xmlns='http://www.w3.org/2000/svg' class='absolute right-1 top-1 h-4 w-4 cursor-pointer m-1 text-gray-700' fill='none' viewBox='0 0 24 24' stroke='currentColor' onclick='appMsgHidder(this)'>
 						<path stroke-linecap='round' stroke-linejoin='round' stroke-width='2' d='M6 18L18 6M6 6l12 12' />
 					</svg>
 					${message}
 				</div>";
+
 		$_SESSION[$type] = $div;
 	}
 

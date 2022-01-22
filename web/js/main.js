@@ -1,1 +1,12 @@
-console.log('Hello from Main.js');
+// Hides appMsg correctly
+const appMsgHidder = (el) => {
+
+    el.parentElement.style.height = el.parentElement.offsetHeight + 'px';
+    el.parentElement.classList.add('opacity-0', 'invisible');
+    
+    setTimeout(() => {
+        el.parentElement.style = 'padding: 0';
+        el.parentElement.style.height = '0px';
+    }, 600);
+
+}
