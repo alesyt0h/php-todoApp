@@ -53,7 +53,7 @@ const init = () => {
     
         const badge = printBadge(todo.status)
         const completed = todo.status === 'Completed';
-        const completedClasses = (completed) ? ['line-through','text-gray-400'] : 'text-gray-900';
+        const completedClasses = (completed) ? ['line-through','text-gray-400'] : ['text-gray-900'];
     
         const title = tr.querySelector('#title');
         title.innerText = todo.title;
