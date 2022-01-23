@@ -31,10 +31,10 @@
                 </div>
                 <!-- Email -->
                 <label for="email" class="block text-sm font-medium text-gray-700">Email</label>
-                <input type="text" name="email" value="<?php echo $this->user['email']; ?>" class="appearance-none relative block w-full px-3 py-2 border border-gray-300 placeholder-gray-500 text-gray-900 rounded-md focus:outline-none focus:ring-sky-500 focus:border-sky-500 focus:z-10 sm:text-sm mb-2">
+                <input type="text" name="email" spellcheck="false" value="<?php echo $this->user['email']; ?>" class="appearance-none relative block w-full px-3 py-2 border border-gray-300 placeholder-gray-500 text-gray-900 rounded-md focus:outline-none focus:ring-sky-500 focus:border-sky-500 focus:z-10 sm:text-sm mb-2">
                 <!-- Avatar -->
                 <label for="avatar" class="block text-sm font-medium text-gray-700">Avatar URL</label>
-                <input type="text" name="avatarUrl" value="<?php echo $this->user['avatarUrl'] ?? ''; ?>" placeholder="Avatar URL" class="appearance-none relative block w-full px-3 py-2 border border-gray-300 placeholder-gray-500 text-gray-900 rounded-md focus:outline-none focus:ring-sky-500 focus:border-sky-500 focus:z-10 sm:text-sm mb-2">
+                <input type="text" name="avatarUrl" spellcheck="false" value="<?php echo $this->user['avatarUrl'] ?? ''; ?>" placeholder="Avatar URL" class="appearance-none relative block w-full px-3 py-2 border border-gray-300 placeholder-gray-500 text-gray-900 rounded-md focus:outline-none focus:ring-sky-500 focus:border-sky-500 focus:z-10 sm:text-sm mb-2">
                 <!-- Created Todos -->
                 <span class="align-middle px-2 inline-flex text-xs leading-5 font-semibold rounded-full bg-sky-100 text-sky-800" id="status"><?php echo $this->user['createdTodos']; ?> Todos created</span>
                 <!-- Form Buttons -->
