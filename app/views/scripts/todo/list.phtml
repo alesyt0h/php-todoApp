@@ -5,8 +5,6 @@ unset($_SESSION['error']);
 $reqFrom = $_SERVER['REQUEST_URI'] ?? '';
 $reqFrom = preg_match('/\/todo\/list/', $reqFrom);
 ?>
-<!-- This was for show the table as absolute on homepage and relative in /todo/list -->
-<!-- <table style="border: 1px solid black" <?php echo (!$reqFrom) ? "class='todo-table table-auto'" : ''; ?>> -->
 
 <?php if (count($this->userTodos ?? [])) { ?>
     <div class="flex flex-col">
@@ -64,11 +62,16 @@ $reqFrom = preg_match('/\/todo\/list/', $reqFrom);
                         </tbody>
                     </table>
                 </div>
+                <?php if(count($this->userTodos) > 5 && !$reqFrom){ ?>
+                    <div class="text-right animate-pulse text-sm mt-1">
+                        <a class="text-slate-400" href="<?php echo WEB_ROOT . '/todo/list'; ?>">See the full list</a>
+                    </div>
+                <?php } ?>
             </div>
         </div>
     </div>
 
-    <script id="todosRef"> todos = <?php echo json_encode($this->userTodos); ?>; </script>
+    <script id="todosRef"> todos = <?php echo json_encode( (!$reqFrom) ? array_slice($this->userTodos, -5, 5) : $this->userTodos); ?>; </script>
 
     <?php echo $this->appendScript('listHelpers.js'); ?>
 
