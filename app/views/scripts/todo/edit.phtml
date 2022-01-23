@@ -3,20 +3,90 @@
         echo $_SESSION['error'] ?? '';
         echo $_SESSION['success'] ?? '';
         unset($_SESSION['error'], $_SESSION['success']);
+
+        $title = $this->todo['title'];
+        $status = $this->todo['status'];
+        $createdAt = date('l \a\t H:i, F jS \of Y', strtotime($this->todo['createdAt']));
+        $completedAt = ($this->todo['completedAt']) ? date('l \a\t H:i, F jS \of Y', strtotime($this->todo['completedAt'])) : 'Not yet completed';
+
+        switch ($status) {
+            case 'Pending':
+                $badge = 'bg-red-100 text-red-800';
+                break;
+            case 'In Process':
+                $badge = 'bg-yellow-100 text-yellow-800';
+                break;
+            case 'Completed':
+                $badge = 'bg-green-100 text-green-800';
+                break;
+        }
     ?>
-    <input type="text" name="title" value="<?php echo $this->todo['title']?>" style="font-size: 2rem" autofocus>
-    <button style="font-size: 2rem; color: grey">Save changes</button>
     <br>
-    <input type="radio" name="status" value="Pending" <?php echo ($this->todo['status'] === 'Pending') ? 'checked' : null; ?> >
-    <label for="Pending">Pending</label>
-    <input type="radio" name="status" value="In Process" <?php echo ($this->todo['status'] === 'In Process') ? 'checked' : null; ?>>
-    <label for="In Process">In Process</label>
-    <input type="radio" name="status" value="Completed" <?php echo ($this->todo['status'] === 'Completed') ? 'checked' : null; ?>>
-    <label for="Completed">Completed</label>
+    <div>
+        <div class="inline-block relative">
+            <!--ml-20 -->
+            <input type="text" name="title" value="<?php echo $this->todo['title'] ?>" spellcheck="false" class="text-[2rem] mt-1 inline-block px-3 py-2 bg-white border border-slate-300 rounded-md text-sm placeholder-slate-400 focus:outline-none focus:border-sky-500 focus:ring-1 focus:ring-sky-500 disabled:bg-slate-50 disabled:text-slate-500 disabled:border-slate-200 disabled:shadow-none border-gray-500 shadow-lg shadow-cyan-500/50" autofocus>
+            <div id="radio-buttons" class="bg-slate-200 rounded-b-md pt-4 -mt-3 pb-1 pl-2 border-2 border-gray-500/20 shadow-md">
+                <input type="radio" name="status" class="transition-all hover:scale-125 !bg-none 
+                       text-sky-600 focus:ring-sky-500 checked:!border-1 
+                       checked:!border-slate-900/70 border-sky-900" value="Pending" <?php echo ($status === 'Pending') ? 'checked' : null; ?>>
+                <label for="Pending" class="align-text-top mr-2 ml-1">Pending</label>
+
+                <input type="radio" name="status" class="transition-all hover:scale-125 !bg-none 
+                       text-sky-600 focus:ring-sky-500 checked:!border-1 
+                       checked:!border-slate-900/70 border-sky-900" value="In Process" <?php echo ($status === 'In Process') ? 'checked' : null; ?>>
+                <label for="In Process" class="align-text-top mr-2 ml-1">In Process</label>
+
+                <input type="radio" name="status" class="transition-all hover:scale-125 !bg-none 
+                       text-sky-600 focus:ring-sky-500 checked:!border-1 
+                       checked:!border-slate-900/70 border-sky-900" value="Completed" <?php echo ($status === 'Completed') ? 'checked' : null; ?>>
+                <label for="Completed" class="align-text-top mr-2 ml-1">Completed</label>
+            </div>
+        </div>
+        <div class="absolute inline-block float-right mt-1 ml-4">
+            <button class="p-4 bg-cyan-500 shadow-lg rounded-lg hover:bg-cyan-600 text-gray-100 text-[2rem] hover:text-gray-300 mb-4">Save</button>
+        </div>
+    </div>
 </form>
 
-<?php
-    // REVIEW
-    var_dump($this->todo);
-
-?>
+<div class="max-w-4xl mx-auto mt-6">
+    <div class="bg-white shadow-[0_0_15px_1px_rgba(0,0,0,0.21)] overflow-hidden sm:rounded-lg border-2 border-slate-200 shadow-2xl">
+        <div class="border-t border-gray-200">
+            <dl>
+                <div class="bg-gray-50 p-2 sm:grid sm:grid-cols-3 sm:gap-4 sm:px-6">
+                    <dt class="text-sm font-medium text-gray-500">
+                        Title
+                    </dt>
+                    <dd class="mt-1 text-sm text-gray-900 sm:mt-0 sm:col-span-2">
+                        <?php echo $title; ?>
+                    </dd>
+                </div>
+                <div class="bg-white p-2 sm:grid sm:grid-cols-3 sm:gap-4 sm:px-6 auto-cols-auto">
+                    <dt class="text-sm font-medium text-gray-500">
+                        Status
+                    </dt>
+                    <dd class="mt-1 text-sm text-gray-900 sm:mt-0 px-2 inline-flex text-xs 
+                        leading-5 font-semibold w-fit rounded-full <?php echo $badge; ?>">
+                        <?php echo $status; ?>
+                    </dd>
+                </div>
+                <div class="bg-gray-50 p-2 sm:grid sm:grid-cols-3 sm:gap-4 sm:px-6">
+                    <dt class="text-sm font-medium text-gray-500">
+                        Date Creation
+                    </dt>
+                    <dd class="mt-1 text-sm text-gray-900 sm:mt-0 sm:col-span-2">
+                        <?php echo $createdAt; ?>
+                    </dd>
+                </div>
+                <div class="bg-white p-2 sm:grid sm:grid-cols-3 sm:gap-4 sm:px-6">
+                    <dt class="text-sm font-medium text-gray-500">
+                        Date Completion
+                    </dt>
+                    <dd class="mt-1 text-sm text-gray-900 sm:mt-0 sm:col-span-2">
+                        <?php echo $completedAt; ?>
+                    </dd>
+                </div>
+            </dl>
+        </div>
+    </div>
+</div>
