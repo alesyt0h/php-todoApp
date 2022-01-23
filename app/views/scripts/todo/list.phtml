@@ -81,7 +81,7 @@ $reqFrom = preg_match('/\/todo\/list/', $reqFrom);
     </script>
 
 <?php } else {
-    echo 'Try to add some TODO see it here!!';
+    echo ($reqFrom) ? 'Try to add some TODO see it here!' : '';
 } ?>
 
 <?php

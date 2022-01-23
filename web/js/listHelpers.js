@@ -48,7 +48,7 @@ const init = () => {
     
     trElem.remove();
 
-    todos.forEach(todo => {
+    todos.reverse().forEach(todo => {
         const tr = trElem.cloneNode(true);
     
         const badge = printBadge(todo.status)
