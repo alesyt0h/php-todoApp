@@ -25,7 +25,7 @@
                 <a href="<?php echo WEB_ROOT ?>" class="text-gray-300 px-3 py-2 rounded-md text-sm font-medium hover:bg-gray-700 hover:text-white" id="dashboard">Home</a>
                 <a href="<?php echo WEB_ROOT . '/todo/new' ?>" class="text-gray-300 hover:bg-gray-700 hover:text-white px-3 py-2 rounded-md text-sm font-medium" id="new">New</a>
                 <a href="<?php echo WEB_ROOT . '/todo/list' ?>" class="text-gray-300 hover:bg-gray-700 hover:text-white px-3 py-2 rounded-md text-sm font-medium" id="list">List</a>
-                <?php echo ($assignEnabled && $isUser && !$fromRegister) ? "<a href=" . WEB_ROOT . '/todo/assign' . " class='text-gray-300 hover:bg-gray-700 hover:text-white px-3 py-2 rounded-md text-sm font-medium' id='assign'>Assign Todos</a>" : '' ?>
+                <?php echo ($assignEnabled && $isUser && !$fromRegister) ? "<a href=" . WEB_ROOT . '/todo/assign' . " class='text-gray-300 hover:bg-gray-700 hover:text-white px-3 py-2 rounded-md text-sm font-medium' id='assign'>Assign Todo" . (count($_SESSION['tempUser']) > 1 ? 's' : '') . "</a>" : '' ?>
             </div>
           </div>
         </div>

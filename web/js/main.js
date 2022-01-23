@@ -2,7 +2,7 @@
 (function(){
     const main = document.querySelector('main');
     
-    if(main.offsetHeight < main.scrollHeight - 40){
+    if(main.offsetHeight < main.scrollHeight - 80){
         main.classList.add('overflow-y-scroll');
     }
 })();

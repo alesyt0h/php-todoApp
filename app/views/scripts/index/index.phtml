@@ -1,13 +1,13 @@
-<?php 
-    $assignSuccess = isset($_SESSION['assignedSuccess']) && $_SESSION['assignedSuccess'] === true;
-    $fromRegister = preg_match('/register/', $_SERVER['HTTP_REFERER'] ?? '');
+<div class="relative text-center">
+    <?php 
+        $assignSuccess = isset($_SESSION['assignedSuccess']) && $_SESSION['assignedSuccess'] === true;
+        $fromRegister = preg_match('/register/', $_SERVER['HTTP_REFERER'] ?? '');
 
-    if ($assignSuccess && !$fromRegister){
-        echo $_SESSION['success'] ?? '';
-        unset($_SESSION['success'], $_SESSION['assignedSuccess']); 
-    }
-?>
-<div style="position: relative; text-align: center">
+        if ($assignSuccess && !$fromRegister){ 
+            echo $_SESSION['success'] ?? '';
+            unset($_SESSION['success'], $_SESSION['assignedSuccess']); 
+        }
+    ?>
     <?php echo $this->_renderViewScript('todo/new.phtml', true); ?><br>
     <?php echo $this->_renderViewScript('todo/list.phtml', true); ?><br>
 </div>

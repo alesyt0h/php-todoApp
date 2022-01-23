@@ -109,7 +109,7 @@ class TodoController extends ApplicationController {
 
             if(!$this->isUser()){
                 $this->appMsg('info', 'You created a todo, but you don\'t have an account!<br/>
-                                       TODO\'s created without account are deleted in 24h. <br/>
+                                       TODO\'s created without an account are deleted in 24h. <br/>
                                        <a href=' . WEB_ROOT . "/auth/register" . ' class="underline underline-offset-2 text-blue-500">Register now</a> to keep your TODO\'s for ever!');
             } else {
                 $this->sumTodo($_SESSION['loggedUser']['id']);

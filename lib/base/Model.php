@@ -75,7 +75,7 @@ class Model {
 
     /**
      * Checks if DB is the correct type
-     * @param string $db the database
+     * @param string todos|users database
      * @return exception|string returns an exception if DB wasn't users or todos, else append _ to the DB name and returns it 
      */
     protected function dbChecker(string $db){
