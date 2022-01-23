@@ -1,1 +1,29 @@
-<?php echo $this->error; ?>
+<div class="text-9xl">
+    
+    <?php if(strpos($this->error, 'no route added') === 0){ ?>
+
+        <div>
+            <div class="align-text-bottom inline-block drop-shadow-lg 
+                font-semibold text-transparent bg-clip-text bg-gradient-to-r from-cyan-500 to-blue-600">
+                404
+            </div>
+            <img src="<?php echo WEB_ROOT . '/img/sad-cat.gif'; ?>" width="200" class="inline-block">
+        </div>
+        <small class="align-super font-normal text-transparent bg-clip-text
+               bg-gradient-to-r from-slate-400 to-gray-900">
+                Not found
+        </small>
+
+    <?php } else { ?>
+
+        <div class="align-text-bottom text-center block drop-shadow-lg 
+             font-semibold text-transparent bg-clip-text bg-gradient-to-r from-rose-500 to-red-700">
+                Error
+        </div>
+        <div class="text-6xl max-w-xl font-normal text-transparent bg-clip-text
+             bg-gradient-to-r from-slate-400 to-gray-900 mt-4">
+            <?php echo $this->error; ?>
+        </div>
+
+    <?php } ?>
+</div>
