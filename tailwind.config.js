@@ -32,6 +32,9 @@ module.exports = {
         }
       }
     },
+    fontFamily: {
+      'catamaran': ['"Catamaran"', 'sans-serif']
+    }
   },
   plugins: [require('@tailwindcss/forms')],
 }
