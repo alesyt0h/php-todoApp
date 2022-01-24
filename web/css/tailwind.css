@@ -668,6 +668,121 @@ select {
   }
 }
 
+/* Logo */
+
+.wrapper-logo {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+.logo-checkmark__circle {
+  stroke-dasharray:  166;
+  stroke-dashoffset: 0;
+  stroke-width: 3;
+  stroke-miterlimit: 10;
+  stroke: #0284C7;
+  fill: none;
+}
+
+.hover-out {
+  -webkit-animation: fillOut .2s ease-in-out forwards;
+          animation: fillOut .2s ease-in-out forwards;
+}
+
+.logo-checkmark {
+  width: 35px;
+  height: 35px;
+  border-radius: 50%;
+  display: block;
+  stroke: #0284C7;
+  stroke-width: 4;
+  stroke-miterlimit: 10;
+  box-shadow: inset 0px 0px 0px #0284C7;
+}
+
+.main-logo:hover .logo-checkmark {
+  stroke-width: 4;
+  -webkit-animation: fill .4s ease-in-out forwards;
+          animation: fill .4s ease-in-out forwards;
+  stroke: #fff;
+  transition-property: all;
+}
+
+.logo-checkmark__check {
+  transform-origin: 50% 50%;
+  stroke-dasharray: 48;
+  stroke-dashoffset: 0
+}
+
+@-webkit-keyframes fill {
+  0% {
+    box-shadow: inset 0px 0px 0px 0px #0284C7;
+  }
+
+  100% {
+    box-shadow: inset 0px 0px 0px 90px #0284C7;
+  }
+}
+
+@keyframes fill {
+  0% {
+    box-shadow: inset 0px 0px 0px 0px #0284C7;
+  }
+
+  100% {
+    box-shadow: inset 0px 0px 0px 90px #0284C7;
+  }
+}
+
+@-webkit-keyframes fillOut {
+  0% {
+    box-shadow: inset 0px 0px 0px 90px #0284C7;
+    stroke: #fff;
+  }
+
+  100% {
+    box-shadow: inset 0px 0px 0px 0px #0284C7;
+    stroke: #0284C7;
+  }
+}
+
+@keyframes fillOut {
+  0% {
+    box-shadow: inset 0px 0px 0px 90px #0284C7;
+    stroke: #fff;
+  }
+
+  100% {
+    box-shadow: inset 0px 0px 0px 0px #0284C7;
+    stroke: #0284C7;
+  }
+}
+
+/* Fix for appMsg in User Profile */
+
+#appMsg + label{
+  margin-top: 20px;
+}
+
+/* List Rounded Borders */
+
+th:first-of-type {
+  border-radius: 0.5rem 0;
+}
+
+th:last-of-type {
+  border-radius: 0 0.5rem;
+}
+
+tr:last-of-type td:first-of-type {
+  border-radius: 0 0.5rem;
+}
+
+tr:last-of-type td:last-of-type {
+  border-radius: 0 0 0.5rem;
+}
+
 .sr-only {
   position: absolute;
   width: 1px;
@@ -1759,6 +1874,11 @@ select {
   color: rgb(243 244 246 / var(--tw-text-opacity));
 }
 
+.text-red-500 {
+  --tw-text-opacity: 1;
+  color: rgb(239 68 68 / var(--tw-text-opacity));
+}
+
 .text-slate-400 {
   --tw-text-opacity: 1;
   color: rgb(148 163 184 / var(--tw-text-opacity));
@@ -1772,11 +1892,6 @@ select {
 .text-blue-500 {
   --tw-text-opacity: 1;
   color: rgb(59 130 246 / var(--tw-text-opacity));
-}
-
-.text-red-500 {
-  --tw-text-opacity: 1;
-  color: rgb(239 68 68 / var(--tw-text-opacity));
 }
 
 .underline {
