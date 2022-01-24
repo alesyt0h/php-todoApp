@@ -81,7 +81,7 @@ $reqFrom = preg_match('/\/todo\/list/', $reqFrom);
 
     <script id="todosRef"> todos = <?php echo json_encode( (!$reqFrom) ? array_slice($this->userTodos, -5, 5) : $this->userTodos); ?>; </script>
 
-    <?php echo $this->appendScript('listHelpers.js'); ?>
+    <?php $this->appendScript('listHelpers.js'); ?>
 
     <script>
         // Render list

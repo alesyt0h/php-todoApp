@@ -31,22 +31,13 @@
     </div>
 </form>
 
-<script type="text/javascript">
+<script>
     const created = <?php echo json_encode($this->accountCreated);?>;
     const tempUser = <?php echo json_encode(isset($_SESSION['tempUser']));?>;
     const successMsg = <?php echo json_encode($_SESSION['success'] ?? '');?>;
-    <?php unset($_SESSION['success']); ?>
-
-    if(created){
-        const form = document.querySelector('form');
-        form.innerHTML = successMsg;
-
-        setTimeout(() => {
-            if(tempUser){
-                window.location.href = <?php echo json_encode(WEB_ROOT . '/todo/assign');?>;
-            } else {
-                window.location.href = <?php echo json_encode(WEB_ROOT);?>;
-            }
-        }, 2000);
-    }
 </script>
+
+<?php 
+    unset($_SESSION['success']);
+    $this->appendScript('authRedirect.js'); 
+?>

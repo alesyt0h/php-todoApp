@@ -67,11 +67,11 @@
                     </div>
                 </div>
             
-                <?php echo $this->appendScript('userPopup.js'); ?>
+                <?php $this->appendScript('userPopup.js'); ?>
 
             <?php } ?> 
         </div>
     </nav>
 </header>
 <script>var webRoot = <?php echo json_encode(WEB_ROOT) ?>; </script>
-<?php echo $this->appendScript('navMenu.js'); ?>
+<?php $this->appendScript('navMenu.js'); ?>
