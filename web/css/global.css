@@ -1,9 +1,8 @@
-html, body {
-    background: url('../img/bg.jpg') fixed;
+body {
+    /* background: url('../img/bg.jpg') fixed;
     background-size: cover;
     background-repeat: no-repeat;
-    overflow: hidden;
-    /* background-position: 60%; TODO for media queries*/ 
+    overflow: hidden; */
 }
 
 .logo-text {
@@ -12,13 +11,13 @@ html, body {
 }
 
 main {
-    display: flex;
-    height: calc(100vh - 128px);
+    /* display: flex; */
+    /* height: calc(100vh - 128px); */
     /* overflow-y: scroll; */
 }
 
 td {
-    padding: 10px;
+    /* padding: 10px; */
 }
 
 .trash {
@@ -34,16 +33,16 @@ td {
 }
 
 .container {
-    align-items: center;
+    /* align-items: center;
     display: flex;
     flex-direction: column;
     margin: auto;
     justify-content: center;
     padding-bottom: 40px;
-    padding-top: 40px;
+    padding-top: 40px; */
 }
 
-.error-msg {
+/* .error-msg {
     background: rgba(0, 0, 0, 0.11);
     background: rgb(179, 33, 33);
     text-align: center;
@@ -57,40 +56,41 @@ td {
 .success-msg {
     background: rgb(58, 151, 58);
     text-align: center;    
-}
+} */
 
 .modal {
-    align-items: center;
-    background: #0000006b;
-    display: flex;
-    height: 100vh;
-    justify-content: center;
+    /* align-items: center; */
+    /* background: #0000006b; */
+    /* display: flex; */
+    /* height: 100vh; */
+
+    /* justify-content: center;
     left: 0;
     position: fixed;
     top: 0;
     width: 100%;
-    z-index: 9999;
+    z-index: 9999; */
 }
 
-.modal-inner-div {
+/* .modal-inner-div {
     background: white;
     border-radius: 10px;
     padding: 100px;
-}
+} */
 
-.todo-completed {
+/* .todo-completed {
     text-decoration: line-through;
-}
+} */
 
-.todo-table {
+/* .todo-table {
     right: 0;
     left: 0;
     margin: 0 auto;
     position: absolute;
-}
+} */
 
 /* TODO: ANIMATE CSS */
-
+/* 
 .fade-in-image {
     animation: fadeIn 0.7s;
     -webkit-animation: fadeIn 0.7s;
@@ -156,7 +156,7 @@ td {
       0% {opacity:1;}
     100% {opacity:0;}
 }
-
+ */
 
 
 
@@ -220,6 +220,12 @@ td {
     0% { box-shadow: inset 0px 0px 0px 90px #0284C7; stroke: #fff; }
     100% { box-shadow: inset 0px 0px 0px 0px #0284C7; stroke: #0284C7; }
 }
+
+
+
+
+
+
 
 /* List Rounded Borders */
 th:first-of-type { border-radius: 0.5rem 0; }
