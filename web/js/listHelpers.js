@@ -72,8 +72,8 @@ const init = () => {
         status.innerText = todo.status;
         status.classList.add(...badge);
     
-        tr.querySelector('.edit').href += todo.id; 
-        tr.querySelector('.trash').href += todo.id;
+        tr.querySelector('#edit').href += todo.id; 
+        tr.querySelector('#remove').href += todo.id;
     
         tbody.appendChild(tr);
     });
