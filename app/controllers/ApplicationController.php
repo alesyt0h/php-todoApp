@@ -86,7 +86,7 @@ class ApplicationController extends Controller {
 				break;
 		}
 
-		$div = "<div id='appMsg' class='${typeMsg} transition-all rounded-md ${padding} pr-10 duration-[600ms] relative shadow border-2 list-disc'>
+		$div = "<div id='appMsg' class='${typeMsg} ml-auto mr-auto max-w-[264px] vsm:max-w-[404px] sm:max-w-[500px] md:max-w-[655px] transition-all rounded-md ${padding} pr-10 duration-[600ms] relative shadow border-2 list-disc'>
 					<svg xmlns='http://www.w3.org/2000/svg' class='absolute right-1 top-1 h-4 w-4 cursor-pointer m-1 text-gray-700' fill='none' viewBox='0 0 24 24' stroke='currentColor' onclick='appMsgHidder(this)'>
 						<path stroke-linecap='round' stroke-linejoin='round' stroke-width='2' d='M6 18L18 6M6 6l12 12' />
 					</svg>
