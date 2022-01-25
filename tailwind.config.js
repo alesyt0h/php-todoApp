@@ -34,6 +34,20 @@ module.exports = {
     },
     fontFamily: {
       'catamaran': ['"Catamaran"', 'sans-serif']
+    },
+    screens: {
+      'vsm': {'min': '320px'},
+      'sm': {'min': '640px'},
+      'md': {'min': '768px'},
+      'lg': {'min': '1024px'},
+      'xl': {'min': '1280px'},
+      '2xl': {'min': '1536px'},
+      'vsm-max': {'max': '389px'},
+      'sm-max': {'max': '656px'},
+      'md-max': {'max': '768px'},
+      'lg-max': {'max': '1024px'},
+      'xl-max': {'max': '1280px'},
+      '2xl-max': {'max': '1536px'},
     }
   },
   plugins: [require('@tailwindcss/forms')],
