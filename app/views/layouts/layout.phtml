@@ -14,7 +14,7 @@
 <body class="bg-[url('../img/bg.jpg')] bg-cover bg-fixed bg-norepeat overflow-hidden">
 	<?php echo $this->_renderViewScript('global/header.phtml', true); ?>
 	<main class="flex h-[calc(100vh_-_128px)]">
-    	<div class="container flex items-center flex-col m-auto justify-center py-8">
+    	<div class="container flex items-center flex-col m-auto justify-center py-8 max-w-none">
 			<?php echo $this->content(); /* Outputs the current action layout */ ?> 
 		</div>
 		<?php $this->appendScript('main.js'); ?>
