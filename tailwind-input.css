@@ -63,8 +63,15 @@
     }
 
     /* List Rounded Borders */
-    th:first-of-type { border-radius: 0.5rem 0; }
-    th:last-of-type { border-radius: 0 0.5rem; }
-    tr:last-of-type td:first-of-type { border-radius: 0 0.5rem; }
-    tr:last-of-type td:last-of-type { border-radius: 0 0 0.5rem; }
+    th:first-of-type { border-top-left-radius: 0.5rem; }
+    th:last-of-type { border-top-right-radius: 0.5rem; }
+    tr:last-of-type td:first-of-type { border-bottom-left-radius: 0.5rem; }
+    tr:last-of-type td:last-of-type { border-bottom-right-radius: 0.5rem; }
+
+    @media (max-width: 600px) { .resizer { width: 300px !important; } }
+    @media (max-width: 561px) { .resizer { width: 250px !important; } }
+    @media (max-width: 500px) { .resizer { width: 200px !important; } }
+    @media (max-width: 450px) { .resizer { width: 164px !important; } }
+    @media (max-width: 400px) { .resizer { width: 100px !important; } }
+    @media (min-width: 320px) { tr:last-of-type td:nth-child(2) { border-bottom-left-radius: 0.375rem } }
 }
