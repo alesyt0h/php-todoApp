@@ -27,6 +27,11 @@ const timeAgo = (dateTime) => {
         second: 1
     }
 
+    if(typeof RelativeTimeFormat !== 'undefined'){
+        Intl.RelativeTimeFormat = RelativeTimeFormat;
+        Intl.RelativeTimeFormat.addLocale(en);
+    }
+
     const rtf = new Intl.RelativeTimeFormat('en', { style: 'long'});
 
     const now = Date.now();

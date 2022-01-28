@@ -50,7 +50,7 @@ class UserController extends ApplicationController{
             return $currentPassword;
         }
 
-        $this->validation->setValidator(new PasswordValidation($formPassword, $currentPassword, $newPassword, $confirmPassword));
+        $this->validation->setValidator(new PasswordValidation($formPassword, $currentPassword, $newPassword, $confirmPassword, true));
         $this->validation->performValidation();
 
         return password_hash($newPassword, PASSWORD_DEFAULT);

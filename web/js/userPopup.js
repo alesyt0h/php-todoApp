@@ -12,7 +12,6 @@
         (e.code === 'Escape') ? menuDiv.classList.add('opacity-0', 'invisible') : null;
     });
 
-    // TODO Beautify this parentElement.parentElement
     document.addEventListener('click', (e) => {
         if(e.target.parentElement !== menuDiv && e.target.parentElement.parentElement !== profileOpener ){
             menuDiv.classList.add('opacity-0', 'invisible');

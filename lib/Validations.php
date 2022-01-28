@@ -64,6 +64,7 @@ class PasswordValidation implements singleValidation {
         private string $currentPassword = '',
         private string $newPassword = '', 
         private string $confirmPassword = '',
+        private bool $isChangingPassword = false
     ){}
 
     public function validation(){
@@ -72,7 +73,7 @@ class PasswordValidation implements singleValidation {
             return Validations::$message .= 'Password must have at least 6 characters<br>';
         }
 
-        if($this->newPassword || $this->confirmPassword){
+        if($this->isChangingPassword){
 
             if(strlen($this->newPassword) < 6){
                 return Validations::$message .= 'Your new password must have at least 6 characters<br>';
