@@ -29,7 +29,7 @@ class AuthController extends ApplicationController{
                 $_SESSION['loggedUser'] = $this->userDB->getLoggedUser();
                 $_SESSION['allowAssign'] = true;
 
-                ($this->isTempUser()) ? $this->redirect('?assign') : $this->redirect();
+                ($this->isTempUser()) ? $this->redirect('/?assign') : $this->redirect();
             } else {
                 $this->appMsg('error', 'Invalid Email or password');
                 $this->redirect('/auth/login');
