@@ -42,6 +42,7 @@ module.exports = {
       'lg': {'min': '1024px'},
       'xl': {'min': '1280px'},
       '2xl': {'min': '1536px'},
+      '4xl': {'min': '2047px'},
       'vsm-max': {'max': '389px'},
       'sm-max': {'max': '656px'},
       'md-max': {'max': '768px'},
