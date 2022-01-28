@@ -22,34 +22,40 @@
         }
     ?>
     <br>
-    <div>
-        <div class="inline-block relative">
+    <div class="vsm:flex vsm:flex-col lg:block">
+        <div class="inline-block relative vsm:mr-2">
             <!--ml-20 -->
-            <input type="text" name="title" value="<?php echo $this->todo['title'] ?>" spellcheck="false" class="text-[2rem] mt-1 inline-block px-3 py-2 bg-white border border-slate-300 rounded-md text-sm placeholder-slate-400 focus:outline-none focus:border-sky-500 focus:ring-1 focus:ring-sky-500 disabled:bg-slate-50 disabled:text-slate-500 disabled:border-slate-200 disabled:shadow-none border-gray-500 shadow-lg shadow-cyan-500/50" autofocus>
+            <input type="text" name="title" value="<?php echo $this->todo['title'] ?>" spellcheck="false" class="vsm:text-[1.4rem] sm:text-[2rem] mt-1 inline-block px-3 py-2 bg-white border border-slate-300 rounded-md text-sm placeholder-slate-400 focus:outline-none focus:border-sky-500 focus:ring-1 focus:ring-sky-500 disabled:bg-slate-50 disabled:text-slate-500 disabled:border-slate-200 disabled:shadow-none border-gray-500 shadow-lg shadow-cyan-500/50" autofocus>
             <div id="radio-buttons" class="bg-slate-200 rounded-b-md pt-4 -mt-3 pb-1 pl-2 border-2 border-gray-500/20 shadow-md">
-                <input type="radio" name="status" class="transition-all hover:scale-125 !bg-none 
-                       text-sky-600 focus:ring-sky-500 checked:!border-1 
-                       checked:!border-slate-900/70 border-sky-900" value="Pending" <?php echo ($status === 'Pending') ? 'checked' : null; ?>>
-                <label for="Pending" class="align-text-top mr-2 ml-1">Pending</label>
+                <div class="sm:inline-block md:inline">
+                    <input type="radio" name="status" class="transition-all hover:scale-125 !bg-none 
+                           text-sky-600 focus:ring-sky-500 checked:!border-1 
+                           checked:!border-slate-900/70 border-sky-900" value="Pending" <?php echo ($status === 'Pending') ? 'checked' : null; ?>>
+                    <label for="Pending" class="align-text-top mr-2 ml-1">Pending</label>
+                </div>
 
-                <input type="radio" name="status" class="transition-all hover:scale-125 !bg-none 
-                       text-sky-600 focus:ring-sky-500 checked:!border-1 
-                       checked:!border-slate-900/70 border-sky-900" value="In Process" <?php echo ($status === 'In Process') ? 'checked' : null; ?>>
-                <label for="In Process" class="align-text-top mr-2 ml-1">In Process</label>
+                <div class="sm:inline-block md:inline">
+                    <input type="radio" name="status" class="transition-all hover:scale-125 !bg-none 
+                           text-sky-600 focus:ring-sky-500 checked:!border-1 
+                           checked:!border-slate-900/70 border-sky-900" value="In Process" <?php echo ($status === 'In Process') ? 'checked' : null; ?>>
+                    <label for="In Process" class="align-text-top mr-2 ml-1">In Process</label>
+                </div>
 
-                <input type="radio" name="status" class="transition-all hover:scale-125 !bg-none 
-                       text-sky-600 focus:ring-sky-500 checked:!border-1 
-                       checked:!border-slate-900/70 border-sky-900" value="Completed" <?php echo ($status === 'Completed') ? 'checked' : null; ?>>
-                <label for="Completed" class="align-text-top mr-2 ml-1">Completed</label>
+                <div class="sm:inline-block md:inline">
+                    <input type="radio" name="status" class="transition-all hover:scale-125 !bg-none 
+                           text-sky-600 focus:ring-sky-500 checked:!border-1 
+                           checked:!border-slate-900/70 border-sky-900" value="Completed" <?php echo ($status === 'Completed') ? 'checked' : null; ?>>
+                    <label for="Completed" class="align-text-top mr-2 ml-1">Completed</label>
+                </div>
             </div>
         </div>
-        <div class="absolute inline-block float-right mt-1 ml-4">
-            <button class="p-4 bg-cyan-500 shadow-lg rounded-lg hover:bg-cyan-600 text-gray-100 text-[2rem] hover:text-gray-300 mb-4">Save</button>
+        <div class="lg:absolute inline-block float-right ml-4 vsm:self-center vsm:mt-4 lg:mt-1">
+            <button class="p-4 bg-cyan-500 shadow-lg rounded-lg hover:bg-cyan-600 text-gray-100 text-[2rem] hover:text-gray-300">Save</button>
         </div>
     </div>
 </form>
 
-<div class="max-w-4xl mx-auto mt-6">
+<div class="max-w-4xl mx-4 lg:mx-0 mt-6 mb-10 sm:mb-0">
     <div class="bg-white shadow-[0_0_15px_1px_rgba(0,0,0,0.21)] overflow-hidden sm:rounded-lg border-2 border-slate-200 shadow-2xl">
         <div class="border-t border-gray-200">
             <dl>
