@@ -96,11 +96,20 @@ class TodoController extends ApplicationController {
         
         if(!isset($_POST['newTodo'])) return false;
 
+        $this->validation = new Validations(new EmptyRuleSet());
         $newTodo = trim($_POST['newTodo']);
 
-        if(!strlen($newTodo)){
-            $this->appMsg('error', 'The todo cannot be empty');
+        $this->validation->setValidator(new TodoValidation($newTodo));
+        $this->validation->performValidation();
+
+        if($this->validation::$message){
+            $this->appMsg('error', $this->validation::$message);
             $this->selfRedirect();
+        }
+
+        // HTML Characters Replace
+        if(preg_match('/[<>"]/', $newTodo)){
+            $newTodo = str_replace(['<','>','"'], ['&lt;', '&gt;', '&quot;'], $newTodo);
         }
 
         $result = $this->todoDB->createTodo($newTodo);

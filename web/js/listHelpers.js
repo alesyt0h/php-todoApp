@@ -61,7 +61,7 @@ const init = () => {
         const completedClasses = (completed) ? ['line-through','text-gray-400'] : ['text-gray-900'];
     
         const title = tr.querySelector('#title');
-        title.innerText = todo.title;
+        title.innerHTML = todo.title;
         title.classList.add(...completedClasses);
     
         const input = tr.querySelector('input');

@@ -11,11 +11,13 @@
 const appMsgHidder = (el) => {
 
     el.parentElement.style.height = el.parentElement.offsetHeight + 'px';
+    el.parentElement.style.width = (el.parentElement.offsetWidth + 1) + 'px';
     el.parentElement.classList.add('opacity-0', 'invisible');
     
     setTimeout(() => {
         el.parentElement.style = 'padding: 0';
         el.parentElement.style.height = '0px';
+        el.parentElement.style.width = '0px';
     }, 600);
 
 }
