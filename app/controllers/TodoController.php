@@ -107,6 +107,11 @@ class TodoController extends ApplicationController {
             $this->selfRedirect();
         }
 
+        // HTML Characters Replace
+        if(preg_match('/[<>"]/', $newTodo)){
+            $newTodo = str_replace(['<','>','"'], ['&lt;', '&gt;', '&quot;'], $newTodo);
+        }
+
         $result = $this->todoDB->createTodo($newTodo);
 
         if($result){
