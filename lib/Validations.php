@@ -164,6 +164,23 @@ class AvatarValidation implements singleValidation {
 
 }
 
+class TodoValidation implements singleValidation {
+
+    public function __construct(private string $todo){
+    }
+
+    public function validation(){
+
+        if(!strlen($this->todo)){
+            return Validations::$message .= 'The Todo cannot be empty';
+        }
+
+        if(strlen($this->todo) > 255){
+            return Validations::$message .= 'Todos can\'t have more than 255 characters<br>';
+        }
+    }
+}
+
 class LoginSuperSet extends Validations {
 
     public function __construct(private string $userName, private string $pass){

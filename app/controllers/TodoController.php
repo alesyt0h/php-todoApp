@@ -96,10 +96,14 @@ class TodoController extends ApplicationController {
         
         if(!isset($_POST['newTodo'])) return false;
 
+        $this->validation = new Validations(new EmptyRuleSet());
         $newTodo = trim($_POST['newTodo']);
 
-        if(!strlen($newTodo)){
-            $this->appMsg('error', 'The todo cannot be empty');
+        $this->validation->setValidator(new TodoValidation($newTodo));
+        $this->validation->performValidation();
+
+        if($this->validation::$message){
+            $this->appMsg('error', $this->validation::$message);
             $this->selfRedirect();
         }
 
