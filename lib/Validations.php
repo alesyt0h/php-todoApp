@@ -40,11 +40,20 @@ class UserValidation implements singleValidation {
     }
 
     public function validation(){
+        $allowedChars = '/^[a-zA-Z0-9äöüÄÖÜ_\-.]*$/';
         
-        if(strlen($this->userName) < 3) {
+        if(strlen($this->userName) < 3){
             return Validations::$message .= 'Username must have at least 3 characters<br>';
         }
 
+        if(strlen($this->userName) > 50){
+            return Validations::$message .= 'Usernames can\'t have more than 50 characters<br>';
+        }
+
+        if(!preg_match($allowedChars, $this->userName)){
+            return Validations::$message .= 'Usernames can only contain letters, numbers, underscores, hyphens and/or dots.<br>';
+        }
+        
         if($this->isRegister){
             $userExists = $this->userDB->userExists($this->userName);
     
@@ -73,17 +82,25 @@ class PasswordValidation implements singleValidation {
             return Validations::$message .= 'Password must have at least 6 characters<br>';
         }
 
+        if(strlen($this->passToValidate) > 50){
+            return Validations::$message .= 'Passwords can\'t have more than 50 characters<br>';
+        }
+
         if($this->isChangingPassword){
 
             if(strlen($this->newPassword) < 6){
                 return Validations::$message .= 'Your new password must have at least 6 characters<br>';
             }
 
+            if(strlen($this->newPassword) > 50){
+                return Validations::$message .= 'Passwords can\'t have more than 50 characters<br>';
+            }
+
             if(!password_verify($this->passToValidate, $this->currentPassword)){
                 return Validations::$message .= 'Current password is incorrect<br>';
             }
 
-            if($this->newPassword !== $this->confirmPassword){ // || !strlen(trim($newPassword))){
+            if($this->newPassword !== $this->confirmPassword){
                 return Validations::$message .= 'New passwords doesn\'t match<br>';
             }
 
@@ -104,6 +121,10 @@ class EmailValidation implements singleValidation {
             return Validations::$message .= 'Please introduce a valid email<br>';
         }
 
+        if(strlen($this->email) > 50){
+            return Validations::$message .= 'Email addresses can\'t have more than 50 characters<br>';
+        }
+
         $mailExists = $this->userDB->mailExists($this->email);
 
         if($mailExists){
@@ -117,8 +138,13 @@ class AvatarValidation implements singleValidation {
     public function __construct(private string $avatar){}
 
     public function validation(){
+        $urlPattern = '/(http|ftp|https):\/\/[\w-]+(\.[\w-]+)+([\w.,@?^=%&amp;:\/~+#-]*[\w@?^=%&amp;\/~+#-])?/';
+        
+        if(strlen($this->avatar) > 255){
+            return Validations::$message .= 'Avatar URL is too long<br>';
+        }
 
-        if(!preg_match('/(http|ftp|https):\/\/[\w-]+(\.[\w-]+)+([\w.,@?^=%&amp;:\/~+#-]*[\w@?^=%&amp;\/~+#-])?/', $this->avatar)){
+        if(!preg_match($urlPattern, $this->avatar)){
             return Validations::$message .= 'Avatar URL is not a valid URL!<br>';
         }
 
