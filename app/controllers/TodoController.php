@@ -79,6 +79,8 @@ class TodoController extends ApplicationController {
                 } else if (!in_array($newStatus, $validStatuses)) {
                     $this->appMsg('error', 'The Todo status is incorrect!');
                 } else {
+                    $newTitle = $this->htmlReplacer($newTitle);
+
                     $todo = $this->todoDB->modifyTodo($todo, $newTitle, $newStatus);
                     $this->appMsg('success', 'The Todo was updated correctly');
                     $this->selfRedirect();
@@ -107,11 +109,8 @@ class TodoController extends ApplicationController {
             $this->selfRedirect();
         }
 
-        // HTML Characters Replace
-        if(preg_match('/[<>"]/', $newTodo)){
-            $newTodo = str_replace(['<','>','"'], ['&lt;', '&gt;', '&quot;'], $newTodo);
-        }
-
+        $newTodo = $this->htmlReplacer($newTodo);
+        
         $result = $this->todoDB->createTodo($newTodo);
 
         if($result){
@@ -228,6 +227,15 @@ class TodoController extends ApplicationController {
             $this->modal['type'] = 'Assign';
 
             $this->afterFilters('view', 'modal', $this->modal);
+        }
+    }
+
+    // HTML Characters Replace
+    private function htmlReplacer(string $todo){
+        if(preg_match('/[<>"]/', $todo)){
+            return str_replace(['<','>','"'], ['&lt;', '&gt;', '&quot;'], $todo);
+        } else {
+            return $todo;
         }
     }
 
