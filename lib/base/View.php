@@ -169,7 +169,7 @@ class View
 	 */
 	public function appendScript($script)
 	{
-		echo '<script type="text/javascript" src="' . $this->baseUrl() . '/js/' . $script . '"></script>';
+		echo '<script src="' . $this->baseUrl() . '/js/' . $script . '"></script>';
 	}
 
 	/**
@@ -197,3 +197,5 @@ class View
 	  return !$this->_layoutEnabled;
 	}
 }
+
+?>

@@ -3,14 +3,19 @@
 class TodoController extends ApplicationController {
 
     public function __construct(){
+        parent::__construct();
         $this->todoDB = new TodoModel();
+
+        if(!$this->isTempUser()){
+            unset($_SESSION['allowAssign']);
+        }
 
         $this->loadModal();
     }
 
     public function listAction(){
 
-        if(isset($_SESSION['loggedUser'])){
+        if($this->isUser()){
 
             $this->userId = $_SESSION['loggedUser']['id'];
 
@@ -24,7 +29,7 @@ class TodoController extends ApplicationController {
 
             $userTodos = array_splice($userTodos, 0);
             
-        } else if(isset($_SESSION['tempUser'])) {
+        } else if($this->isTempUser()) {
 
             $userTodos = array_filter($this->todoDB->getTodos(), function($todo){ 
                 if(in_array($todo['id'], $_SESSION['tempUser'])){ 
@@ -49,49 +54,91 @@ class TodoController extends ApplicationController {
         $todoId = $uri[count($uri) - 1];
 
         if(!is_numeric($todoId)){
-            header('Location: ' . WEB_ROOT . '/todo/list');
-            die();
+            $this->selfRedirect();
         }
         
         $todo = $this->todoDB->getTodoById($todoId);
 
-        if( count($todo) === 0 ){
-            header('Location: ' . WEB_ROOT . '/todo/list');
-            die();
+        if(count($todo) === 0){
+            $this->selfRedirect();
         };
 
-        if(count($_POST)){
+        $isValidUser = ($this->isUser() && $todo['createdBy'] === $_SESSION['loggedUser']['id']);
+        $isValidTempUser = ($this->isTempUser() && in_array($todo['id'], $_SESSION['tempUser']));
 
-            $newTitle = $_POST['title'];
-            $newStatus = $_POST['status'];
+        if($isValidUser || $isValidTempUser){
 
-            $todo = $this->todoDB->modifyTodo($todo, $newTitle, $newStatus);
+            if(count($_POST) === 2){
+    
+                $validStatuses = ['Pending', 'In Process', 'Completed'];
+                $newTitle = trim($_POST['title']);
+                $newStatus = $_POST['status'];
+    
+                if(!strlen($newTitle)){
+                    $this->appMsg('error', 'The Todo can not be empty!');
+                } else if (!in_array($newStatus, $validStatuses)) {
+                    $this->appMsg('error', 'The Todo status is incorrect!');
+                } else {
+                    $newTitle = $this->htmlReplacer($newTitle);
+                    $newTitle = ucfirst($newTitle);
+
+                    $todo = $this->todoDB->modifyTodo($todo, $newTitle, $newStatus);
+                    $this->appMsg('success', 'The Todo was updated correctly');
+                    $this->selfRedirect();
+                }
+            } else {
+                if($todo['status'] === 'Pending'){
+                    $newStatus = 'In Process';
+                } else if ($todo['status'] === 'In Process'){
+                    $newStatus = 'Completed';
+                } else if ($todo['status'] === 'Completed'){
+                    $newStatus = 'Pending';
+                }
+    
+                $todo = $this->todoDB->modifyTodo($todo, $todo['title'], $newStatus);
+            }
+            
+            $this->view->todo = $todo;
+        } else {
+            $this->redirect();
         }
-
-        $this->view->todo = $todo;
 
     }
 
     public function newAction(){
         
-        if(isset($_POST['newTodo'])){
+        if(!isset($_POST['newTodo'])) return false;
 
-            $result = $this->todoDB->createTodo($_POST['newTodo']);
+        $this->validation = new Validations(new EmptyRuleSet());
+        $newTodo = trim($_POST['newTodo']);
 
-            if($result){
+        $this->validation->setValidator(new TodoValidation($newTodo));
+        $this->validation->performValidation();
 
-                if(!isset($_SESSION['loggedUser'])){
-                    $_SESSION['todoMsg'] = "You created a todo, but you don't have an account! 
-                    TODO's created without account are deleted in 24h. 
-                    <a href=" . WEB_ROOT . "/auth/register" . ">Register now to keep your TODO for ever!</a>";
-                }
-                
-                header('Location: ' . WEB_ROOT . substr($_SERVER['REQUEST_URI'], strlen(WEB_ROOT)));
-                die();
+        if($this->validation::$message){
+            $this->appMsg('error', $this->validation::$message);
+            $this->selfRedirect();
+        }
+
+        $newTodo = $this->htmlReplacer($newTodo);
+        $newTodo = ucfirst($newTodo);
+        
+        $result = $this->todoDB->createTodo($newTodo);
+
+        if($result){
+
+            if(!$this->isUser()){
+                $this->appMsg('info', 'You created a todo, but you don\'t have an account!<br/>
+                                       TODO\'s created without an account are deleted in 24h. <br/>
+                                       <a href=' . WEB_ROOT . "/auth/register" . ' class="underline underline-offset-2 text-blue-500">Register now</a> to keep your TODO\'s for ever!');
             } else {
-                $this->view->todoError = 'Error creating the todo, please try again';
+                $this->sumTodo($_SESSION['loggedUser']['id']);
             }
 
+            $this->appMsg('success', 'You created the todo: <strong>' . $newTodo . '</strong>');
+            $this->selfRedirect();
+        } else {
+            $this->appMsg('error', 'Error creating the todo, please try again');
         }
     }
 
@@ -100,63 +147,107 @@ class TodoController extends ApplicationController {
         $this->view->disableView();
 
         if(!isset($_POST['deleteTodoId'])){
-            if($_SERVER['HTTP_REFERER']){
-                header('Location: ' . $_SERVER['HTTP_REFERER']);
-            } else {
-                header('Location: ' . WEB_ROOT);
-            }
+            header('Location: ' . $_SERVER['HTTP_REFERER'] ?? WEB_ROOT);
             die();
         }
 
         $todoId = $_POST['deleteTodoId'];
-        $result = $this->todoDB->deleteTodo($todoId);
+        $todo = $this->todoDB->getTodoById($todoId);
 
-        if($result){
-            $location = preg_replace('/\?(.*)/','', $_SERVER['HTTP_REFERER']);
-            header('Location: ' . $location);
-        } else {
-            throw new Exception('The Todo couldn\'t be deleted', 1);
+        $isValidUser = ($this->isUser() && $todo['createdBy'] === $_SESSION['loggedUser']['id']);
+        $isValidTempUser = ($this->isTempUser() && in_array($todo['id'], $_SESSION['tempUser']));
+
+        if($isValidUser || $isValidTempUser) {
+
+            $result = $this->todoDB->deleteTodo($todoId);
+
+            if(!$result){
+                $this->appMsg('error', 'Error deleting the todo');
+            }
+
+            if($isValidTempUser && $result){
+                $key = array_search($todoId, $_SESSION['tempUser']);
+                unset($_SESSION['tempUser'][$key]);
+                $_SESSION['tempUser'] = array_splice($_SESSION['tempUser'], 0);
+            }
         }
 
+        $location = preg_replace('/\?(.*)/','', $_SERVER['HTTP_REFERER']);
+        header('Location: ' . $location);
+        die();
     }
 
     public function assignAction(){
 
         $this->view->disableView();
 
-        if(isset($_SERVER['HTTP_REFERER']) && substr($_SERVER['HTTP_REFERER'], -13, 13) === 'auth/register'){
-            $this->todoDB->assignTodos();
+        if(isset($_SESSION['allowAssign']) && $_SESSION['allowAssign'] === true){
+            $newUserData = $this->todoDB->assignTodos();
+            $this->sumTodo($newUserData['userId'], $newUserData['todosCount']);
+            
+            unset($_SESSION['tempUser']);
+            unset($_SESSION['allowAssign']);
+
+            $_SESSION['assignedSuccess'] = true; 
+            $this->appMsg('success', 'Todo\'s cretead while you were not authenticated had been successfully added to this account!');
         }
 
-        header('Location: ' . WEB_ROOT);
-        die();
+        $this->redirect();
     }
 
     public function loadModal(){
         
         if(isset($_GET['delete'])){
 
-            if(!isset($_SERVER['HTTP_REFERER'])){
-
-                (isset($_SERVER['HTTP_ORIGIN'])) ? $location = $_SERVER['HTTP_ORIGIN'] : $location = WEB_ROOT;
-                header('Location: ' . $location );
-                die();
-            }
-
-            // TODO check if this is the user who created it, if not don't even display it on modal. Same for TempUsers
+            if(!isset($_SERVER['HTTP_REFERER'])) $this->refererRedirect();
+            
             $todo = $this->todoDB->getTodoById($_GET['delete']);
 
-            $formatedDate = date('l, F jS \of Y', strtotime($todo['createdAt']));
+            $isInvalidUser = $this->isUser() && $todo['createdBy'] !== $_SESSION['loggedUser']['id'];
+            $isInvalidTempUser = ($this->isTempUser() && !in_array($todo['id'], $_SESSION['tempUser']));
+
+            if($isInvalidTempUser || $isInvalidUser) $this->refererRedirect();
 
             $this->formData = "
             <form action=" . WEB_ROOT . '/todo/delete/' . $todo['id'] . " method='POST'>
-            <p>Are you sure you want to delete <strong> " . $todo['title'] . "</strong>?</p>
-            <p>You created this Todo on <strong> " . $formatedDate . "</strong></p><br>
-            <button type='submit' name='deleteTodoId' value=" . $todo['id'] . " >Delete</button>
-            </form>";
+                <p>Are you sure you want to delete <strong> " . $todo['title'] . "</strong>?</p>
+            ";
+
+            $this->modal = [];
+
+            $this->modal['content'] = $this->formData;
+            $this->modal['title'] = 'Delete todo';
+            $this->modal['type'] = 'Delete';
+            $this->modal['id'] = $todo['id'];
             
-            $this->afterFilters('view', 'modalContent', $this->formData);
+            $this->afterFilters('view', 'modal', $this->modal);
             
+        } else if(isset($_GET['assign'])) {
+
+            if(!$_SESSION['allowAssign']) $this->redirect();
+
+            $this->formData = "
+            <form action=" . WEB_ROOT . '/todo/assign' . ">
+                <p>You created <strong>". count($_SESSION['tempUser']) . "</strong> todo while you were not authenticated. Would you like to add them to this account?</p><br>
+                <p>If you want to do it later, you will find a link in the menu to assign them to your account.</p>
+            ";
+
+            $this->modal = [];
+
+            $this->modal['content'] = $this->formData;
+            $this->modal['title'] = 'Assign todo' . (count($_SESSION['tempUser']) > 1 ? 's' : '');
+            $this->modal['type'] = 'Assign';
+
+            $this->afterFilters('view', 'modal', $this->modal);
+        }
+    }
+
+    // HTML Characters Replace
+    private function htmlReplacer(string $todo){
+        if(preg_match('/[<>"]/', $todo)){
+            return str_replace(['<','>','"'], ['&lt;', '&gt;', '&quot;'], $todo);
+        } else {
+            return $todo;
         }
     }
 

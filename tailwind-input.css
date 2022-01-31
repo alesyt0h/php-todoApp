@@ -1,0 +1,77 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@layer components {
+    
+    /* Logo */
+    .wrapper-logo {
+        display: flex;
+        justify-content: center;
+        align-items: center;
+    }
+
+    .logo-checkmark__circle {
+        stroke-dasharray:  166;
+        stroke-dashoffset: 0;
+        stroke-width: 3;
+        stroke-miterlimit: 10;
+        stroke: #0284C7;
+        fill: none;
+    }
+
+    .hover-out {
+        animation: fillOut .2s ease-in-out forwards;
+    }
+
+    .logo-checkmark {
+        width: 35px;
+        height: 35px;
+        border-radius: 50%;
+        display: block;
+        stroke: #0284C7;
+        stroke-width: 4;
+        stroke-miterlimit: 10;
+        box-shadow: inset 0px 0px 0px #0284C7;
+    }
+
+    .main-logo:hover .logo-checkmark {
+        stroke-width: 4;
+        animation: fill .4s ease-in-out forwards;
+        stroke: #fff;
+        transition-property: all;
+    }
+
+    .logo-checkmark__check {
+        transform-origin: 50% 50%;
+        stroke-dasharray: 48;
+        stroke-dashoffset: 0
+    }
+
+    @keyframes fill {
+        0% { box-shadow: inset 0px 0px 0px 0px #0284C7; }
+        100% { box-shadow: inset 0px 0px 0px 90px #0284C7; }
+    }
+    @keyframes fillOut {
+        0% { box-shadow: inset 0px 0px 0px 90px #0284C7; stroke: #fff; }
+        100% { box-shadow: inset 0px 0px 0px 0px #0284C7; stroke: #0284C7; }
+    }
+
+    /* Fix for appMsg in User Profile */
+    #appMsg + label{
+        margin-top: 20px;
+    }
+
+    /* List Rounded Borders */
+    th:first-of-type { border-top-left-radius: 0.5rem; }
+    th:last-of-type { border-top-right-radius: 0.5rem; }
+    tr:last-of-type td:first-of-type { border-bottom-left-radius: 0.5rem; }
+    tr:last-of-type td:last-of-type { border-bottom-right-radius: 0.5rem; }
+
+    @media (max-width: 600px) { .resizer { width: 300px !important; } }
+    @media (max-width: 561px) { .resizer { width: 250px !important; } }
+    @media (max-width: 500px) { .resizer { width: 200px !important; } }
+    @media (max-width: 450px) { .resizer { width: 164px !important; } }
+    @media (max-width: 400px) { .resizer { width: 100px !important; } }
+    @media (min-width: 320px) { tr:last-of-type td:nth-child(2) { border-bottom-left-radius: 0.375rem } }
+}
