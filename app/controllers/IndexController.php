@@ -8,6 +8,10 @@ class IndexController extends ApplicationController {
 
         $this->view->userTodos = $todo->listAction();
 
+        if(!isset($_SESSION['proTip'])){
+            $_SESSION['proTip'] = true;
+        }
+
         if(isset($_GET['delete']) || isset($_GET['assign'])){
             $this->afterFilters('view', 'modal', $todo->modal);
         }
