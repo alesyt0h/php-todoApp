@@ -23,6 +23,7 @@ $routes = array(
 	'/todo/delete/:todoId' => 'todo#delete',
 	'/todo/new/' => 'todo#new',
 	'/todo/assign/' => 'todo#assign',
+	'/todo/status/:todoId' => 'todo#status',
 	'/user/profile/' => 'user#profile'
 );
 
