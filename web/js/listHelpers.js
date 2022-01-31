@@ -47,6 +47,21 @@ const timeAgo = (dateTime) => {
     }
 }
 
+const masterChecker = () => {
+    let someIncomplete;
+    const inputs = document.querySelectorAll('td input');
+
+    inputs.forEach(el => {
+        if(!el.checked){
+            someIncomplete = true
+        }
+    });
+
+    if(!someIncomplete){
+        document.querySelector('#master-checker').checked = true;
+    }
+}
+
 const init = () => {
     const tbody = document.querySelector('tbody');
     const trElem = document.querySelectorAll('tr')[1];
@@ -58,6 +73,7 @@ const init = () => {
     
         const badge = printBadge(todo.status)
         const completed = todo.status === 'Completed';
+        const inProcess = todo.status === 'In Process';
         const completedClasses = (completed) ? ['line-through','text-gray-400'] : ['text-gray-900'];
     
         const title = tr.querySelector('#title');
@@ -66,6 +82,7 @@ const init = () => {
     
         const input = tr.querySelector('input');
         input.checked = completed;
+        input.indeterminate = inProcess;
         input.id = todo.id;
     
         const created = tr.querySelector('#created');
@@ -82,6 +99,8 @@ const init = () => {
     
         tbody.appendChild(tr);
     });
+
+    masterChecker();
 }
 
 const removeOverflowEffect = () => {
