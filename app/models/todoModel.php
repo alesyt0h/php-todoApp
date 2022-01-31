@@ -34,7 +34,7 @@ class TodoModel extends Model {
         $tempTodosId = $_SESSION['tempUser'];
 
         for ($i=0; $i < count($tempTodosId); $i++) {
-            for ($j = count($this->_todos) - 1; $j > 0; $j--) {
+            for ($j = count($this->_todos) - 1; $j > 0; $j--) { // Reverse lookup - Faster
 
                 if($this->_todos[$j]['id'] === $tempTodosId[$i]){
                     $this->_todos[$j]['createdBy'] = $userId;
@@ -45,6 +45,7 @@ class TodoModel extends Model {
 
         $this->writeJSON('todos');
         unset($_SESSION['tempUser']);
+        return ["userId" => $userId, "todosCount" => count($tempTodosId)];
     }
 
     public function modifyTodo(array $todo, string $title, string $status){
@@ -70,13 +71,6 @@ class TodoModel extends Model {
     }
 
     public function deleteTodo(string $todoId){
-
-        $todo = $this->findOneById($todoId, 'todos');
-
-        // TODO try this changing loggedUser id
-        if($todo['createdBy'] !== $_SESSION['loggedUser']['id']){
-            return 'You are not the owner of this Todo!';
-        }
 
         $this->todoId = intval($todoId);
 

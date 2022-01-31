@@ -25,6 +25,11 @@ include(ROOT_PATH . '/config/routes.php');
  */
 function autoloader($className) {
 	// controller autoloading
+
+	if(substr($className, -8) === 'SuperSet'){
+		$className = 'Validations';
+	}
+
 	if (strlen($className) > 10 && substr($className, -10) == 'Controller') {
 		if (file_exists(ROOT_PATH . '/app/controllers/' . $className . '.php') == 1) {
 			require_once ROOT_PATH . '/app/controllers/' . $className . '.php';
@@ -38,7 +43,11 @@ function autoloader($className) {
 			require_once ROOT_PATH . '/lib/' . $className . '.php';
 		}
 		else {
-			require_once ROOT_PATH . '/app/models/' . $className . '.php';
+			if(substr($className, -8) === 'SuperSet'){
+				$className = 'Validations';
+			} else {
+				require_once ROOT_PATH . '/app/models/' . $className . '.php';
+			}
 		}
 	}
 }
@@ -48,3 +57,5 @@ spl_autoload_register('autoloader');
 
 $router = new Router();
 $router->execute($routes);
+
+?>

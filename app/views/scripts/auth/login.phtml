@@ -1,11 +1,47 @@
-<form action="<?php echo WEB_ROOT . '/auth/login'; ?>" method="POST">
-    <div class="error-msg" style="background: red"><?php echo $this->loginError ?></div>
-    <label for="username">Username:</label>
-    <input type="text" minlength="3" name="username" required> <br>
+<form method="POST" class="mx-4">
+    <?php 
+        // echo $_SESSION['error'] ?? '';
+        // unset($_SESSION['error']);
+    ?>
 
-    <label for="password">Password:</label>
-    <input type="password" minlength="6" name="password" required> <br>
+    <div class="max-w-md w-full space-y-8">
+        <div>
+            <div class="wrapper-logo rounded-full">
+                <svg class="logo-checkmark z-20 h-20 w-14" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 52 52" >
+                    <circle class="logo-checkmark__circle" cx="26" cy="26" r="25" fill="none" />
+                    <path class="logo-checkmark__check" fill="none" d="M14.1 27.2l7.1 7.2 16.7-16.8" />
+                </svg>
+            </div>
+            <h2 class="mt-2 text-center text-3xl font-extrabold text-gray-900">Sign in to your account</h2>
+            <p class="mt-2 text-center text-sm text-gray-600">
+                Or <a href="<?php echo WEB_ROOT . '/auth/register'; ?>" class="font-medium text-sky-600 hover:text-sky-500"> sign up if you don't have an account yet!</a>
+            </p>
+        </div>
+        <?php 
+        echo $_SESSION['error'] ?? '';
+        unset($_SESSION['error']);
+    ?>
+        <div class="rounded-md shadow-sm -space-y-px">
+            <div>
+                <label for="username" class="sr-only">Username</label>
+                <input id="username" name="username" type="text" class="appearance-none rounded-none relative block w-full px-3 py-2 border border-gray-300 placeholder-gray-500 text-gray-900 rounded-t-md focus:outline-none focus:ring-sky-500 focus:border-sky-500 focus:z-10 sm:text-sm" placeholder="Username">
+            </div>
 
-    <button type="submit">Login</button>
-    <span style="font-size: 0.8rem">Don't have an account? <a href="<?php echo WEB_ROOT . '/auth/register'; ?>">Register!</a></span>
+            <div>
+                <label for="password" class="sr-only">Password</label>
+                <input id="password" name="password" type="password" class="appearance-none rounded-none relative block w-full px-3 py-2 border border-gray-300 placeholder-gray-500 text-gray-900 rounded-b-md focus:outline-none focus:ring-sky-500 focus:border-sky-500 focus:z-10 sm:text-sm" placeholder="Password">
+            </div>
+        </div>
+
+        <div>
+            <button type="submit" class="group relative w-full flex justify-center py-2 px-4 border border-transparent text-sm font-medium rounded-md text-white bg-sky-600 hover:bg-sky-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-sky-500">
+                <span class="absolute left-0 inset-y-0 flex items-center pl-3">
+                    <svg class="h-5 w-5 text-sky-500 group-hover:text-sky-400" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor" aria-hidden="true">
+                        <path fill-rule="evenodd" d="M5 9V7a5 5 0 0110 0v2a2 2 0 012 2v5a2 2 0 01-2 2H5a2 2 0 01-2-2v-5a2 2 0 012-2zm8-2v2H7V7a3 3 0 016 0z" clip-rule="evenodd"></path>
+                    </svg>
+                </span>
+                Sign in
+            </button>
+        </div>
+    </div>
 </form>
