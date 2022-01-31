@@ -86,6 +86,16 @@ class TodoController extends ApplicationController {
                     $this->appMsg('success', 'The Todo was updated correctly');
                     $this->selfRedirect();
                 }
+            } else {
+                if($todo['status'] === 'Pending'){
+                    $newStatus = 'In Process';
+                } else if ($todo['status'] === 'In Process'){
+                    $newStatus = 'Completed';
+                } else if ($todo['status'] === 'Completed'){
+                    $newStatus = 'Pending';
+                }
+    
+                $todo = $this->todoDB->modifyTodo($todo, $todo['title'], $newStatus);
             }
             
             $this->view->todo = $todo;
@@ -183,40 +193,6 @@ class TodoController extends ApplicationController {
         }
 
         $this->redirect();
-    }
-
-    public function statusAction(){
-
-        $this->view->disableView();
-
-        $uri = explode('/',$_SERVER['REQUEST_URI']);
-        $todoId = $uri[count($uri) - 1];
-
-        if(!is_numeric($todoId)){
-            $this->selfRedirect();
-        }
-        
-        $todo = $this->todoDB->getTodoById($todoId);
-
-        if(count($todo) === 0){
-            $this->selfRedirect();
-        };
-
-        $isValidUser = ($this->isUser() && $todo['createdBy'] === $_SESSION['loggedUser']['id']);
-        $isValidTempUser = ($this->isTempUser() && in_array($todo['id'], $_SESSION['tempUser']));
-
-        if($isValidUser || $isValidTempUser){
-
-            if($todo['status'] === 'Pending'){
-                $newStatus = 'In Process';
-            } else if ($todo['status'] === 'In Process'){
-                $newStatus = 'Completed';
-            } else if ($todo['status'] === 'Completed'){
-                $newStatus = 'Pending';
-            }
-
-            $todo = $this->todoDB->modifyTodo($todo, $todo['title'], $newStatus);
-        }
     }
 
     public function loadModal(){
