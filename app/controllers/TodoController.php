@@ -80,6 +80,7 @@ class TodoController extends ApplicationController {
                     $this->appMsg('error', 'The Todo status is incorrect!');
                 } else {
                     $newTitle = $this->htmlReplacer($newTitle);
+                    $newTitle = ucfirst($newTitle);
 
                     $todo = $this->todoDB->modifyTodo($todo, $newTitle, $newStatus);
                     $this->appMsg('success', 'The Todo was updated correctly');
@@ -110,6 +111,7 @@ class TodoController extends ApplicationController {
         }
 
         $newTodo = $this->htmlReplacer($newTodo);
+        $newTodo = ucfirst($newTodo);
         
         $result = $this->todoDB->createTodo($newTodo);
 
