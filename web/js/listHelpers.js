@@ -92,7 +92,12 @@ const init = () => {
     
         const status = tr.querySelector('#status');
         status.innerText = todo.status;
-        status.classList.add(...badge);
+        status.classList.add(...badge, 'cursor-pointer');
+        status.addEventListener('click', (el) => {
+            fetch(`${webRoot}/todo/edit/${todo.id}`).then( () => {
+                location.reload();
+            });
+        });
     
         tr.querySelector('#edit').href += todo.id; 
         tr.querySelector('#remove').href += todo.id;

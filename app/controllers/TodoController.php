@@ -54,13 +54,13 @@ class TodoController extends ApplicationController {
         $todoId = $uri[count($uri) - 1];
 
         if(!is_numeric($todoId)){
-            $this->redirect('/todo/list');
+            $this->selfRedirect();
         }
         
         $todo = $this->todoDB->getTodoById($todoId);
 
         if(count($todo) === 0){
-            $this->redirect('/todo/list');
+            $this->selfRedirect();
         };
 
         $isValidUser = ($this->isUser() && $todo['createdBy'] === $_SESSION['loggedUser']['id']);
@@ -86,6 +86,16 @@ class TodoController extends ApplicationController {
                     $this->appMsg('success', 'The Todo was updated correctly');
                     $this->selfRedirect();
                 }
+            } else {
+                if($todo['status'] === 'Pending'){
+                    $newStatus = 'In Process';
+                } else if ($todo['status'] === 'In Process'){
+                    $newStatus = 'Completed';
+                } else if ($todo['status'] === 'Completed'){
+                    $newStatus = 'Pending';
+                }
+    
+                $todo = $this->todoDB->modifyTodo($todo, $todo['title'], $newStatus);
             }
             
             $this->view->todo = $todo;
