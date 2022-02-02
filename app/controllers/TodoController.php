@@ -175,7 +175,7 @@ class TodoController extends ApplicationController {
             unset($_SESSION['allowAssign']);
 
             $_SESSION['assignedSuccess'] = true; 
-            $this->appMsg('success', 'Todo\'s cretead while you were not authenticated had been successfully added to this account!');
+            $this->appMsg('success', 'Todo\'s created while you were not authenticated had been successfully added to this account!');
         }
 
         $this->redirect();
