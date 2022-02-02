@@ -86,8 +86,8 @@ const init = () => {
         input.id = todo.id;
     
         const created = tr.querySelector('#created');
-        created.after((completed) ? timeAgo(todo.completedAt) : timeAgo(todo.createdAt));
-        created.parentElement.title = (completed) ? 'Created ' + timeAgo(todo.createdAt) : '';
+        created.after((completed) ? timeAgo(todo.completed_at) : timeAgo(todo.created_at));
+        created.parentElement.title = (completed) ? 'Created ' + timeAgo(todo.created_at) : '';
         created.innerText = (completed) ? 'Completed ' : '';
     
         const status = tr.querySelector('#status');
