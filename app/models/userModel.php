@@ -3,6 +3,9 @@
 class UserModel extends Model {
 
     public function checkCredentials(string $username, string $password){
+
+        $this->getUsers();
+
         $match = false;
 
         for ($i=0; $i < count($this->_users); $i++) { 
@@ -19,10 +22,14 @@ class UserModel extends Model {
             }
         }
 
+        $this->_users = [];
+
         return $match;
     }
 
     public function userExists(string $username){
+
+        $this->getUsers();
 
         $userExists = false;
 
@@ -33,10 +40,14 @@ class UserModel extends Model {
             }
         }
 
+        $this->_users = [];
+
         return $userExists;
     }
 
     public function mailExists(string $email){
+
+        $this->getUsers();
 
         $mailExists = false;
 
@@ -46,6 +57,9 @@ class UserModel extends Model {
                 break;
             }
         }
+
+        $this->_users = [];
+
         return $mailExists;
     }
 
@@ -63,22 +77,24 @@ class UserModel extends Model {
             "avatarUrl" => null
         ];
 
-        array_push($this->_users, $newUser);
         $this->_loggedUser = $newUser;
 
-        return $this->writeJSON('users');
+        return $this->writeJSON('users', $newUser);
     }
 
     public function modifyUser(int $userId, string $email, string $password, string|null $avatar, int $count = 0){
 
+        $this->getUsers();
         $this->user = $this->findOneById($userId, 'users');
+
+        if(!$this->user) return;
 
         $this->user['email'] = $email;
         $this->user['password'] = $password;
         $this->user['avatarUrl'] = $avatar;
         $this->user['createdTodos'] += $count;
         
-        $this->_users = array_map( function($oldUser){ 
+        $fullUsers = array_map( function($oldUser){ 
             return ($oldUser['id'] === $this->user['id']) ? $this->user : $oldUser;
         }, $this->_users);
 
@@ -86,11 +102,17 @@ class UserModel extends Model {
 
         $_SESSION['loggedUser'] = $this->user;
 
-        return [ 'status' => $this->writeJSON('users'), 
-                 'equals' => $equals ];
+        $result = [ 'status' => $this->writeJSON('users', $fullUsers, true), 
+                    'equals' => $equals ];
+
+        $this->_users = [];
+
+        return $result;
     }
 
     public function getLastUserId(){
+
+        $this->getUsers();
         
         if(!count($this->_users)) return 1;
         
@@ -99,12 +121,19 @@ class UserModel extends Model {
             $lastId = $this->_users[$i]['id'];
             break;
         }
+
+        $this->_users = [];
         
         return $lastId + 1;
     }
 
     public function getLoggedUser(){
         return $this->_loggedUser;
+    }
+    
+    protected function getUsers(){
+        $this->parseJSON('users');
+        $this->fetchUsers();
     }
 
     public function purgeModelUser(){
