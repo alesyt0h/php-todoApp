@@ -2,28 +2,35 @@
 
 class TodoModel extends Model {
 
+    public function __construct(){
+        Model::__construct();
+        $this->_setTable('todos');
+    }
+
     public function createTodo(string $title){
 
         $userId = null;
-        $todoId = intval(microtime(true) * 1000);
 
         if(isset($_SESSION['loggedUser'])){
             $userId = $_SESSION['loggedUser']['id'];
-        } else {
-            $_SESSION['tempUser'] ?? $_SESSION['tempUser'] = [];
-            array_push($_SESSION['tempUser'], $todoId);
         }
 
-        $newTodo = [
-            "id" => $todoId,
-            "title" => $title,
-            "status" =>  'Pending',
-            "createdBy" => $userId,
-            "createdAt" => date('c'), 
-            "completedAt" => null
+        $todo = [
+            'title' => $title, 
+            'status' => 'Pending', 
+            'created_by' => $userId ?? null, 
+            'created_at' => date('Y-m-d H:i:s'), 
+            'completed_at' => null
         ];
 
-        return $this->writeJSON('todos', $newTodo);
+        $inserted = $this->save($todo);
+
+        if(!isset($_SESSION['loggedUser'])){
+            $_SESSION['tempUser'] ?? $_SESSION['tempUser'] = [];
+            array_push($_SESSION['tempUser'], $inserted);
+        }
+
+        return $inserted;
     }
 
     public function assignTodos(){
