@@ -38,19 +38,7 @@ class TodoModel extends Model {
         $userId = $_SESSION['loggedUser']['id'];
         $tempTodosId = $_SESSION['tempUser'];
 
-        $fullTodos = $this->parseJSON('todos');
-
-        for ($i=0; $i < count($tempTodosId); $i++) {
-            for ($j = count($fullTodos) - 1; $j > 0; $j--) { // Reverse lookup - Faster
-
-                if($fullTodos[$j]['id'] === $tempTodosId[$i]){
-                    $fullTodos[$j]['createdBy'] = $userId;
-                    break;
-                }
-            }
-        }
-
-        $this->writeJSON('todos', $fullTodos, true);
+        $this->assign($userId, $tempTodosId);
 
         unset($_SESSION['tempUser']);
         return ["userId" => $userId, "todosCount" => count($tempTodosId)];
@@ -85,7 +73,7 @@ class TodoModel extends Model {
     }
 
     public function getTodoById(string $todoId){
-        return $this->fetchOne(intval($todoId), 'id');
+        return $this->fetchOne(intval($todoId));
     }
 }
 

@@ -167,4 +167,18 @@ class Model
 		
 		return ($found) ? $found : [];
 	}
+
+	protected function assign(mixed $userId, mixed $ids){
+
+		$in  = str_repeat('?,', count($ids) - 1) . '?';
+
+		$sql = 'UPDATE todos';
+		$sql .= ' SET created_by = ?';
+		$sql .= ' WHERE ' . 'id' . ' IN (' . $in . ')';
+
+		array_unshift($ids, $userId);
+
+		$statement = $this->_dbh->prepare($sql);
+		$statement->execute($ids);
+	}
 }
