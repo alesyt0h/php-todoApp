@@ -76,20 +76,12 @@ class TodoModel extends Model {
 
         $this->todoId = intval($todoId);
 
-        $fullTodos = $this->parseJSON('todos');
-        $fullTodos = array_filter($fullTodos, function($oldTodo){ 
-            if($oldTodo['id'] !== $this->todoId){ 
-                return $oldTodo; 
-            }
-        });
-
-        $fullTodos = array_splice($fullTodos, 0);
-
-        return $this->writeJSON('todos', $fullTodos, true);
+        $result = $this->delete($todoId);
+        return $result;
     }
 
-    public function getTodos(){
-        return $this->_todos;
+    public function getTodos(mixed $id){
+        return $this->fetchTodos($id);
     }
 
     public function getTodoById(string $todoId){
