@@ -2,6 +2,11 @@
 
 class UserModel extends Model {
 
+    public function __construct(){
+        Model::__construct();
+        $this->_setTable('users');
+    }
+
     public function checkCredentials(string $username, string $password){
 
         $this->getUsers();
@@ -29,57 +34,32 @@ class UserModel extends Model {
 
     public function userExists(string $username){
 
-        $this->getUsers();
-
-        $userExists = false;
-
-        for ($i=0; $i < count($this->_users); $i++) { 
-            if(strtolower($this->_users[$i]['username']) === $username){
-                $userExists = true;
-                break;
-            }
-        }
-
-        $this->_users = [];
+        $userExists = $this->fetchOne($username, 'username');
 
         return $userExists;
     }
 
     public function mailExists(string $email){
 
-        $this->getUsers();
-
-        $mailExists = false;
-
-        for ($i=0; $i < count($this->_users); $i++) { 
-            if(strtolower($this->_users[$i]['email']) === $email){
-                $mailExists = true;
-                break;
-            }
-        }
-
-        $this->_users = [];
+        $mailExists = $this->fetchOne($email, 'email');
 
         return $mailExists;
     }
 
     public function insertUser(string $username, string $password, string $email){
 
-        $id = $this->getLastUserId();
-
         $newUser = [
-            "id" => $id,
             "username" => $username,
             "password" => $password,
             "email" => $email,
-            "registerDate" => date('c'),
-            "createdTodos" => 0,
-            "avatarUrl" => null
+            "register_date" => date('Y-m-d H:i:s'),
+            "created_todos" => 0,
+            "avatar_url" => null
         ];
 
         $this->_loggedUser = $newUser;
 
-        return $this->writeJSON('users', $newUser);
+        return $this->save($newUser);
     }
 
     public function modifyUser(int $userId, string $email, string $password, string|null $avatar, int $count = 0){
@@ -110,30 +90,8 @@ class UserModel extends Model {
         return $result;
     }
 
-    public function getLastUserId(){
-
-        $this->getUsers();
-        
-        if(!count($this->_users)) return 1;
-        
-        // Reverse lookup, since users aren't deleted, this should be faster and efficient
-        for ($i= count($this->_users) - 1; $i < count($this->_users); $i--) { 
-            $lastId = $this->_users[$i]['id'];
-            break;
-        }
-
-        $this->_users = [];
-        
-        return $lastId + 1;
-    }
-
     public function getLoggedUser(){
         return $this->_loggedUser;
-    }
-    
-    protected function getUsers(){
-        $this->parseJSON('users');
-        $this->fetchUsers();
     }
 
     public function purgeModelUser(){
