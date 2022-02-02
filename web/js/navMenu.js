@@ -15,7 +15,7 @@
         dashboardMobile.classList.add('bg-gray-900', 'text-white');
         dashboardMobile.classList.remove('text-gray-300', 'hover:bg-gray-700', 'hover:text-white');
 
-    } else if(currentUrl.includes('todo/new')) {
+    } else if(currentUrl.includes('todo/new') || currentUrl.match(/todo$/) || currentUrl.match(/todo\/$/)) {
 
         const newTodo = document.querySelector('#new');
         newTodo.classList.add('bg-gray-900', 'text-white');
