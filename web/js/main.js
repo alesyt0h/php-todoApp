@@ -18,6 +18,8 @@ const appMsgHidder = (el) => {
         el.parentElement.style = 'padding: 0';
         el.parentElement.style.height = '0px';
         el.parentElement.style.width = '0px';
+        el.parentElement.innerHTML = '';
+
     }, 600);
 
 }
