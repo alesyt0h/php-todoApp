@@ -53,7 +53,7 @@ class Model
 		$statement = $this->_dbh->prepare($sql);
 		$statement->execute(array($id));
 		
-		return $statement->fetch(PDO::FETCH_OBJ);
+		return get_object_vars($statement->fetch(PDO::FETCH_OBJ));
 	}
 	
 	/**

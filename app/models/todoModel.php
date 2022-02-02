@@ -62,22 +62,14 @@ class TodoModel extends Model {
         $todo['status'] = $status;
 
         if($status === 'Completed'){
-            $todo['completedAt'] = date('c');
+            $todo['completed_at'] = date('Y-m-d H:i:s');
         } else {
-            $todo['completedAt'] = null;
+            $todo['completed_at'] = null;
         }
 
-        $this->todo = $todo;
-
-        $fullTodos = $this->parseJSON('todos');
-
-        $fullTodos = array_map( function($oldTodo){ 
-            return ($oldTodo['id'] === $this->todo['id']) ? $this->todo : $oldTodo;
-        }, $fullTodos);
-
-        $this->writeJSON('todos', $fullTodos, true);
-
-        return $this->todo;
+        $this->save($todo);
+        
+        return $todo;
     }
 
     public function deleteTodo(string $todoId){
@@ -101,7 +93,7 @@ class TodoModel extends Model {
     }
 
     public function getTodoById(string $todoId){
-        return $this->findOneById(intval($todoId), 'todos');
+        return $this->fetchOne(intval($todoId), 'id');
     }
 }
 
