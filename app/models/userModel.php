@@ -57,35 +57,25 @@ class UserModel extends Model {
             "avatar_url" => null
         ];
 
+        $newUser['id'] = intval($this->save($newUser));
         $this->_loggedUser = $newUser;
 
-        return $this->save($newUser);
+        return $newUser;
     }
 
-    public function modifyUser(int $userId, string $email, string $password, string|null $avatar, int $count = 0){
+    public function modifyUser(string $email, string $password, string|null $avatar, int $count = 0){
 
-        $this->getUsers();
-        $this->user = $this->findOneById($userId, 'users');
+        $user = $_SESSION['loggedUser'];
 
-        if(!$this->user) return;
+        if(!$user) return;
 
-        $this->user['email'] = $email;
-        $this->user['password'] = $password;
-        $this->user['avatarUrl'] = $avatar;
-        $this->user['createdTodos'] += $count;
-        
-        $fullUsers = array_map( function($oldUser){ 
-            return ($oldUser['id'] === $this->user['id']) ? $this->user : $oldUser;
-        }, $this->_users);
+        $user['email'] = $email;
+        $user['password'] = $password;
+        $user['avatar_url'] = $avatar;
+        $user['created_todos'] += $count;
 
-        $equals = ($this->user === $_SESSION['loggedUser']) ? true : false; 
-
-        $_SESSION['loggedUser'] = $this->user;
-
-        $result = [ 'status' => $this->writeJSON('users', $fullUsers, true), 
-                    'equals' => $equals ];
-
-        $this->_users = [];
+        $result = $this->save($user);
+        if ($result) $_SESSION['loggedUser'] = $user;
 
         return $result;
     }
