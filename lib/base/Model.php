@@ -132,4 +132,38 @@ class Model
 		$statement = $this->_dbh->prepare("DELETE FROM " . $this->_table . " WHERE {$id_field} = ?");
 		return $statement->execute(array($id));
 	}
+	
+	protected function isTempUser(){
+        return (isset($_SESSION['tempUser']) && count($_SESSION['tempUser'])) ? true : false;
+	}
+    
+	protected function isUser(){
+        return (isset($_SESSION['loggedUser'])) ? true : false;
+	}
+
+	protected function fetchTodos(mixed $id){
+		$isValidUser = $this->isUser();
+        $isValidTempUser = $this->isTempUser();
+
+        if($isValidUser){
+
+			$sql = 'SELECT * FROM ' . $this->_table;
+			$sql .= ' WHERE ' . 'created_by' . ' = ?';
+
+			$id = array($id);
+        } else if ($isValidTempUser) {
+
+			$in  = str_repeat('?,', count($id) - 1) . '?';
+
+			$sql = 'SELECT * FROM ' . $this->_table;
+			$sql .= ' WHERE ' . 'id' . ' IN (' . $in . ')';
+        }
+
+		$statement = $this->_dbh->prepare($sql);
+		$statement->execute($id);
+		
+		$found = $statement->fetchAll(PDO::FETCH_ASSOC);
+		
+		return ($found) ? $found : [];
+	}
 }
