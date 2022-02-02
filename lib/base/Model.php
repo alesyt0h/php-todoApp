@@ -70,8 +70,9 @@ class Model
 		
 		$values = array();
 		$firstField = array_key_first($data);
+		$lastField = array_key_last($data);
 	
-		if (preg_match('/id$/', $firstField)) {
+		if (preg_match('/id$/', $firstField) || preg_match('/id$/', $lastField)) {
 			$sql = 'UPDATE ' . $this->_table . ' SET ';
 			
 			$first = true;
