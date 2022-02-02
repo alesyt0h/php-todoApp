@@ -86,7 +86,7 @@ class TodoController extends ApplicationController {
                     $this->appMsg('success', 'The Todo was updated correctly');
                     $this->selfRedirect();
                 }
-            } else {
+            } else if(isset($_POST['change'])){
                 if($todo['status'] === 'Pending'){
                     $newStatus = 'In Process';
                 } else if ($todo['status'] === 'In Process'){
@@ -147,7 +147,8 @@ class TodoController extends ApplicationController {
         $this->view->disableView();
 
         if(!isset($_POST['deleteTodoId'])){
-            header('Location: ' . $_SERVER['HTTP_REFERER'] ?? WEB_ROOT);
+            $location = $_SERVER['HTTP_REFERER'] ?? WEB_ROOT;
+            header('Location: ' . $location);
             die();
         }
 
