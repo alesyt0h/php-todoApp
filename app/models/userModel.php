@@ -9,27 +9,17 @@ class UserModel extends Model {
 
     public function checkCredentials(string $username, string $password){
 
-        $this->getUsers();
-
         $match = false;
 
-        for ($i=0; $i < count($this->_users); $i++) { 
-            
-            if($this->_users[$i]['username'] === $username){
+        $user = $this->fetchOne($username, 'username');
+        $match = password_verify($password, $user['password']);
 
-                $validation = password_verify($password, $this->_users[$i]['password']);
-
-                if($validation){
-                    $this->_loggedUser = $this->_users[$i];
-                    $match = true;
-                    break;
-                } 
-            }
+        if($match){
+            $user['id'] = intval($user['id']);
+            $user['created_todos'] = intval($user['created_todos']);
         }
 
-        $this->_users = [];
-
-        return $match;
+        return ($match) ? $user : false;
     }
 
     public function userExists(string $username){
@@ -58,7 +48,6 @@ class UserModel extends Model {
         ];
 
         $newUser['id'] = intval($this->save($newUser));
-        $this->_loggedUser = $newUser;
 
         return $newUser;
     }
@@ -82,14 +71,6 @@ class UserModel extends Model {
         if ($result['status']) $_SESSION['loggedUser'] = $user;
 
         return $result;
-    }
-
-    public function getLoggedUser(){
-        return $this->_loggedUser;
-    }
-
-    public function purgeModelUser(){
-        $this->_loggedUser = [];
     }
 
 }

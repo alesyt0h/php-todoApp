@@ -53,9 +53,9 @@ class Model
 		$statement = $this->_dbh->prepare($sql);
 		$statement->execute(array($id));
 		
-		$found = $statement->fetch(PDO::FETCH_OBJ);
+		$found = $statement->fetch(PDO::FETCH_ASSOC);
 
-		return ($found) ? get_object_vars($found) : false;
+		return ($found) ? $found : false;
 	}
 	
 	/**
