@@ -22,7 +22,7 @@ class ApplicationController extends Controller {
 
 		$email = $_SESSION['loggedUser']['email'];
         $pass = $_SESSION['loggedUser']['password'];
-        $avatar = $_SESSION['loggedUser']['avatarUrl'];
+        $avatar = $_SESSION['loggedUser']['avatar_url'];
 
 		$this->userDB->modifyUser($userId, $email, $pass, $avatar, $count);
 	
