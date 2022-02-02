@@ -74,8 +74,12 @@ class UserModel extends Model {
         $user['avatar_url'] = $avatar;
         $user['created_todos'] += $count;
 
-        $result = $this->save($user);
-        if ($result) $_SESSION['loggedUser'] = $user;
+        $equals = ($user === $_SESSION['loggedUser']) ? true : false; 
+
+        $result = [ 'status' => $this->save($user), 
+                    'equals' => $equals ];
+
+        if ($result['status']) $_SESSION['loggedUser'] = $user;
 
         return $result;
     }
