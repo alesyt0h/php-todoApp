@@ -18,13 +18,14 @@ class Model {
     protected $dbDir = ROOT_PATH . '/db/';
 
     public function __construct(){
-        // Parse the DB's
+
+        // Parse the Todo DB & purges +24h todos
         $this->parseJSON('todos');
-        $this->_todos = $this->fetchTodos();
         $this->purgeTodos();
 
-        $this->parseJSON('users');
-        $this->_users = $this->fetchUsers();
+        $this->parseJSON('todos');
+        $this->_todos = $this->fetchTodos();
+
     }
 
     /**
@@ -47,21 +48,38 @@ class Model {
             throw new Exception($err['message']);
         }
 
-        $this->_jsonData = json_decode($jsonRaw, true);
+        return $this->_jsonData = json_decode($jsonRaw, true);
     }
 
     /**
      * Writes the current array state to the respective JSON database
      * @param string $db the database being written. Only users & todos are valid values
+     * @param array $data the data to append to the database
+     * @param bool $isFullDb wether if the data in 2nd argument is a full db to write or not
      */
-    public function writeJSON(string $db){
+    public function writeJSON(string $db, array $data = [], $isFullDb = false){
+        $fullDb = $this->parseJSON($db);
         $db = $this->dbChecker($db);
 
-        if(!count($this->$db)){
+        if(!$fullDb){
+            $fullDb = [];
+        }
+
+        if(!count($this->$db) && !count($fullDb) && !$data){
             return;
         }
 
-        $rawData = json_encode($this->$db, JSON_PRETTY_PRINT);
+        $this->_jsonData = [];
+
+        if($data && !$isFullDb){
+            array_push($fullDb, $data);
+        } else if($isFullDb){
+            $fullDb = $data;
+        } else {
+            $fullDb = $this->$db;
+        }
+
+        $rawData = json_encode($fullDb, JSON_PRETTY_PRINT);
 
         $result = @file_put_contents($this->dbDir . substr($db, 1) . '.json', $rawData);
 
@@ -108,7 +126,7 @@ class Model {
      */
     protected function purgeTodos(){
 
-        $this->_todos = array_filter($this->_todos, function($todo){
+        $this->_jsonData = array_filter($this->_jsonData, function($todo){
             if(!$todo['createdBy']){
                 $now = new DateTime();
                 $todoDate = new DateTime($todo['createdAt']);
@@ -123,11 +141,19 @@ class Model {
             }
         });
 
-        $this->_todos = array_splice($this->_todos, 0);
+        $this->_jsonData = array_splice($this->_jsonData, 0);
 
-        $this->writeJSON('todos');
+        $this->writeJSON('todos', $this->_jsonData, true);
     }
 
+    protected function isTempUser(){
+        return (isset($_SESSION['tempUser']) && count($_SESSION['tempUser'])) ? true : false;
+	}
+    
+	protected function isUser(){
+        return (isset($_SESSION['loggedUser'])) ? true : false;
+	}
+    
     protected function fetchUsers(){
         $this->_users = $this->_jsonData ?? [];
         $this->_jsonData = [];
@@ -136,7 +162,28 @@ class Model {
     }
 
     protected function fetchTodos(){
-        $this->_todos = $this->_jsonData ?? [];
+
+        $isValidUser = $this->isUser();
+        $isValidTempUser = $this->isTempUser();
+
+
+        if($isValidUser){
+
+            $this->_todos = array_filter($this->_jsonData ?? [], function($todo){
+                if($todo['createdBy'] === $_SESSION['loggedUser']['id']){
+                    return $todo;
+                }
+            });
+        } else if ($isValidTempUser) {
+
+            $this->_todos = array_filter($this->_jsonData ?? [], function($todo){
+                if(in_array($todo['id'], $_SESSION['tempUser'])){ 
+                    return $todo; 
+                }
+            });
+        }
+
+        $this->_todos = array_splice($this->_todos, 0);
         $this->_jsonData = [];
 
         return $this->_todos;

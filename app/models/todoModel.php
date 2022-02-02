@@ -23,9 +23,7 @@ class TodoModel extends Model {
             "completedAt" => null
         ];
 
-        array_push($this->_todos, $newTodo);
-
-        return $this->writeJSON('todos');
+        return $this->writeJSON('todos', $newTodo);
     }
 
     public function assignTodos(){
@@ -33,17 +31,20 @@ class TodoModel extends Model {
         $userId = $_SESSION['loggedUser']['id'];
         $tempTodosId = $_SESSION['tempUser'];
 
-        for ($i=0; $i < count($tempTodosId); $i++) {
-            for ($j = count($this->_todos) - 1; $j > 0; $j--) { // Reverse lookup - Faster
+        $fullTodos = $this->parseJSON('todos');
 
-                if($this->_todos[$j]['id'] === $tempTodosId[$i]){
-                    $this->_todos[$j]['createdBy'] = $userId;
+        for ($i=0; $i < count($tempTodosId); $i++) {
+            for ($j = count($fullTodos) - 1; $j > 0; $j--) { // Reverse lookup - Faster
+
+                if($fullTodos[$j]['id'] === $tempTodosId[$i]){
+                    $fullTodos[$j]['createdBy'] = $userId;
                     break;
                 }
             }
         }
 
-        $this->writeJSON('todos');
+        $this->writeJSON('todos', $fullTodos, true);
+
         unset($_SESSION['tempUser']);
         return ["userId" => $userId, "todosCount" => count($tempTodosId)];
     }
@@ -61,11 +62,13 @@ class TodoModel extends Model {
 
         $this->todo = $todo;
 
-        $this->_todos = array_map( function($oldTodo){ 
-            return ($oldTodo['id'] === $this->todo['id']) ? $this->todo : $oldTodo;
-        }, $this->_todos);
+        $fullTodos = $this->parseJSON('todos');
 
-        $this->writeJSON('todos');
+        $fullTodos = array_map( function($oldTodo){ 
+            return ($oldTodo['id'] === $this->todo['id']) ? $this->todo : $oldTodo;
+        }, $fullTodos);
+
+        $this->writeJSON('todos', $fullTodos, true);
 
         return $this->todo;
     }
@@ -74,15 +77,16 @@ class TodoModel extends Model {
 
         $this->todoId = intval($todoId);
 
-        $this->_todos = array_filter($this->_todos, function($oldTodo){ 
+        $fullTodos = $this->parseJSON('todos');
+        $fullTodos = array_filter($fullTodos, function($oldTodo){ 
             if($oldTodo['id'] !== $this->todoId){ 
                 return $oldTodo; 
-            } 
+            }
         });
 
-        $this->_todos = array_splice($this->_todos, 0);
+        $fullTodos = array_splice($fullTodos, 0);
 
-        return $this->writeJSON('todos');
+        return $this->writeJSON('todos', $fullTodos, true);
     }
 
     public function getTodos(){
