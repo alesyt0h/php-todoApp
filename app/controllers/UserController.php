@@ -29,11 +29,12 @@ class UserController extends ApplicationController{
             
             $result = $this->userDB->modifyUser($userId, $email, $password, $avatarUrl);
             
-            if($result['status']){
-
+            if($result['status'] ?? null){
                 ($result['equals']) ? null : $this->appMsg('success','Profile updated!');
                 
                 $this->redirect('/user/profile');
+            } else {
+                $this->appMsg('error','Error updating the profile, please try again');
             }
         }
     }

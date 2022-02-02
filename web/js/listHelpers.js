@@ -94,7 +94,13 @@ const init = () => {
         status.innerText = todo.status;
         status.classList.add(...badge, 'cursor-pointer');
         status.addEventListener('click', (el) => {
-            fetch(`${webRoot}/todo/edit/${todo.id}`).then( () => {
+            const data = new FormData();
+            data.append('change', 'yes');
+
+            fetch(`${webRoot}/todo/edit/${todo.id}`, {
+                method: 'POST',
+                body: data
+            }).then(() => {
                 location.reload();
             });
         });
