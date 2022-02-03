@@ -20,26 +20,11 @@ class TodoController extends ApplicationController {
         if($this->isUser()){
 
             $this->userId = $_SESSION['loggedUser']['id'];
-
-            $userTodos = [];
-
-            $userTodos = array_filter($this->todoDB->getTodos(), function($todo){ 
-                if($todo['createdBy'] === $this->userId){ 
-                    return $todo; 
-                }
-            });
-
-            $userTodos = array_splice($userTodos, 0);
-            
+            $userTodos = $this->todoDB->getTodos($this->userId);
         } else if($this->isTempUser()) {
-
-            $userTodos = array_filter($this->todoDB->getTodos(), function($todo){ 
-                if(in_array($todo['id'], $_SESSION['tempUser'])){ 
-                    return $todo; 
-                }
-            });
-
-            $userTodos = array_splice($userTodos, 0);
+            
+            $tempTodos = $_SESSION['tempUser'];
+            $userTodos = $this->todoDB->getTodos($tempTodos);
         }
 
         if($this->view){
@@ -67,7 +52,7 @@ class TodoController extends ApplicationController {
             $this->selfRedirect();
         };
 
-        $isValidUser = ($this->isUser() && $todo['createdBy'] === $_SESSION['loggedUser']['id']);
+        $isValidUser = ($this->isUser() && $todo['created_by'] === $_SESSION['loggedUser']['id']);
         $isValidTempUser = ($this->isTempUser() && in_array($todo['id'], $_SESSION['tempUser']));
 
         if($isValidUser || $isValidTempUser){
@@ -161,7 +146,7 @@ class TodoController extends ApplicationController {
         $todoId = $_POST['deleteTodoId'];
         $todo = $this->todoDB->getTodoById($todoId);
 
-        $isValidUser = ($this->isUser() && $todo['createdBy'] === $_SESSION['loggedUser']['id']);
+        $isValidUser = ($this->isUser() && $todo['created_by'] === $_SESSION['loggedUser']['id']);
         $isValidTempUser = ($this->isTempUser() && in_array($todo['id'], $_SESSION['tempUser']));
 
         if($isValidUser || $isValidTempUser) {
