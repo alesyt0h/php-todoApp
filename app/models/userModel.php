@@ -9,17 +9,12 @@ class UserModel extends Model {
 
     public function checkCredentials(string $username, string $password){
 
-        // $match = false;
+        $match = false;
 
-        // $user = $this->fetchOne($username, 'username');
-        // $match = password_verify($password, $user['password']);
-
-        // if($match){
-        //     $user['id'] = intval($user['id']);
-        //     $user['created_todos'] = intval($user['created_todos']);
-        // }
-
-        // return ($match) ? $user : false;
+        $user = $this->getOne('username', $username);
+        $match = password_verify($password, $user['password']);
+        
+        return ($match) ? $user : false;
     }
 
     public function userExists(string $username){
