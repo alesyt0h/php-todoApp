@@ -24,16 +24,16 @@ class UserModel extends Model {
 
     public function userExists(string $username){
 
-        // $userExists = $this->fetchOne($username, 'username');
+        $userExists = $this->getOne('username', $username);
 
-        // return $userExists;
+        return $userExists;
     }
 
     public function mailExists(string $email){
 
-        // $mailExists = $this->fetchOne($email, 'email');
+        $mailExists = $this->getOne('email', $email);;
 
-        // return $mailExists;
+        return $mailExists;
     }
 
     public function insertUser(string $username, string $password, string $email){
