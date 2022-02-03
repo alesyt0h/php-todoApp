@@ -15,8 +15,6 @@ class UserController extends ApplicationController{
         $this->view->user = $_SESSION['loggedUser'];
         
         if(count($_POST) > 0){
-            
-            $userId = $_SESSION['loggedUser']['id'];
 
             $this->validation = new Validations(new EmptyRuleSet());
 
@@ -29,7 +27,7 @@ class UserController extends ApplicationController{
                 $this->redirect('/user/profile');
             }
             
-            $result = $this->userDB->modifyUser($userId, $email, $password, $avatarUrl);
+            $result = $this->userDB->modifyUser($email, $password, $avatarUrl);
             
             if($result['status'] ?? null){
                 ($result['equals']) ? null : $this->appMsg('success','Profile updated!');

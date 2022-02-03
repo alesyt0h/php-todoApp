@@ -2,142 +2,75 @@
 
 class UserModel extends Model {
 
-    public function checkCredentials(string $username, string $password){
+    public function __construct(){
+        Model::__construct();
+        $this->_setTable('users');
+    }
 
-        $this->getUsers();
+    public function checkCredentials(string $username, string $password){
 
         $match = false;
 
-        for ($i=0; $i < count($this->_users); $i++) { 
-            
-            if($this->_users[$i]['username'] === $username){
+        $user = $this->fetchOne($username, 'username');
+        $match = password_verify($password, $user['password']);
 
-                $validation = password_verify($password, $this->_users[$i]['password']);
-
-                if($validation){
-                    $this->_loggedUser = $this->_users[$i];
-                    $match = true;
-                    break;
-                } 
-            }
+        if($match){
+            $user['id'] = intval($user['id']);
+            $user['created_todos'] = intval($user['created_todos']);
         }
 
-        $this->_users = [];
-
-        return $match;
+        return ($match) ? $user : false;
     }
 
     public function userExists(string $username){
 
-        $this->getUsers();
-
-        $userExists = false;
-
-        for ($i=0; $i < count($this->_users); $i++) { 
-            if(strtolower($this->_users[$i]['username']) === $username){
-                $userExists = true;
-                break;
-            }
-        }
-
-        $this->_users = [];
+        $userExists = $this->fetchOne($username, 'username');
 
         return $userExists;
     }
 
     public function mailExists(string $email){
 
-        $this->getUsers();
-
-        $mailExists = false;
-
-        for ($i=0; $i < count($this->_users); $i++) { 
-            if(strtolower($this->_users[$i]['email']) === $email){
-                $mailExists = true;
-                break;
-            }
-        }
-
-        $this->_users = [];
+        $mailExists = $this->fetchOne($email, 'email');
 
         return $mailExists;
     }
 
     public function insertUser(string $username, string $password, string $email){
 
-        $id = $this->getLastUserId();
-
         $newUser = [
-            "id" => $id,
             "username" => $username,
             "password" => $password,
             "email" => $email,
-            "registerDate" => date('c'),
-            "createdTodos" => 0,
-            "avatarUrl" => null
+            "register_date" => date('Y-m-d H:i:s'),
+            "created_todos" => 0,
+            "avatar_url" => null
         ];
 
-        $this->_loggedUser = $newUser;
+        $newUser['id'] = intval($this->save($newUser));
 
-        return $this->writeJSON('users', $newUser);
+        return $newUser;
     }
 
-    public function modifyUser(int $userId, string $email, string $password, string|null $avatar, int $count = 0){
+    public function modifyUser(string $email, string $password, string|null $avatar, int $count = 0){
 
-        $this->getUsers();
-        $this->user = $this->findOneById($userId, 'users');
+        $user = $_SESSION['loggedUser'];
 
-        if(!$this->user) return;
+        if(!$user) return;
 
-        $this->user['email'] = $email;
-        $this->user['password'] = $password;
-        $this->user['avatarUrl'] = $avatar;
-        $this->user['createdTodos'] += $count;
-        
-        $fullUsers = array_map( function($oldUser){ 
-            return ($oldUser['id'] === $this->user['id']) ? $this->user : $oldUser;
-        }, $this->_users);
+        $user['email'] = $email;
+        $user['password'] = $password;
+        $user['avatar_url'] = $avatar;
+        $user['created_todos'] += $count;
 
-        $equals = ($this->user === $_SESSION['loggedUser']) ? true : false; 
+        $equals = ($user === $_SESSION['loggedUser']) ? true : false; 
 
-        $_SESSION['loggedUser'] = $this->user;
-
-        $result = [ 'status' => $this->writeJSON('users', $fullUsers, true), 
+        $result = [ 'status' => $this->save($user), 
                     'equals' => $equals ];
 
-        $this->_users = [];
+        if ($result['status']) $_SESSION['loggedUser'] = $user;
 
         return $result;
-    }
-
-    public function getLastUserId(){
-
-        $this->getUsers();
-        
-        if(!count($this->_users)) return 1;
-        
-        // Reverse lookup, since users aren't deleted, this should be faster and efficient
-        for ($i= count($this->_users) - 1; $i < count($this->_users); $i--) { 
-            $lastId = $this->_users[$i]['id'];
-            break;
-        }
-
-        $this->_users = [];
-        
-        return $lastId + 1;
-    }
-
-    public function getLoggedUser(){
-        return $this->_loggedUser;
-    }
-    
-    protected function getUsers(){
-        $this->parseJSON('users');
-        $this->fetchUsers();
-    }
-
-    public function purgeModelUser(){
-        $this->_loggedUser = [];
     }
 
 }

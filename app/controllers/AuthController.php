@@ -25,10 +25,10 @@ class AuthController extends ApplicationController{
                 $this->redirect('/auth/login');
             }
             
-            $loginResult = $this->userDB->checkCredentials($user, $pass);
+            $loggedUser = $this->userDB->checkCredentials($user, $pass);
 
-            if($loginResult){
-                $_SESSION['loggedUser'] = $this->userDB->getLoggedUser();
+            if($loggedUser){
+                $_SESSION['loggedUser'] = $loggedUser;
                 $_SESSION['allowAssign'] = true;
 
                 ($this->isTempUser()) ? $this->redirect('/?assign') : $this->redirect();
@@ -62,11 +62,11 @@ class AuthController extends ApplicationController{
             }
 
             $pass = password_hash($pass, PASSWORD_DEFAULT);
-            $result = $this->userDB->insertUser($user, $pass, $email);
+            $registeredUser = $this->userDB->insertUser($user, $pass, $email);
 
-            if($result){
+            if($registeredUser){
                 $_SESSION['allowAssign'] = true;
-                $_SESSION['loggedUser'] = $this->userDB->getLoggedUser();
+                $_SESSION['loggedUser'] = $registeredUser;
 
                 $this->view->accountCreated = true;
                 $this->appMsg('success', 'Account created! You will be redirected in few seconds');
@@ -83,9 +83,7 @@ class AuthController extends ApplicationController{
 
         $this->view->disableView();
 
-        $this->userDB->purgeModelUser();
         unset($_SESSION['loggedUser']);
-
         $this->redirect('/auth');
     }
 
