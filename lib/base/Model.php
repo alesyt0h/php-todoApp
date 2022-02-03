@@ -27,6 +27,31 @@ class Model
 
 		return $result->getInsertedId();
 	}
+
+	protected function getOne(string $field, string $value){
+
+		if($field === 'id'){
+			$field = '_' . $field;
+			$value = new MongoDB\BSON\ObjectId($value);
+		}
+		
+		$options = ["typeMap" => ['root' => 'array', 'document' => 'array']];
+		$result = $this->_collection->findOne([$field => $value], $options);
+
+		if($result){
+
+			$result['_id'] = (string) $result['_id'];
+
+			foreach($result as $key => $value){
+				$result['id'] = $value;
+				unset($result['_id']);
+
+				break;
+			}
+		}
+
+		return $result;
+	}
 }
 
 ?>
