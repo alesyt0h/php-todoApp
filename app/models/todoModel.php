@@ -4,7 +4,7 @@ class TodoModel extends Model {
 
     public function __construct(){
         Model::__construct();
-        $this->_setTable('todos');
+        $this->_setCollection('todos');
     }
 
     public function createTodo(string $title){
@@ -18,13 +18,14 @@ class TodoModel extends Model {
         $todo = [
             'title' => $title, 
             'status' => 'Pending', 
-            'created_by' => $userId ?? null, 
-            'created_at' => date('Y-m-d H:i:s'), 
-            'completed_at' => null
+            'createdBy' => $userId ?? null,
+            'createdAt' => date('Y-m-d H:i:s'),
+            'completedAt' => null
         ];
 
-        $inserted = $this->save($todo);
-
+        $inserted = get_object_vars($this->insertOne($todo));
+        $inserted = $inserted['oid'];
+        
         if(!isset($_SESSION['loggedUser'])){
             $_SESSION['tempUser'] ?? $_SESSION['tempUser'] = [];
             array_push($_SESSION['tempUser'], $inserted);
@@ -35,49 +36,49 @@ class TodoModel extends Model {
 
     public function assignTodos(){
 
-        $userId = $_SESSION['loggedUser']['id'];
-        $tempTodosId = $_SESSION['tempUser'];
+        // $userId = $_SESSION['loggedUser']['id'];
+        // $tempTodosId = $_SESSION['tempUser'];
 
-        $this->assign($userId, $tempTodosId);
+        // $this->assign($userId, $tempTodosId);
 
-        unset($_SESSION['tempUser']);
-        return ["userId" => $userId, "todosCount" => count($tempTodosId)];
+        // unset($_SESSION['tempUser']);
+        // return ["userId" => $userId, "todosCount" => count($tempTodosId)];
     }
 
     public function modifyTodo(array $todo, string $title, string $status){
 
-        $todo['title'] = $title;
-        $todo['status'] = $status;
+        // $todo['title'] = $title;
+        // $todo['status'] = $status;
 
-        if($status === 'Completed'){
-            $todo['completed_at'] = date('Y-m-d H:i:s');
-        } else {
-            $todo['completed_at'] = null;
-        }
+        // if($status === 'Completed'){
+        //     $todo['completed_at'] = date('Y-m-d H:i:s');
+        // } else {
+        //     $todo['completed_at'] = null;
+        // }
 
-        $this->save($todo);
+        // $this->save($todo);
         
-        return $todo;
+        // return $todo;
     }
 
     public function deleteTodo(string $todoId){
 
-        $this->todoId = intval($todoId);
+        // $this->todoId = intval($todoId);
 
-        $result = $this->delete($todoId);
-        return $result;
+        // $result = $this->delete($todoId);
+        // return $result;
     }
 
     public function getTodos(mixed $id){
-        return $this->fetchTodos($id);
+        // return $this->fetchTodos($id);
     }
 
     public function getTodoById(string $todoId){
-        $todo = $this->fetchOne(intval($todoId));
-        $todo['id'] = intval($todo['id']);
-        $todo['created_by'] = intval($todo['created_by']);
+        // $todo = $this->fetchOne(intval($todoId));
+        // $todo['id'] = intval($todo['id']);
+        // $todo['created_by'] = intval($todo['created_by']);
         
-        return $todo;
+        // return $todo;
     }
 }
 
