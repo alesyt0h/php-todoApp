@@ -34,7 +34,7 @@ class TodoModel extends Model {
         $fullTodos = $this->parseJSON('todos');
 
         for ($i=0; $i < count($tempTodosId); $i++) {
-            for ($j = count($fullTodos) - 1; $j > 0; $j--) { // Reverse lookup - Faster
+            for ($j = count($fullTodos) - 1; $j >= 0; $j--) { // Reverse lookup - Faster
 
                 if($fullTodos[$j]['id'] === $tempTodosId[$i]){
                     $fullTodos[$j]['createdBy'] = $userId;
