@@ -126,7 +126,7 @@ class Model {
      */
     protected function purgeTodos(){
 
-        $this->_jsonData = array_filter($this->_jsonData, function($todo){
+        $this->_jsonData = array_filter($this->_jsonData ?? [], function($todo){
             if(!$todo['createdBy']){
                 $now = new DateTime();
                 $todoDate = new DateTime($todo['createdAt']);
