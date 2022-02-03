@@ -8,6 +8,8 @@ class AuthController extends ApplicationController{
 
     public function loginAction(){
 
+        $this->view->setTitle('Sign in | ' . APP_TITLE);
+
         if($this->isUser()) $this->redirect();
 
         if(isset($_POST['username']) && isset($_POST['password'])){
@@ -41,6 +43,8 @@ class AuthController extends ApplicationController{
 
     public function registerAction(){
         
+        $this->view->setTitle('Sign up | ' . APP_TITLE);
+
         if($this->isUser()) $this->redirect();
         
         if(isset($_POST['username']) && isset($_POST['password']) && isset($_POST['email'])){
