@@ -13,7 +13,7 @@ class UserModel extends Model {
 
         $user = $this->getOne('username', $username);
         $match = password_verify($password, $user['password']);
-        
+
         return ($match) ? $user : false;
     }
 
@@ -61,7 +61,7 @@ class UserModel extends Model {
 
         $equals = ($user === $_SESSION['loggedUser']) ? true : false; 
 
-        $result = [ 'status' => $this->save($user), 
+        $result = [ 'status' => $this->modifyOne($user), 
                     'equals' => $equals ];
 
         if ($result['status']) $_SESSION['loggedUser'] = $user;

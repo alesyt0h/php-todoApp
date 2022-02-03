@@ -38,19 +38,39 @@ class Model
 		$options = ["typeMap" => ['root' => 'array', 'document' => 'array']];
 		$result = $this->_collection->findOne([$field => $value], $options);
 
-		if($result){
+		$document = ($result) ? $this->deserializeId($result) : null;
 
-			$result['_id'] = (string) $result['_id'];
+		return $document;
+	}
 
-			foreach($result as $key => $value){
-				$result['id'] = $value;
-				unset($result['_id']);
+	protected function modifyOne(array $newDoc){
 
-				break;
-			}
+		$id = new MongoDB\BSON\ObjectId($newDoc['id']);
+		unset($newDoc['id']);
+
+		$result = $this->_collection->findOneAndUpdate(
+			['_id' => $id], 
+			[ '$set' => $newDoc], 
+			['returnDocument' => MongoDB\Operation\FindOneAndUpdate::RETURN_DOCUMENT_AFTER,
+			 'typeMap' => ['root' => 'array', 'document' => 'array']]
+		);
+
+		$document = ($result) ? $this->deserializeId($result) : null;
+
+		return $document;
+	}
+
+	private function deserializeId(array $document){
+		$document['_id'] = (string) $document['_id'];
+
+		foreach($document as $key => $value){
+			$document['id'] = $value;
+			unset($document['_id']);
+
+			break;
 		}
 
-		return $result;
+		return $document;
 	}
 }
 
