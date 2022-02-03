@@ -123,7 +123,7 @@ class TodoController extends ApplicationController {
                                        TODO\'s created without an account are deleted in 24h. <br/>
                                        <a href=' . WEB_ROOT . "/auth/register" . ' class="underline underline-offset-2 text-blue-500">Register now</a> to keep your TODO\'s for ever!');
             } else {
-                $this->sumTodo($_SESSION['loggedUser']['id']);
+                $this->sumTodo();
             }
 
             $this->appMsg('success', 'You created the todo: <strong>' . $newTodo . '</strong>');
@@ -175,7 +175,7 @@ class TodoController extends ApplicationController {
 
         if(isset($_SESSION['allowAssign']) && $_SESSION['allowAssign'] === true){
             $newUserData = $this->todoDB->assignTodos();
-            $this->sumTodo($newUserData['userId'], $newUserData['todosCount']);
+            $this->sumTodo($newUserData['todosCount']);
             
             unset($_SESSION['tempUser']);
             unset($_SESSION['allowAssign']);
