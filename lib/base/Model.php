@@ -1,184 +1,27 @@
 <?php
 
-/**
- * A base model for handling the database connections
- * @author jimmiw
- * @since 2012-07-02
- */
+require_once ROOT_PATH . '/vendor/autoload.php';
+
 class Model
 {
-	protected $_dbh = null;
-	protected $_table = "";
+	protected $_db = null;
+	protected $_client = null;
+	protected $_collection;
 	
-	public function __construct()
-	{
-		// parses the settings file
+	public function __construct(){
+		
 		$settings = parse_ini_file(ROOT_PATH . '/config/settings.ini', true);
-		
-		// starts the connection to the database
-		$this->_dbh = new PDO(
-			sprintf(
-				"%s:host=%s;dbname=%s",
-				$settings['database']['driver'],
-				$settings['database']['host'],
-				$settings['database']['dbname']
-			),
-			$settings['database']['user'],
-			$settings['database']['password'],
-			array(PDO::MYSQL_ATTR_INIT_COMMAND => "SET NAMES utf8")
-		);
-		
-		$this->init();
+		$connectionString = $settings['database']['connection_string'];
+		$this->_db = $settings['database']['dbname'];
+
+		$this->_client = new MongoDB\Client($connectionString);
 	}
 	
-	public function init()
-	{
-		
+	protected function _setCollection(string $collection){
+		$db = $this->_db;
+		$this->_collection = $this->_client->$db->$collection;
 	}
 	
-	/**
-	 * Sets the database table the model is using
-	 * @param string $table the table the model is using
-	 */
-	protected function _setTable($table)
-	{
-		$this->_table = $table;
-	}
-	
-	public function fetchOne($id, $id_field = 'id')
-	{
-		$sql = 'SELECT * FROM ' . $this->_table;
-		$sql .= ' WHERE ' . $id_field . ' = ?';
-
-		$statement = $this->_dbh->prepare($sql);
-		$statement->execute(array($id));
-		
-		$found = $statement->fetch(PDO::FETCH_ASSOC);
-
-		return ($found) ? $found : false;
-	}
-	
-	/**
-	 * Saves the current data to the database. If an key named "id" is given,
-	 * an update will be issued.
-	 * @param array $data the data to save
-	 * @return int the id the data was saved under
-	 */
-	public function save($data = array())
-	{
-		$sql = '';
-		
-		$values = array();
-		$firstField = array_key_first($data);
-		$lastField = array_key_last($data);
-	
-		if (preg_match('/id$/', $firstField) || preg_match('/id$/', $lastField)) {
-			$sql = 'UPDATE ' . $this->_table . ' SET ';
-			
-			$first = true;
-			foreach($data as $key => $value) {
-				if ($key != $firstField) {
-					$sql .= ($first == false ? ',' : '') . ' ' . $key . ' = ?';
-					$values[] = $value;
-					
-					$first = false;
-				}
-			}
-			
-			// adds the id as well
-			$values[] = $data[$firstField];
-			
-			$sql .= ' WHERE ' . $firstField . ' = ?';// . $data['id'];
-			
-			$statement = $this->_dbh->prepare($sql);
-			return $statement->execute($values);
-		}
-		else {
-			$keys = array_keys($data);
-			
-			$sql = 'INSERT INTO ' . $this->_table . '(';
-			$sql .= implode(',', $keys);
-			$sql .= ')';
-			$sql .= ' VALUES (';
-			
-			$dataValues = array_values($data);
-			$first = true;
-			foreach($dataValues as $value) {
-				$sql .= ($first == false ? ',?' : '?');
-				
-				$values[] = $value;
-				
-				$first = false;
-			}
-			
-			$sql .= ')';
-			
-			$statement = $this->_dbh->prepare($sql);
-			if ($statement->execute($values)) {
-				return $this->_dbh->lastInsertId();
-			}
-		}
-		
-		return false;
-	}
-	
-	/**
-	 * Deletes a single entry
-	 * @param int $id the id of the entry to delete
-	 * @param string $id_field the id_field name of the entry to delete
-	 * @return boolean true if all went well, else false.
-	 */
-	public function delete($id, $id_field = 'id')
-	{
-		$statement = $this->_dbh->prepare("DELETE FROM " . $this->_table . " WHERE {$id_field} = ?");
-		return $statement->execute(array($id));
-	}
-	
-	protected function isTempUser(){
-        return (isset($_SESSION['tempUser']) && count($_SESSION['tempUser'])) ? true : false;
-	}
-    
-	protected function isUser(){
-        return (isset($_SESSION['loggedUser'])) ? true : false;
-	}
-
-	protected function fetchTodos(mixed $id){
-		$isValidUser = $this->isUser();
-        $isValidTempUser = $this->isTempUser();
-
-        if($isValidUser){
-
-			$sql = 'SELECT * FROM ' . $this->_table;
-			$sql .= ' WHERE ' . 'created_by' . ' = ?';
-
-			$id = array($id);
-        } else if ($isValidTempUser) {
-
-			$in  = str_repeat('?,', count($id) - 1) . '?';
-
-			$sql = 'SELECT * FROM ' . $this->_table;
-			$sql .= ' WHERE ' . 'id' . ' IN (' . $in . ')';
-        }
-
-		$statement = $this->_dbh->prepare($sql);
-		$statement->execute($id);
-		
-		$found = $statement->fetchAll(PDO::FETCH_ASSOC);
-		
-		return ($found) ? $found : [];
-	}
-
-	protected function assign(mixed $userId, mixed $ids){
-
-		$in  = str_repeat('?,', count($ids) - 1) . '?';
-
-		$sql = 'UPDATE todos';
-		$sql .= ' SET created_by = ?';
-		$sql .= ' WHERE ' . 'id' . ' IN (' . $in . ')';
-
-		array_unshift($ids, $userId);
-
-		$statement = $this->_dbh->prepare($sql);
-		$statement->execute($ids);
-	}
 }
+
+?>
