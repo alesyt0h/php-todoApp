@@ -8,6 +8,8 @@ class UserController extends ApplicationController{
 
     public function profileAction(){
 
+        $this->view->setTitle('User Profile | ' . APP_TITLE);
+
         if(!$this->isUser()) $this->redirect();
 
         $this->view->user = $_SESSION['loggedUser'];

@@ -15,6 +15,8 @@ class TodoController extends ApplicationController {
 
     public function listAction(){
 
+        ($this->view) ? $this->view->setTitle('Todo List | ' . APP_TITLE) : null;
+
         if($this->isUser()){
 
             $this->userId = $_SESSION['loggedUser']['id'];
@@ -49,6 +51,8 @@ class TodoController extends ApplicationController {
     }
 
     public function editAction(){
+
+        $this->view->setTitle('Edit Todo | ' . APP_TITLE);
 
 		$uri = explode('/',$_SERVER['REQUEST_URI']);
         $todoId = $uri[count($uri) - 1];
@@ -106,6 +110,8 @@ class TodoController extends ApplicationController {
     }
 
     public function newAction(){
+
+        ($this->view) ? $this->view->setTitle('New Todo | ' . APP_TITLE) : null;
         
         if(!isset($_POST['newTodo'])) return false;
 
@@ -200,12 +206,14 @@ class TodoController extends ApplicationController {
         
         if(isset($_GET['delete'])){
 
+            ($this->view) ? $this->view->setTitle('Delete Todo | ' . APP_TITLE) : null;
+
             if(!isset($_SERVER['HTTP_REFERER'])) $this->refererRedirect();
             
             $todo = $this->todoDB->getTodoById($_GET['delete']);
 
-            $isInvalidUser = $this->isUser() && $todo['createdBy'] !== $_SESSION['loggedUser']['id'];
-            $isInvalidTempUser = ($this->isTempUser() && !in_array($todo['id'], $_SESSION['tempUser']));
+            $isInvalidUser = $this->isUser() && $todo['created_by'] !== $_SESSION['loggedUser']['id'];
+            $isInvalidTempUser = ($this->isTempUser() && !in_array($todo['id'], $_SESSION['tempUser']) && $_SESSION['allowAssign'] === false);
 
             if($isInvalidTempUser || $isInvalidUser) $this->refererRedirect();
 
