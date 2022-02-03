@@ -73,7 +73,11 @@ class TodoModel extends Model {
     }
 
     public function getTodoById(string $todoId){
-        return $this->fetchOne(intval($todoId));
+        $todo = $this->fetchOne(intval($todoId));
+        $todo['id'] = intval($todo['id']);
+        $todo['created_by'] = intval($todo['created_by']);
+        
+        return $todo;
     }
 }
 

@@ -140,7 +140,7 @@ class TodoController extends ApplicationController {
         $todoId = $_POST['deleteTodoId'];
         $todo = $this->todoDB->getTodoById($todoId);
 
-        $isValidUser = ($this->isUser() && $todo['createdBy'] === $_SESSION['loggedUser']['id']);
+        $isValidUser = ($this->isUser() && $todo['created_by'] === $_SESSION['loggedUser']['id']);
         $isValidTempUser = ($this->isTempUser() && in_array($todo['id'], $_SESSION['tempUser']));
 
         if($isValidUser || $isValidTempUser) {
@@ -189,7 +189,7 @@ class TodoController extends ApplicationController {
             
             $todo = $this->todoDB->getTodoById($_GET['delete']);
 
-            $isInvalidUser = $this->isUser() && $todo['createdBy'] !== $_SESSION['loggedUser']['id'];
+            $isInvalidUser = $this->isUser() && $todo['created_by'] !== $_SESSION['loggedUser']['id'];
             $isInvalidTempUser = ($this->isTempUser() && !in_array($todo['id'], $_SESSION['tempUser']));
 
             if($isInvalidTempUser || $isInvalidUser) $this->refererRedirect();
