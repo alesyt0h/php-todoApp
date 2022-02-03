@@ -4,36 +4,36 @@ class UserModel extends Model {
 
     public function __construct(){
         Model::__construct();
-        $this->_setTable('users');
+        $this->_setCollection('users');
     }
 
     public function checkCredentials(string $username, string $password){
 
-        $match = false;
+        // $match = false;
 
-        $user = $this->fetchOne($username, 'username');
-        $match = password_verify($password, $user['password']);
+        // $user = $this->fetchOne($username, 'username');
+        // $match = password_verify($password, $user['password']);
 
-        if($match){
-            $user['id'] = intval($user['id']);
-            $user['created_todos'] = intval($user['created_todos']);
-        }
+        // if($match){
+        //     $user['id'] = intval($user['id']);
+        //     $user['created_todos'] = intval($user['created_todos']);
+        // }
 
-        return ($match) ? $user : false;
+        // return ($match) ? $user : false;
     }
 
     public function userExists(string $username){
 
-        $userExists = $this->fetchOne($username, 'username');
+        // $userExists = $this->fetchOne($username, 'username');
 
-        return $userExists;
+        // return $userExists;
     }
 
     public function mailExists(string $email){
 
-        $mailExists = $this->fetchOne($email, 'email');
+        // $mailExists = $this->fetchOne($email, 'email');
 
-        return $mailExists;
+        // return $mailExists;
     }
 
     public function insertUser(string $username, string $password, string $email){
@@ -42,12 +42,13 @@ class UserModel extends Model {
             "username" => $username,
             "password" => $password,
             "email" => $email,
-            "register_date" => date('Y-m-d H:i:s'),
-            "created_todos" => 0,
-            "avatar_url" => null
+            "registerDate" => date('Y-m-d H:i:s'),
+            "createdTodos" => 0,
+            "avatarUrl" => null
         ];
 
-        $newUser['id'] = intval($this->save($newUser));
+        $id = get_object_vars($this->insertOne($newUser));
+        $newUser['id'] = $id['oid'];
 
         return $newUser;
     }
@@ -60,8 +61,8 @@ class UserModel extends Model {
 
         $user['email'] = $email;
         $user['password'] = $password;
-        $user['avatar_url'] = $avatar;
-        $user['created_todos'] += $count;
+        $user['avatarUrl'] = $avatar;
+        $user['createdTodos'] += $count;
 
         $equals = ($user === $_SESSION['loggedUser']) ? true : false; 
 

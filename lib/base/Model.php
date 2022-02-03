@@ -9,7 +9,7 @@ class Model
 	protected $_collection;
 	
 	public function __construct(){
-		
+
 		$settings = parse_ini_file(ROOT_PATH . '/config/settings.ini', true);
 		$connectionString = $settings['database']['connection_string'];
 		$this->_db = $settings['database']['dbname'];
@@ -22,6 +22,11 @@ class Model
 		$this->_collection = $this->_client->$db->$collection;
 	}
 	
+	protected function insertOne(array $data){
+		$result = $this->_collection->insertOne($data);
+
+		return $result->getInsertedId();
+	}
 }
 
 ?>
