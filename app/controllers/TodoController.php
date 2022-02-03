@@ -212,7 +212,7 @@ class TodoController extends ApplicationController {
             
             $todo = $this->todoDB->getTodoById($_GET['delete']);
 
-            $isInvalidUser = $this->isUser() && $todo['created_by'] !== $_SESSION['loggedUser']['id'];
+            $isInvalidUser = $this->isUser() && $todo['createdBy'] !== $_SESSION['loggedUser']['id'];
             $isInvalidTempUser = ($this->isTempUser() && !in_array($todo['id'], $_SESSION['tempUser']) && $_SESSION['allowAssign'] === false);
 
             if($isInvalidTempUser || $isInvalidUser) $this->refererRedirect();
