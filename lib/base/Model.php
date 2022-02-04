@@ -32,32 +32,24 @@ class Model
 
 		if($field === 'id'){
 			$field = '_' . $field;
-			$value = new MongoDB\BSON\ObjectId($value);
 		}
 		
 		$options = ["typeMap" => ['root' => 'array', 'document' => 'array']];
-		$result = $this->_collection->findOne([$field => $value], $options);
+		$document = $this->_collection->findOne([$field => $value], $options);
 
-		$document = ($result) ? $this->deserializeId($result) : null;
-
-		return $document;
+		return ($document) ? $document : null;
 	}
 
 	protected function modifyOne(array $newDoc){
 
-		$id = new MongoDB\BSON\ObjectId($newDoc['id']);
-		unset($newDoc['id']);
-
-		$result = $this->_collection->findOneAndUpdate(
-			['_id' => $id], 
+		$document = $this->_collection->findOneAndUpdate(
+			['_id' => $newDoc['_id']], 
 			[ '$set' => $newDoc], 
 			['returnDocument' => MongoDB\Operation\FindOneAndUpdate::RETURN_DOCUMENT_AFTER,
 			 'typeMap' => ['root' => 'array', 'document' => 'array']]
 		);
 
-		$document = ($result) ? $this->deserializeId($result) : null;
-
-		return $document;
+		return ($document) ? $document : null;
 	}
 
 	private function deserializeId(array $document){
@@ -71,6 +63,21 @@ class Model
 		}
 
 		return $document;
+	}
+
+	protected function getMany(string $field, mixed $value){
+
+		if($field === 'id'){
+			$field = '_' . $field;
+		}
+
+        $isArray = (gettype($value) === 'array') ? true : false;
+		$value = ($isArray) ? [ '$in' => $value ] : $value;
+		
+		$options = ["typeMap" => ['root' => 'array', 'document' => 'array']];
+		$documents = $this->_collection->find([$field => $value], $options)->toArray();
+
+		return $documents;
 	}
 }
 
