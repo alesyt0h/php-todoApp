@@ -42,18 +42,15 @@ class TodoController extends ApplicationController {
 		$uri = explode('/',$_SERVER['REQUEST_URI']);
         $todoId = $uri[count($uri) - 1];
 
-        if(!is_numeric($todoId)){
-            $this->selfRedirect();
-        }
-        
+        $todoId = $this->todoDB->returnObjectId($todoId);
         $todo = $this->todoDB->getTodoById($todoId);
 
         if(count($todo) === 0){
             $this->selfRedirect();
         };
 
-        $isValidUser = ($this->isUser() && $todo['created_by'] === $_SESSION['loggedUser']['_id']);
-        $isValidTempUser = ($this->isTempUser() && in_array($todo['id'], $_SESSION['tempUser']));
+        $isValidUser = ($this->isUser() && $todo['createdBy'] === $_SESSION['loggedUser']['_id']);
+        $isValidTempUser = ($this->isTempUser() && in_array($todo['_id'], $_SESSION['tempUser']));
 
         if($isValidUser || $isValidTempUser){
 
@@ -146,8 +143,8 @@ class TodoController extends ApplicationController {
         $todoId = $_POST['deleteTodoId'];
         $todo = $this->todoDB->getTodoById($todoId);
 
-        $isValidUser = ($this->isUser() && $todo['created_by'] === $_SESSION['loggedUser']['_id']);
-        $isValidTempUser = ($this->isTempUser() && in_array($todo['id'], $_SESSION['tempUser']));
+        $isValidUser = ($this->isUser() && $todo['createdBy'] === $_SESSION['loggedUser']['_id']);
+        $isValidTempUser = ($this->isTempUser() && in_array($todo['_id'], $_SESSION['tempUser']));
 
         if($isValidUser || $isValidTempUser) {
 
@@ -197,8 +194,8 @@ class TodoController extends ApplicationController {
             
             $todo = $this->todoDB->getTodoById($_GET['delete']);
 
-            $isInvalidUser = $this->isUser() && $todo['created_by'] !== $_SESSION['loggedUser']['_id'];
-            $isInvalidTempUser = ($this->isTempUser() && !in_array($todo['id'], $_SESSION['tempUser']) && $_SESSION['allowAssign'] === false);
+            $isInvalidUser = $this->isUser() && $todo['createdBy'] !== $_SESSION['loggedUser']['_id'];
+            $isInvalidTempUser = ($this->isTempUser() && !in_array($todo['_id'], $_SESSION['tempUser']) && $_SESSION['allowAssign'] === false);
 
             if($isInvalidTempUser || $isInvalidUser) $this->refererRedirect();
 

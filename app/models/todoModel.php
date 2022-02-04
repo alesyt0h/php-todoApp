@@ -76,12 +76,10 @@ class TodoModel extends Model {
         return $this->getMany($field, $id);
     }
 
-    public function getTodoById(string $todoId){
-        // $todo = $this->fetchOne(intval($todoId));
-        // $todo['id'] = intval($todo['id']);
-        // $todo['created_by'] = intval($todo['created_by']);
+    public function getTodoById(mixed $todoId){
+        $todo = $this->getOne('id', $todoId);
         
-        // return $todo;
+        return $todo;
     }
 }
 

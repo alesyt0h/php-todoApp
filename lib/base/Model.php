@@ -28,7 +28,7 @@ class Model
 		return $result->getInsertedId();
 	}
 
-	protected function getOne(string $field, string $value){
+	protected function getOne(string $field, mixed $value){
 
 		if($field === 'id'){
 			$field = '_' . $field;
@@ -63,6 +63,10 @@ class Model
 		}
 
 		return $document;
+	}
+
+	public function returnObjectId(string $id){
+		return new MongoDB\BSON\ObjectId($id);
 	}
 
 	protected function getMany(string $field, mixed $value){
