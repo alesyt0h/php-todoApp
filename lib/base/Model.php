@@ -94,6 +94,16 @@ class Model
 
 		return $documents;
 	}
+
+	protected function assign(mixed $userId, mixed $ids){
+
+		$document = $this->_collection->findOneAndUpdate(
+			['_id' => [ '$in' => $ids ]], 
+			[ '$set' => [ 'createdBy' => $userId ]]
+		);
+
+		return ($document) ? $document : null;
+	}
 }
 
 ?>

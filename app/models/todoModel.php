@@ -35,13 +35,13 @@ class TodoModel extends Model {
 
     public function assignTodos(){
 
-        // $userId = $_SESSION['loggedUser']['_id'];
-        // $tempTodosId = $_SESSION['tempUser'];
+        $userId = $_SESSION['loggedUser']['_id'];
+        $tempTodosId = $_SESSION['tempUser'];
 
-        // $this->assign($userId, $tempTodosId);
+        $this->assign($userId, $tempTodosId);
 
-        // unset($_SESSION['tempUser']);
-        // return ["userId" => $userId, "todosCount" => count($tempTodosId)];
+        unset($_SESSION['tempUser']);
+        return ["userId" => $userId, "todosCount" => count($tempTodosId)];
     }
 
     public function modifyTodo(array $todo, string $title, string $status){

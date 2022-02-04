@@ -42,7 +42,7 @@ class UserModel extends Model {
             "avatarUrl" => null
         ];
 
-        $newUser['id'] = $this->insertOne($newUser);
+        $newUser['_id'] = $this->insertOne($newUser);
 
         return $newUser;
     }
