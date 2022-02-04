@@ -42,8 +42,7 @@ class UserModel extends Model {
             "avatarUrl" => null
         ];
 
-        $id = get_object_vars($this->insertOne($newUser));
-        $newUser['id'] = $id['oid'];
+        $newUser['id'] = $this->insertOne($newUser);
 
         return $newUser;
     }
