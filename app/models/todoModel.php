@@ -46,18 +46,18 @@ class TodoModel extends Model {
 
     public function modifyTodo(array $todo, string $title, string $status){
 
-        // $todo['title'] = $title;
-        // $todo['status'] = $status;
+        $todo['title'] = $title;
+        $todo['status'] = $status;
 
-        // if($status === 'Completed'){
-        //     $todo['completed_at'] = date('Y-m-d H:i:s');
-        // } else {
-        //     $todo['completed_at'] = null;
-        // }
+        if($status === 'Completed'){
+            $todo['completedAt'] = date('Y-m-d H:i:s');
+        } else {
+            $todo['completedAt'] = null;
+        }
 
-        // $this->save($todo);
+        $todo = $this->modifyOne($todo);
         
-        // return $todo;
+        return $todo;
     }
 
     public function deleteTodo(string $todoId){
