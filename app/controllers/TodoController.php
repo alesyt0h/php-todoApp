@@ -140,7 +140,7 @@ class TodoController extends ApplicationController {
             die();
         }
 
-        $todoId = $_POST['deleteTodoId'];
+        $todoId = $this->todoDB->returnObjectId($_POST['deleteTodoId']);
         $todo = $this->todoDB->getTodoById($todoId);
 
         $isValidUser = ($this->isUser() && $todo['createdBy'] === $_SESSION['loggedUser']['_id']);
@@ -192,7 +192,8 @@ class TodoController extends ApplicationController {
 
             if(!isset($_SERVER['HTTP_REFERER'])) $this->refererRedirect();
             
-            $todo = $this->todoDB->getTodoById($_GET['delete']);
+            $todoId = $this->todoDB->returnObjectId($_GET['delete']);
+            $todo = $this->todoDB->getTodoById($todoId);
 
             $isInvalidUser = $this->isUser() && $todo['createdBy'] !== $_SESSION['loggedUser']['_id'];
             $isInvalidTempUser = ($this->isTempUser() && !in_array($todo['_id'], $_SESSION['tempUser']) && $_SESSION['allowAssign'] === false);
@@ -200,7 +201,7 @@ class TodoController extends ApplicationController {
             if($isInvalidTempUser || $isInvalidUser) $this->refererRedirect();
 
             $this->formData = "
-            <form action=" . WEB_ROOT . '/todo/delete/' . $todo['id'] . " method='POST'>
+            <form action=" . WEB_ROOT . '/todo/delete/' . $todo['_id'] . " method='POST'>
                 <p>Are you sure you want to delete <strong> " . $todo['title'] . "</strong>?</p>
             ";
 
@@ -209,7 +210,7 @@ class TodoController extends ApplicationController {
             $this->modal['content'] = $this->formData;
             $this->modal['title'] = 'Delete todo';
             $this->modal['type'] = 'Delete';
-            $this->modal['id'] = $todo['id'];
+            $this->modal['id'] = $todo['_id'];
             
             $this->afterFilters('view', 'modal', $this->modal);
             

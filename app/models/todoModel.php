@@ -60,12 +60,11 @@ class TodoModel extends Model {
         return $todo;
     }
 
-    public function deleteTodo(string $todoId){
+    public function deleteTodo(mixed $todoId){
 
-        // $this->todoId = intval($todoId);
+        $result = $this->deleteOne('id', $todoId);
 
-        // $result = $this->delete($todoId);
-        // return $result;
+        return $result;
     }
 
     public function getTodos(mixed $id){

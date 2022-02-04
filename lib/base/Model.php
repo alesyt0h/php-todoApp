@@ -65,6 +65,17 @@ class Model
 		return $document;
 	}
 
+	protected function deleteOne(string $field, mixed $value){
+		
+		if($field === 'id'){
+			$field = '_' . $field;
+		}
+
+		$result = $this->_collection->deleteOne([$field => $value]);
+
+		return $result;
+	}
+
 	public function returnObjectId(string $id){
 		return new MongoDB\BSON\ObjectId($id);
 	}
