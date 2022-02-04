@@ -12,7 +12,7 @@ class TodoModel extends Model {
         $userId = null;
 
         if(isset($_SESSION['loggedUser'])){
-            $userId = $_SESSION['loggedUser']['id'];
+            $userId = $_SESSION['loggedUser']['_id'];
         }
 
         $todo = [
@@ -23,8 +23,7 @@ class TodoModel extends Model {
             'completedAt' => null
         ];
 
-        $inserted = get_object_vars($this->insertOne($todo));
-        $inserted = $inserted['oid'];
+        $inserted = $this->insertOne($todo);
         
         if(!isset($_SESSION['loggedUser'])){
             $_SESSION['tempUser'] ?? $_SESSION['tempUser'] = [];
@@ -36,7 +35,7 @@ class TodoModel extends Model {
 
     public function assignTodos(){
 
-        // $userId = $_SESSION['loggedUser']['id'];
+        // $userId = $_SESSION['loggedUser']['_id'];
         // $tempTodosId = $_SESSION['tempUser'];
 
         // $this->assign($userId, $tempTodosId);
@@ -70,7 +69,11 @@ class TodoModel extends Model {
     }
 
     public function getTodos(mixed $id){
-        // return $this->fetchTodos($id);
+        
+        $isArray = (gettype($id) === 'array') ? true : false;
+        $field = ($isArray) ? 'id' : 'createdBy';
+
+        return $this->getMany($field, $id);
     }
 
     public function getTodoById(string $todoId){
