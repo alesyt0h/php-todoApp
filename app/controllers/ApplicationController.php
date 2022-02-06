@@ -19,13 +19,12 @@ class ApplicationController extends Controller {
 	}
 
 	protected function sumTodo(int $count = 1){
-
+		
 		$email = $_SESSION['loggedUser']['email'];
         $pass = $_SESSION['loggedUser']['password'];
-        $avatar = $_SESSION['loggedUser']['avatar_url'];
+        $avatar = $_SESSION['loggedUser']['avatarUrl'];
 
 		$this->userDB->modifyUser($email, $pass, $avatar, $count);
-	
 	}
 
 	/**

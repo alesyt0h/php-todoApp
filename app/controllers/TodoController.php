@@ -19,7 +19,7 @@ class TodoController extends ApplicationController {
 
         if($this->isUser()){
 
-            $this->userId = $_SESSION['loggedUser']['id'];
+            $this->userId = $_SESSION['loggedUser']['_id'];
             $userTodos = $this->todoDB->getTodos($this->userId);
         } else if($this->isTempUser()) {
             
@@ -42,18 +42,15 @@ class TodoController extends ApplicationController {
 		$uri = explode('/',$_SERVER['REQUEST_URI']);
         $todoId = $uri[count($uri) - 1];
 
-        if(!is_numeric($todoId)){
-            $this->selfRedirect();
-        }
-        
+        $todoId = $this->todoDB->returnObjectId($todoId);
         $todo = $this->todoDB->getTodoById($todoId);
 
         if(count($todo) === 0){
             $this->selfRedirect();
         };
 
-        $isValidUser = ($this->isUser() && $todo['created_by'] === $_SESSION['loggedUser']['id']);
-        $isValidTempUser = ($this->isTempUser() && in_array($todo['id'], $_SESSION['tempUser']));
+        $isValidUser = ($this->isUser() && $todo['createdBy'] == $_SESSION['loggedUser']['_id']);
+        $isValidTempUser = ($this->isTempUser() && in_array($todo['_id'], $_SESSION['tempUser']));
 
         if($isValidUser || $isValidTempUser){
 
@@ -143,11 +140,11 @@ class TodoController extends ApplicationController {
             die();
         }
 
-        $todoId = $_POST['deleteTodoId'];
+        $todoId = $this->todoDB->returnObjectId($_POST['deleteTodoId']);
         $todo = $this->todoDB->getTodoById($todoId);
 
-        $isValidUser = ($this->isUser() && $todo['created_by'] === $_SESSION['loggedUser']['id']);
-        $isValidTempUser = ($this->isTempUser() && in_array($todo['id'], $_SESSION['tempUser']));
+        $isValidUser = ($this->isUser() && $todo['createdBy'] == $_SESSION['loggedUser']['_id']);
+        $isValidTempUser = ($this->isTempUser() && in_array($todo['_id'], $_SESSION['tempUser']));
 
         if($isValidUser || $isValidTempUser) {
 
@@ -195,15 +192,16 @@ class TodoController extends ApplicationController {
 
             if(!isset($_SERVER['HTTP_REFERER'])) $this->refererRedirect();
             
-            $todo = $this->todoDB->getTodoById($_GET['delete']);
+            $todoId = $this->todoDB->returnObjectId($_GET['delete']);
+            $todo = $this->todoDB->getTodoById($todoId);
 
-            $isInvalidUser = $this->isUser() && $todo['created_by'] !== $_SESSION['loggedUser']['id'];
-            $isInvalidTempUser = ($this->isTempUser() && !in_array($todo['id'], $_SESSION['tempUser']) && $_SESSION['allowAssign'] === false);
+            $isInvalidUser = $this->isUser() && $todo['createdBy'] != $_SESSION['loggedUser']['_id'];
+            $isInvalidTempUser = ($this->isTempUser() && !in_array($todo['_id'], $_SESSION['tempUser']) && $_SESSION['allowAssign'] === false);
 
             if($isInvalidTempUser || $isInvalidUser) $this->refererRedirect();
 
             $this->formData = "
-            <form action=" . WEB_ROOT . '/todo/delete/' . $todo['id'] . " method='POST'>
+            <form action=" . WEB_ROOT . '/todo/delete/' . $todo['_id'] . " method='POST'>
                 <p>Are you sure you want to delete <strong> " . $todo['title'] . "</strong>?</p>
             ";
 
@@ -212,7 +210,7 @@ class TodoController extends ApplicationController {
             $this->modal['content'] = $this->formData;
             $this->modal['title'] = 'Delete todo';
             $this->modal['type'] = 'Delete';
-            $this->modal['id'] = $todo['id'];
+            $this->modal['id'] = $todo['_id'];
             
             $this->afterFilters('view', 'modal', $this->modal);
             

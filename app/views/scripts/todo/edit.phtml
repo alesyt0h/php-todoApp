@@ -6,8 +6,8 @@
 
         $title = $this->todo['title'];
         $status = $this->todo['status'];
-        $createdAt = date('l \a\t H:i, F jS \of Y', strtotime($this->todo['created_at']));
-        $completedAt = ($this->todo['completed_at']) ? date('l \a\t H:i, F jS \of Y', strtotime($this->todo['completed_at'])) : 'Not yet completed';
+        $createdAt = date('l \a\t H:i, F jS \of Y', strtotime($this->todo['createdAt']));
+        $completedAt = ($this->todo['completedAt']) ? date('l \a\t H:i, F jS \of Y', strtotime($this->todo['completedAt'])) : 'Not yet completed';
 
         switch ($status) {
             case 'Pending':
