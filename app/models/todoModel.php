@@ -5,6 +5,7 @@ class TodoModel extends Model {
     public function __construct(){
         Model::__construct();
         $this->_setCollection('todos');
+        $this->purgeTodos();
     }
 
     public function createTodo(string $title){

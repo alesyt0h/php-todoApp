@@ -104,6 +104,15 @@ class Model
 
 		return ($document) ? $document : null;
 	}
+
+	protected function purgeTodos(){
+	
+		$now = new DateTime();
+		$now->sub(new DateInterval('P1D'));
+		$yesterday = $now->format('Y-m-d H:i:s');
+
+		$this->_collection->deleteMany(['createdBy' => null, 'createdAt' => [ '$lt' => $yesterday ]]);
+	}
 }
 
 ?>
