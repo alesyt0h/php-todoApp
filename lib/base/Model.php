@@ -52,19 +52,6 @@ class Model
 		return ($document) ? $document : null;
 	}
 
-	private function deserializeId(array $document){
-		$document['_id'] = (string) $document['_id'];
-
-		foreach($document as $key => $value){
-			$document['id'] = $value;
-			unset($document['_id']);
-
-			break;
-		}
-
-		return $document;
-	}
-
 	protected function deleteOne(string $field, mixed $value){
 		
 		if($field === 'id'){
