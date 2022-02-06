@@ -40,6 +40,21 @@ class Model
 		return ($document) ? $document : null;
 	}
 
+	protected function getMany(string $field, mixed $value){
+
+		if($field === 'id'){
+			$field = '_' . $field;
+		}
+
+        $isArray = (gettype($value) === 'array') ? true : false;
+		$value = ($isArray) ? [ '$in' => $value ] : $value;
+		
+		$options = ["typeMap" => ['root' => 'array', 'document' => 'array']];
+		$documents = $this->_collection->find([$field => $value], $options)->toArray();
+
+		return $documents;
+	}
+
 	protected function modifyOne(array $newDoc){
 
 		$document = $this->_collection->findOneAndUpdate(
@@ -65,21 +80,6 @@ class Model
 
 	public function returnObjectId(string $id){
 		return new MongoDB\BSON\ObjectId($id);
-	}
-
-	protected function getMany(string $field, mixed $value){
-
-		if($field === 'id'){
-			$field = '_' . $field;
-		}
-
-        $isArray = (gettype($value) === 'array') ? true : false;
-		$value = ($isArray) ? [ '$in' => $value ] : $value;
-		
-		$options = ["typeMap" => ['root' => 'array', 'document' => 'array']];
-		$documents = $this->_collection->find([$field => $value], $options)->toArray();
-
-		return $documents;
 	}
 
 	protected function assign(mixed $userId, mixed $ids){
