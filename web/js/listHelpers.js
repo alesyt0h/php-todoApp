@@ -67,6 +67,7 @@ const init = () => {
     const trElem = document.querySelectorAll('tr')[1];
     
     trElem.remove();
+    console.log(todos);
 
     todos.reverse().forEach(todo => {
         const tr = trElem.cloneNode(true);
@@ -83,11 +84,11 @@ const init = () => {
         const input = tr.querySelector('input');
         input.checked = completed;
         input.indeterminate = inProcess;
-        input.id = todo.id;
+        input.id = todo._id.$oid;
     
         const created = tr.querySelector('#created');
-        created.after((completed) ? timeAgo(todo.completed_at) : timeAgo(todo.created_at));
-        created.parentElement.title = (completed) ? 'Created ' + timeAgo(todo.created_at) : '';
+        created.after((completed) ? timeAgo(todo.completedAt) : timeAgo(todo.createdAt));
+        created.parentElement.title = (completed) ? 'Created ' + timeAgo(todo.createdAt) : '';
         created.innerText = (completed) ? 'Completed ' : '';
     
         const status = tr.querySelector('#status');
@@ -97,7 +98,7 @@ const init = () => {
             const data = new FormData();
             data.append('change', 'yes');
 
-            fetch(`${webRoot}/todo/edit/${todo.id}`, {
+            fetch(`${webRoot}/todo/edit/${todo._id.$oid}`, {
                 method: 'POST',
                 body: data
             }).then(() => {
@@ -105,8 +106,8 @@ const init = () => {
             });
         });
     
-        tr.querySelector('#edit').href += todo.id; 
-        tr.querySelector('#remove').href += todo.id;
+        tr.querySelector('#edit').href += todo._id.$oid; 
+        tr.querySelector('#remove').href += todo._id.$oid;
     
         tbody.appendChild(tr);
     });

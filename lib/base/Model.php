@@ -1,184 +1,105 @@
 <?php
 
-/**
- * A base model for handling the database connections
- * @author jimmiw
- * @since 2012-07-02
- */
+require_once ROOT_PATH . '/vendor/autoload.php';
+
 class Model
 {
-	protected $_dbh = null;
-	protected $_table = "";
+	protected $_db = null;
+	protected $_client = null;
+	protected $_collection;
 	
-	public function __construct()
-	{
-		// parses the settings file
+	public function __construct(){
+
 		$settings = parse_ini_file(ROOT_PATH . '/config/settings.ini', true);
+		$connectionString = $settings['database']['connection_string'];
+		$this->_db = $settings['database']['dbname'];
+
+		$this->_client = new MongoDB\Client($connectionString);
+	}
+	
+	protected function _setCollection(string $collection){
+		$db = $this->_db;
+		$this->_collection = $this->_client->$db->$collection;
+	}
+	
+	protected function insertOne(array $data){
+		$result = $this->_collection->insertOne($data);
+
+		return $result->getInsertedId();
+	}
+
+	protected function getOne(string $field, mixed $value){
+
+		if($field === 'id'){
+			$field = '_' . $field;
+		}
 		
-		// starts the connection to the database
-		$this->_dbh = new PDO(
-			sprintf(
-				"%s:host=%s;dbname=%s",
-				$settings['database']['driver'],
-				$settings['database']['host'],
-				$settings['database']['dbname']
-			),
-			$settings['database']['user'],
-			$settings['database']['password'],
-			array(PDO::MYSQL_ATTR_INIT_COMMAND => "SET NAMES utf8")
+		$options = ["typeMap" => ['root' => 'array', 'document' => 'array']];
+		$document = $this->_collection->findOne([$field => $value], $options);
+
+		return ($document) ? $document : null;
+	}
+
+	protected function getMany(string $field, mixed $value){
+
+		if($field === 'id'){
+			$field = '_' . $field;
+		}
+
+        $isArray = (gettype($value) === 'array') ? true : false;
+		$value = ($isArray) ? [ '$in' => $value ] : $value;
+		
+		$options = ["typeMap" => ['root' => 'array', 'document' => 'array']];
+		$documents = $this->_collection->find([$field => $value], $options)->toArray();
+
+		return $documents;
+	}
+
+	protected function modifyOne(array $newDoc){
+
+		$document = $this->_collection->findOneAndUpdate(
+			['_id' => $newDoc['_id']], 
+			[ '$set' => $newDoc], 
+			['returnDocument' => MongoDB\Operation\FindOneAndUpdate::RETURN_DOCUMENT_AFTER,
+			 'typeMap' => ['root' => 'array', 'document' => 'array']]
 		);
-		
-		$this->init();
-	}
-	
-	public function init()
-	{
-		
-	}
-	
-	/**
-	 * Sets the database table the model is using
-	 * @param string $table the table the model is using
-	 */
-	protected function _setTable($table)
-	{
-		$this->_table = $table;
-	}
-	
-	public function fetchOne($id, $id_field = 'id')
-	{
-		$sql = 'SELECT * FROM ' . $this->_table;
-		$sql .= ' WHERE ' . $id_field . ' = ?';
 
-		$statement = $this->_dbh->prepare($sql);
-		$statement->execute(array($id));
-		
-		$found = $statement->fetch(PDO::FETCH_ASSOC);
-
-		return ($found) ? $found : false;
+		return ($document) ? $document : null;
 	}
-	
-	/**
-	 * Saves the current data to the database. If an key named "id" is given,
-	 * an update will be issued.
-	 * @param array $data the data to save
-	 * @return int the id the data was saved under
-	 */
-	public function save($data = array())
-	{
-		$sql = '';
+
+	protected function deleteOne(string $field, mixed $value){
 		
-		$values = array();
-		$firstField = array_key_first($data);
-		$lastField = array_key_last($data);
-	
-		if (preg_match('/id$/', $firstField) || preg_match('/id$/', $lastField)) {
-			$sql = 'UPDATE ' . $this->_table . ' SET ';
-			
-			$first = true;
-			foreach($data as $key => $value) {
-				if ($key != $firstField) {
-					$sql .= ($first == false ? ',' : '') . ' ' . $key . ' = ?';
-					$values[] = $value;
-					
-					$first = false;
-				}
-			}
-			
-			// adds the id as well
-			$values[] = $data[$firstField];
-			
-			$sql .= ' WHERE ' . $firstField . ' = ?';// . $data['id'];
-			
-			$statement = $this->_dbh->prepare($sql);
-			return $statement->execute($values);
+		if($field === 'id'){
+			$field = '_' . $field;
 		}
-		else {
-			$keys = array_keys($data);
-			
-			$sql = 'INSERT INTO ' . $this->_table . '(';
-			$sql .= implode(',', $keys);
-			$sql .= ')';
-			$sql .= ' VALUES (';
-			
-			$dataValues = array_values($data);
-			$first = true;
-			foreach($dataValues as $value) {
-				$sql .= ($first == false ? ',?' : '?');
-				
-				$values[] = $value;
-				
-				$first = false;
-			}
-			
-			$sql .= ')';
-			
-			$statement = $this->_dbh->prepare($sql);
-			if ($statement->execute($values)) {
-				return $this->_dbh->lastInsertId();
-			}
-		}
-		
-		return false;
-	}
-	
-	/**
-	 * Deletes a single entry
-	 * @param int $id the id of the entry to delete
-	 * @param string $id_field the id_field name of the entry to delete
-	 * @return boolean true if all went well, else false.
-	 */
-	public function delete($id, $id_field = 'id')
-	{
-		$statement = $this->_dbh->prepare("DELETE FROM " . $this->_table . " WHERE {$id_field} = ?");
-		return $statement->execute(array($id));
-	}
-	
-	protected function isTempUser(){
-        return (isset($_SESSION['tempUser']) && count($_SESSION['tempUser'])) ? true : false;
-	}
-    
-	protected function isUser(){
-        return (isset($_SESSION['loggedUser'])) ? true : false;
+
+		$result = $this->_collection->deleteOne([$field => $value]);
+
+		return $result;
 	}
 
-	protected function fetchTodos(mixed $id){
-		$isValidUser = $this->isUser();
-        $isValidTempUser = $this->isTempUser();
-
-        if($isValidUser){
-
-			$sql = 'SELECT * FROM ' . $this->_table;
-			$sql .= ' WHERE ' . 'created_by' . ' = ?';
-
-			$id = array($id);
-        } else if ($isValidTempUser) {
-
-			$in  = str_repeat('?,', count($id) - 1) . '?';
-
-			$sql = 'SELECT * FROM ' . $this->_table;
-			$sql .= ' WHERE ' . 'id' . ' IN (' . $in . ')';
-        }
-
-		$statement = $this->_dbh->prepare($sql);
-		$statement->execute($id);
-		
-		$found = $statement->fetchAll(PDO::FETCH_ASSOC);
-		
-		return ($found) ? $found : [];
+	public function returnObjectId(string $id){
+		return new MongoDB\BSON\ObjectId($id);
 	}
 
 	protected function assign(mixed $userId, mixed $ids){
 
-		$in  = str_repeat('?,', count($ids) - 1) . '?';
+		$document = $this->_collection->findOneAndUpdate(
+			['_id' => [ '$in' => $ids ]], 
+			[ '$set' => [ 'createdBy' => $userId ]]
+		);
 
-		$sql = 'UPDATE todos';
-		$sql .= ' SET created_by = ?';
-		$sql .= ' WHERE ' . 'id' . ' IN (' . $in . ')';
+		return ($document) ? $document : null;
+	}
 
-		array_unshift($ids, $userId);
+	protected function purgeTodos(){
+	
+		$now = new DateTime();
+		$now->sub(new DateInterval('P1D'));
+		$yesterday = $now->format('Y-m-d H:i:s');
 
-		$statement = $this->_dbh->prepare($sql);
-		$statement->execute($ids);
+		$this->_collection->deleteMany(['createdBy' => null, 'createdAt' => [ '$lt' => $yesterday ]]);
 	}
 }
+
+?>

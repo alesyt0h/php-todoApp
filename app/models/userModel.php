@@ -4,34 +4,29 @@ class UserModel extends Model {
 
     public function __construct(){
         Model::__construct();
-        $this->_setTable('users');
+        $this->_setCollection('users');
     }
 
     public function checkCredentials(string $username, string $password){
 
         $match = false;
 
-        $user = $this->fetchOne($username, 'username');
+        $user = $this->getOne('username', $username);
         $match = password_verify($password, $user['password']);
-
-        if($match){
-            $user['id'] = intval($user['id']);
-            $user['created_todos'] = intval($user['created_todos']);
-        }
 
         return ($match) ? $user : false;
     }
 
     public function userExists(string $username){
 
-        $userExists = $this->fetchOne($username, 'username');
+        $userExists = $this->getOne('username', $username);
 
         return $userExists;
     }
 
     public function mailExists(string $email){
 
-        $mailExists = $this->fetchOne($email, 'email');
+        $mailExists = $this->getOne('email', $email);;
 
         return $mailExists;
     }
@@ -42,12 +37,12 @@ class UserModel extends Model {
             "username" => $username,
             "password" => $password,
             "email" => $email,
-            "register_date" => date('Y-m-d H:i:s'),
-            "created_todos" => 0,
-            "avatar_url" => null
+            "registerDate" => date('Y-m-d H:i:s'),
+            "createdTodos" => 0,
+            "avatarUrl" => null
         ];
 
-        $newUser['id'] = intval($this->save($newUser));
+        $newUser['_id'] = $this->insertOne($newUser);
 
         return $newUser;
     }
@@ -60,12 +55,12 @@ class UserModel extends Model {
 
         $user['email'] = $email;
         $user['password'] = $password;
-        $user['avatar_url'] = $avatar;
-        $user['created_todos'] += $count;
+        $user['avatarUrl'] = $avatar;
+        $user['createdTodos'] += $count;
 
         $equals = ($user === $_SESSION['loggedUser']) ? true : false; 
 
-        $result = [ 'status' => $this->save($user), 
+        $result = [ 'status' => $this->modifyOne($user), 
                     'equals' => $equals ];
 
         if ($result['status']) $_SESSION['loggedUser'] = $user;

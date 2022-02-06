@@ -4,7 +4,8 @@ class TodoModel extends Model {
 
     public function __construct(){
         Model::__construct();
-        $this->_setTable('todos');
+        $this->_setCollection('todos');
+        $this->purgeTodos();
     }
 
     public function createTodo(string $title){
@@ -12,19 +13,19 @@ class TodoModel extends Model {
         $userId = null;
 
         if(isset($_SESSION['loggedUser'])){
-            $userId = $_SESSION['loggedUser']['id'];
+            $userId = $_SESSION['loggedUser']['_id'];
         }
 
         $todo = [
             'title' => $title, 
             'status' => 'Pending', 
-            'created_by' => $userId ?? null, 
-            'created_at' => date('Y-m-d H:i:s'), 
-            'completed_at' => null
+            'createdBy' => $userId ?? null,
+            'createdAt' => date('Y-m-d H:i:s'),
+            'completedAt' => null
         ];
 
-        $inserted = $this->save($todo);
-
+        $inserted = $this->insertOne($todo);
+        
         if(!isset($_SESSION['loggedUser'])){
             $_SESSION['tempUser'] ?? $_SESSION['tempUser'] = [];
             array_push($_SESSION['tempUser'], $inserted);
@@ -35,7 +36,7 @@ class TodoModel extends Model {
 
     public function assignTodos(){
 
-        $userId = $_SESSION['loggedUser']['id'];
+        $userId = $_SESSION['loggedUser']['_id'];
         $tempTodosId = $_SESSION['tempUser'];
 
         $this->assign($userId, $tempTodosId);
@@ -50,32 +51,33 @@ class TodoModel extends Model {
         $todo['status'] = $status;
 
         if($status === 'Completed'){
-            $todo['completed_at'] = date('Y-m-d H:i:s');
+            $todo['completedAt'] = date('Y-m-d H:i:s');
         } else {
-            $todo['completed_at'] = null;
+            $todo['completedAt'] = null;
         }
 
-        $this->save($todo);
+        $todo = $this->modifyOne($todo);
         
         return $todo;
     }
 
-    public function deleteTodo(string $todoId){
+    public function deleteTodo(mixed $todoId){
 
-        $this->todoId = intval($todoId);
+        $result = $this->deleteOne('id', $todoId);
 
-        $result = $this->delete($todoId);
         return $result;
     }
 
     public function getTodos(mixed $id){
-        return $this->fetchTodos($id);
+        
+        $isArray = (gettype($id) === 'array') ? true : false;
+        $field = ($isArray) ? 'id' : 'createdBy';
+
+        return $this->getMany($field, $id);
     }
 
-    public function getTodoById(string $todoId){
-        $todo = $this->fetchOne(intval($todoId));
-        $todo['id'] = intval($todo['id']);
-        $todo['created_by'] = intval($todo['created_by']);
+    public function getTodoById(mixed $todoId){
+        $todo = $this->getOne('id', $todoId);
         
         return $todo;
     }
