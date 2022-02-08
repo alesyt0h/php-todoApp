@@ -46,6 +46,8 @@ class TodoModel extends Model {
 
     public function modifyTodo(array $todo, string $title, string $status){
 
+        unset($todo['created_by'], $todo['created_at'], $todo['completed_at']);
+
         $todo['title'] = $title;
         $todo['status'] = $status;
 
