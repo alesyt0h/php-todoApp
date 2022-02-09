@@ -40,6 +40,7 @@ db.createCollection("todos", {
                 "completedAt": {
                     "bsonType": [
                         "date",
+                        "string",
                         "null"
                     ]
                 }
