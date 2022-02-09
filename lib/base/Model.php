@@ -1,6 +1,14 @@
 <?php
 
-require_once ROOT_PATH . '/vendor/autoload.php';
+try {
+	@require_once ROOT_PATH . '/vendor/autoload.php';
+} catch (\Throwable $th) {
+	throw new Exception("
+	<div style='word-break: break-word'>
+		MongoDB Driver is not installed, please run: 'composer i'
+		on a terminal to install it
+	</div>",1);
+}
 
 class Model
 {
