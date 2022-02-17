@@ -14,6 +14,12 @@ const printBadge = (status) => {
     return badge;
 }
 
+const convertDateForIos = (date) => {
+    var arr = date.split(/[- :]/);
+    date = new Date(arr[0], arr[1]-1, arr[2], arr[3], arr[4], arr[5]);
+    return date;
+}
+
 const timeAgo = (dateTime) => {
 
     if(typeof dateTime !== 'string') return;
@@ -30,6 +36,10 @@ const timeAgo = (dateTime) => {
     if(typeof RelativeTimeFormat !== 'undefined'){
         Intl.RelativeTimeFormat = RelativeTimeFormat;
         Intl.RelativeTimeFormat.addLocale(en);
+    }
+
+    if(dateTime.includes('-') || dateTime.includes(':')){
+        dateTime = convertDateForIos(dateTime);
     }
 
     const rtf = new Intl.RelativeTimeFormat('en', { style: 'long'});
@@ -67,7 +77,6 @@ const init = () => {
     const trElem = document.querySelectorAll('tr')[1];
     
     trElem.remove();
-    console.log(todos);
 
     todos.reverse().forEach(todo => {
         const tr = trElem.cloneNode(true);
